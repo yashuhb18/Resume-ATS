@@ -11,184 +11,183 @@ interface WakeUpScreenProps {
 
 export default function WakeUpScreen({ onVerified }: WakeUpScreenProps) {
   const [status, setStatus] = useState<'idle' | 'waking' | 'success' | 'error'>('idle');
-  const [dots, setDots] = useState('');
+  const [dots,   setDots]   = useState('');
   const [attempt, setAttempt] = useState(0);
 
-  // Animate dots while waking
   useEffect(() => {
     if (status !== 'waking') return;
-    const interval = setInterval(() => {
-      setDots((prev) => (prev.length >= 3 ? '' : prev + '.'));
-    }, 500);
-    return () => clearInterval(interval);
+    const iv = setInterval(() => setDots(d => (d.length >= 3 ? '' : d + '.')), 500);
+    return () => clearInterval(iv);
   }, [status]);
 
   const pingBackend = useCallback(async (): Promise<boolean> => {
     try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 30000);
-      const res = await fetch(`${BACKEND_URL}/health`, { signal: controller.signal });
-      clearTimeout(timeout);
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 30000);
+      const res = await fetch(`${BACKEND_URL}/health`, { signal: ctrl.signal });
+      clearTimeout(t);
       return res.ok;
-    } catch {
-      return false;
-    }
+    } catch { return false; }
   }, []);
 
   const handleVerify = async () => {
     setStatus('waking');
     setAttempt(0);
-
-    // Retry up to 5 times — free-tier can take ~30s to wake
     for (let i = 0; i < 5; i++) {
       setAttempt(i + 1);
-      const ok = await pingBackend();
-      if (ok) {
+      if (await pingBackend()) {
         setStatus('success');
-        // Small delay so user sees the success state
         setTimeout(() => onVerified(), 800);
         return;
       }
-      // Wait a bit before retrying
-      if (i < 4) await new Promise((r) => setTimeout(r, 3000));
+      if (i < 4) await new Promise(r => setTimeout(r, 3000));
     }
-
     setStatus('error');
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      {/* Background decorations */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-brand-600/10 rounded-full blur-3xl" />
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center"
+      style={{ background: 'var(--surface-base)' }}
+    >
+      {/* Background blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="blob blob-brand absolute w-[480px] h-[480px] top-[-100px] left-[-100px] opacity-20" />
+        <div className="blob blob-violet absolute w-[380px] h-[380px] bottom-[-80px] right-[-80px] opacity-15" style={{ animationDelay: '3s' }} />
       </div>
 
       <div className="relative w-full max-w-md mx-4">
-        {/* Card */}
-        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-3xl p-8 sm:p-10 text-center shadow-2xl">
-          {/* Logo area */}
+        <div
+          className="card-glass rounded-3xl p-8 sm:p-10 text-center border"
+          style={{ borderColor: 'rgba(255,255,255,0.08)' }}
+        >
+          {/* Logo */}
           <div className="mb-6">
-            <div className="w-16 h-16 mx-auto bg-gradient-to-br from-brand-500 to-brand-600 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/30 mb-4">
+            <div
+              className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-4 shadow-brand"
+              style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }}
+            >
               <ShieldCheck className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-white font-display">
-              ATS<span className="text-brand-400">Analyzer</span>
+            <h1 className="text-2xl font-bold font-display" style={{ color: 'var(--text-primary)' }}>
+              Res<span className="text-gradient-brand">Q</span>
             </h1>
           </div>
 
-          {/* Status-specific content */}
+          {/* ── IDLE ── */}
           {status === 'idle' && (
             <>
-              <p className="text-gray-400 mb-2 text-sm">
+              <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>
                 Quick verification required
               </p>
-              <p className="text-gray-500 mb-8 text-xs leading-relaxed">
-                Our backend runs on a free tier and may be sleeping. 
+              <p className="text-xs mb-8 leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                Our backend runs on a free tier and may be sleeping.
                 Click below to wake it up and verify you&apos;re a real person.
               </p>
 
               <button
                 onClick={handleVerify}
-                className="group relative w-full bg-white/5 hover:bg-white/10 border border-white/20 hover:border-brand-500/50 rounded-2xl p-5 transition-all duration-300 cursor-pointer"
+                className="group relative w-full rounded-2xl p-5 transition-all duration-300 cursor-pointer border text-left"
+                style={{
+                  background: 'var(--surface-subtle)',
+                  borderColor: 'var(--surface-border2)',
+                }}
               >
                 <div className="flex items-center gap-4">
-                  {/* Checkbox */}
-                  <div className="w-7 h-7 rounded-lg border-2 border-gray-500 group-hover:border-brand-500 flex items-center justify-center transition-colors">
-                    <div className="w-3 h-3 rounded-sm bg-transparent group-hover:bg-brand-500/30 transition-colors" />
+                  <div
+                    className="w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-colors"
+                    style={{ borderColor: 'var(--text-faint)' }}
+                  >
+                    <div className="w-3 h-3 rounded-sm" style={{ background: 'transparent' }} />
                   </div>
-                  <span className="text-gray-300 font-medium text-lg">
+                  <span className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>
                     I&apos;m not a robot
                   </span>
                 </div>
               </button>
 
-              <p className="text-gray-600 mt-6 text-xs">
+              <p className="text-xs mt-6" style={{ color: 'var(--text-faint)' }}>
                 This wakes up our analysis server so you can use the tool
               </p>
             </>
           )}
 
+          {/* ── WAKING ── */}
           {status === 'waking' && (
             <>
-              <div className="mb-6">
-                <Loader2 className="w-10 h-10 text-brand-400 mx-auto animate-spin" />
-              </div>
-              <p className="text-white font-semibold text-lg mb-2">
+              <Loader2
+                className="w-10 h-10 mx-auto mb-5 animate-spin"
+                style={{ color: 'var(--brand-glow-core)' }}
+              />
+              <p className="font-semibold text-lg mb-2" style={{ color: 'var(--text-primary)' }}>
                 Waking up server{dots}
               </p>
-              <p className="text-gray-400 text-sm mb-4">
-                Free-tier servers sleep when inactive. This may take up to 30-60 seconds.
+              <p className="text-sm mb-5" style={{ color: 'var(--text-muted)' }}>
+                Free-tier servers sleep when inactive. This may take up to 30–60 seconds.
               </p>
 
-              {/* Progress indicator */}
+              {/* Attempt dots */}
               <div className="flex items-center justify-center gap-2 mb-4">
-                {[1, 2, 3, 4, 5].map((n) => (
+                {[1, 2, 3, 4, 5].map(n => (
                   <div
                     key={n}
-                    className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${
-                      n < attempt
-                        ? 'bg-brand-500'
-                        : n === attempt
-                        ? 'bg-brand-400 animate-pulse'
-                        : 'bg-gray-700'
-                    }`}
+                    className="w-2.5 h-2.5 rounded-full transition-all duration-500"
+                    style={{
+                      background:
+                        n < attempt  ? 'var(--brand-glow-core)' :
+                        n === attempt ? 'var(--accent-ice)' :
+                        'var(--surface-muted)',
+                    }}
                   />
                 ))}
               </div>
-              <p className="text-gray-600 text-xs">
+              <p className="text-xs mb-5" style={{ color: 'var(--text-faint)' }}>
                 Attempt {attempt} of 5
               </p>
 
-              {/* Fun waiting tips */}
-              <div className="mt-6 p-3 bg-white/5 rounded-xl border border-white/5">
-                <p className="text-gray-500 text-xs italic">
-                  💡 Tip: Grab a coffee while the server wakes up!
-                </p>
+              <div
+                className="p-3 rounded-xl border text-xs italic"
+                style={{ background: 'var(--surface-subtle)', borderColor: 'var(--surface-border)', color: 'var(--text-faint)' }}
+              >
+                💡 Tip: Grab a coffee while the server wakes up!
               </div>
             </>
           )}
 
+          {/* ── SUCCESS ── */}
           {status === 'success' && (
             <>
-              <div className="mb-6">
-                <div className="w-16 h-16 mx-auto bg-success-500/20 rounded-2xl flex items-center justify-center">
-                  <CheckCircle2 className="w-10 h-10 text-success-500" />
-                </div>
+              <div
+                className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-4"
+                style={{ background: 'rgba(52,211,153,0.12)' }}
+              >
+                <CheckCircle2 className="w-9 h-9" style={{ color: 'var(--emerald-neon)' }} />
               </div>
-              <p className="text-white font-semibold text-lg mb-2">
-                Server is online!
-              </p>
-              <p className="text-gray-400 text-sm">
-                Redirecting you to the analyzer...
-              </p>
+              <p className="font-semibold text-lg mb-2" style={{ color: 'var(--text-primary)' }}>Server is online!</p>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Redirecting you to the analyzer...</p>
             </>
           )}
 
+          {/* ── ERROR ── */}
           {status === 'error' && (
             <>
-              <div className="mb-6">
-                <div className="w-16 h-16 mx-auto bg-danger-500/20 rounded-2xl flex items-center justify-center">
-                  <WifiOff className="w-10 h-10 text-danger-500" />
-                </div>
-              </div>
-              <p className="text-white font-semibold text-lg mb-2">
-                Server is unavailable
-              </p>
-              <p className="text-gray-400 text-sm mb-6">
-                The server couldn&apos;t be reached after multiple attempts. 
-                It may be undergoing maintenance.
-              </p>
-              <button
-                onClick={handleVerify}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl transition-colors"
+              <div
+                className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-4"
+                style={{ background: 'rgba(251,113,133,0.10)' }}
               >
-                <RefreshCw className="w-4 h-4" />
-                Try Again
+                <WifiOff className="w-9 h-9" style={{ color: '#fb7185' }} />
+              </div>
+              <p className="font-semibold text-lg mb-2" style={{ color: 'var(--text-primary)' }}>Server is unavailable</p>
+              <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>
+                The server couldn&apos;t be reached after multiple attempts. It may be undergoing maintenance.
+              </p>
+              <button onClick={handleVerify} className="btn-primary inline-flex items-center gap-2 px-6 py-3">
+                <RefreshCw className="w-4 h-4" /> Try Again
               </button>
               <button
                 onClick={onVerified}
-                className="block mx-auto mt-4 text-gray-500 hover:text-gray-400 text-sm underline transition-colors"
+                className="block mx-auto mt-4 text-sm underline transition-colors"
+                style={{ color: 'var(--text-faint)' }}
               >
                 Continue anyway →
               </button>
@@ -199,3 +198,4 @@ export default function WakeUpScreen({ onVerified }: WakeUpScreenProps) {
     </div>
   );
 }
+

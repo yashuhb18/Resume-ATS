@@ -1,7 +1,7 @@
 """
-ATS Resume Analyzer - FastAPI Backend
+ResQ - FastAPI Backend
 """
-from fastapi import FastAPI, UploadFile, File, HTTPException, Request
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 import os
@@ -13,10 +13,13 @@ from app.services.ats_scorer import ATSScorer
 from app.services.skill_extractor import SkillExtractor
 from app.services.domain_classifier import DomainClassifier
 from app.services.report_generator import ReportGenerator
-from app.models.schemas import AnalysisResponse
+from app.services.jd_comparator import JDComparator
+from app.services.ml_quality_analyzer import ml_quality_analyzer
+from app.services.interview_chatbot import interview_chatbot
+from app.models.schemas import AnalysisResponse, ComparisonResponse, InterviewChatResponse
 
 app = FastAPI(
-    title="ATS Resume Analyzer",
+    title="ResQ",
     description="AI-powered resume analysis and ATS scoring",
     version="1.0.0"
 )
@@ -36,14 +39,33 @@ ats_scorer = ATSScorer()
 skill_extractor = SkillExtractor()
 domain_classifier = DomainClassifier()
 report_generator = ReportGenerator()
+jd_comparator = JDComparator()
 
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
 ALLOWED_EXTENSIONS = {".pdf", ".docx"}
 
 
+def extract_jd_text(file_path: str, file_ext: str) -> str:
+    """Extract text from a JD file."""
+    if file_ext == ".pdf":
+        from pypdf import PdfReader
+        with open(file_path, "rb") as f:
+            jd_text = ""
+            reader = PdfReader(f)
+            for page in reader.pages:
+                jd_text += page.extract_text() or ""
+            return jd_text
+    if file_ext == ".docx":
+        from docx import Document
+        doc = Document(file_path)
+        return "\n".join([para.text for para in doc.paragraphs])
+    with open(file_path, "r", encoding="utf-8") as f:
+        return f.read()
+
+
 @app.get("/")
 async def root():
-    return {"message": "ATS Resume Analyzer API", "status": "running"}
+    return {"message": "ResQ API", "status": "running"}
 
 
 @app.get("/health")
@@ -92,6 +114,9 @@ async def analyze_resume(file: UploadFile = File(...)):
         
         # Classify domain
         domain_data = domain_classifier.classify(parsed_data["raw_text"], skills_data)
+
+        # Analyze resume content quality with PyTorch when available
+        ml_analysis = ml_quality_analyzer.analyze(parsed_data, skills_data)
         
         # Calculate ATS score (OCR-aware)
         ats_analysis = ats_scorer.calculate_score(
@@ -99,7 +124,8 @@ async def analyze_resume(file: UploadFile = File(...)):
             skills_data, 
             domain_data,
             parsing_method=parsing_method,
-            ocr_confidence=ocr_confidence
+            ocr_confidence=ocr_confidence,
+            ml_analysis=ml_analysis
         )
         
         # Cleanup temporary file
@@ -120,6 +146,8 @@ async def analyze_resume(file: UploadFile = File(...)):
             issues=ats_analysis["issues"],
             suggestions=ats_analysis["suggestions"],
             keywords_analysis=ats_analysis["keywords_analysis"],
+            score_methodology=ats_analysis.get("methodology", {}),
+            computer_vision=parsed_data.get("computer_vision", {}),
             # OCR metadata
             parsing_method=parsing_method,
             ocr_confidence=ocr_confidence
@@ -150,13 +178,293 @@ async def download_report(request: Request):
             content=pdf_bytes,
             media_type="application/pdf",
             headers={
-                "Content-Disposition": "attachment; filename=ats-resume-report.pdf"
+                "Content-Disposition": "attachment; filename=resq-resume-report.pdf"
             }
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/api/compare", response_model=ComparisonResponse)
+async def compare_resume_with_jd(
+    resume_file: UploadFile = File(...),
+    jd_file: UploadFile = File(...)
+):
+    """
+    Compare resume against job description and return match analysis
+    """
+    temp_resume_path = None
+    temp_jd_path = None
+    
+    try:
+        # Validate resume file
+        resume_ext = os.path.splitext(resume_file.filename)[1].lower()
+        if resume_ext not in ALLOWED_EXTENSIONS:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid resume file type. Allowed types: {', '.join(ALLOWED_EXTENSIONS)}"
+            )
+        
+        # Validate JD file (can be PDF or text file)
+        jd_ext = os.path.splitext(jd_file.filename)[1].lower()
+        if jd_ext not in {".pdf", ".docx", ".txt"}:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid JD file type. Allowed types: .pdf, .docx, .txt"
+            )
+        
+        # Read resume content
+        resume_content = await resume_file.read()
+        if len(resume_content) > MAX_FILE_SIZE:
+            raise HTTPException(
+                status_code=400,
+                detail="Resume file size exceeds 5MB limit"
+            )
+        
+        # Read JD content
+        jd_content = await jd_file.read()
+        if len(jd_content) > MAX_FILE_SIZE:
+            raise HTTPException(
+                status_code=400,
+                detail="JD file size exceeds 5MB limit"
+            )
+        
+        # Create temporary files
+        with tempfile.NamedTemporaryFile(delete=False, suffix=resume_ext) as tmp:
+            tmp.write(resume_content)
+            temp_resume_path = tmp.name
+        
+        with tempfile.NamedTemporaryFile(delete=False, suffix=jd_ext) as tmp:
+            tmp.write(jd_content)
+            temp_jd_path = tmp.name
+        
+        # Parse resume
+        resume_parsed = resume_parser.parse(temp_resume_path, resume_ext)
+        parsing_method = resume_parsed.get("parsing_method", "standard")
+        ocr_confidence = resume_parsed.get("ocr_confidence")
+        
+        # Extract skills
+        skills_data = skill_extractor.extract(resume_parsed["raw_text"])
+        
+        # Calculate ATS score
+        domain_data = domain_classifier.classify(resume_parsed["raw_text"], skills_data)
+        ml_analysis = ml_quality_analyzer.analyze(resume_parsed, skills_data)
+        ats_analysis = ats_scorer.calculate_score(
+            resume_parsed,
+            skills_data,
+            domain_data,
+            parsing_method=parsing_method,
+            ocr_confidence=ocr_confidence,
+            ml_analysis=ml_analysis
+        )
+        
+        # Extract JD text
+        jd_text = extract_jd_text(temp_jd_path, jd_ext)
+        
+        # Compare resume with JD
+        comparison = jd_comparator.compare(
+            resume_parsed["raw_text"],
+            {
+                "programming_languages": skills_data.programming_languages,
+                "frameworks": skills_data.frameworks,
+                "tools": skills_data.tools,
+                "databases": skills_data.databases,
+                "soft_skills": skills_data.soft_skills,
+                "other": skills_data.other,
+            },
+            jd_text
+        )
+        
+        # Build JD Analysis
+        from app.models.schemas import JDAnalysis, MatchBreakdown, RecruiterReport, ComparisonSuggestion
+        
+        jd_analysis = JDAnalysis(
+            requirements=comparison["jd_requirements"],
+            skills=comparison["jd_skills"],
+            keywords=comparison["jd_keywords"]
+        )
+        
+        # Build Match Breakdown
+        match_breakdown = MatchBreakdown(
+            skill_match=comparison["skill_match_percentage"],
+            keyword_match=comparison["keyword_match_percentage"],
+            experience_match=comparison["experience_match_percentage"],
+            overall_match=comparison["match_percentage"]
+        )
+        
+        # Build Recruiter Report
+        recruiter_data = comparison["recruiter_report"]
+        recruiter_report = RecruiterReport(
+            fit_rating=recruiter_data["fit_rating"],
+            overall_summary=recruiter_data["overall_summary"],
+            match_breakdown=match_breakdown,
+            strengths=recruiter_data["strengths"],
+            gaps=recruiter_data["gaps"],
+            recommendation=recruiter_data["recommendation"],
+            next_steps=recruiter_data["next_steps"]
+        )
+        
+        # Build suggestions
+        suggestions = [
+            ComparisonSuggestion(
+                category=s.get("category", "General"),
+                title=s.get("title", ""),
+                description=s.get("description", ""),
+                priority=s.get("priority", "Medium")
+            )
+            for s in comparison["suggestions"]
+        ]
+        
+        # Build response
+        response = ComparisonResponse(
+            success=True,
+            candidate=resume_parsed["candidate"],
+            ats_score=ats_analysis["score"],
+            match_percentage=comparison["match_percentage"],
+            match_breakdown=match_breakdown,
+            jd_analysis=jd_analysis,
+            missing_skills=comparison["missing_skills"],
+            missing_keywords=comparison["missing_keywords"],
+            suggestions=suggestions,
+            recruiter_report=recruiter_report,
+            score_methodology=ats_analysis.get("methodology", {}),
+            computer_vision=resume_parsed.get("computer_vision", {}),
+            parsing_method=parsing_method,
+            ocr_confidence=ocr_confidence
+        )
+        
+        return response
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        # Cleanup temporary files
+        if temp_resume_path and os.path.exists(temp_resume_path):
+            os.unlink(temp_resume_path)
+        if temp_jd_path and os.path.exists(temp_jd_path):
+            os.unlink(temp_jd_path)
+
+
+@app.post("/api/interview-chat", response_model=InterviewChatResponse)
+async def interview_chat(
+    resume_file: Optional[UploadFile] = File(None),
+    jd_file: Optional[UploadFile] = File(None),
+    message: str = Form("Act as my virtual interviewer and HR. What should I improve?"),
+    mode: str = Form("coach"),
+    history: str = Form("[]")
+):
+    """Virtual HR/interviewer chatbot with full resume and optional JD access."""
+    temp_resume_path = None
+    temp_jd_path = None
+
+    try:
+        resume_parsed = {
+            "raw_text": "",
+            "candidate": {},
+            "projects": [],
+            "experience": {},
+            "education": [],
+            "sections": {},
+            "formatting": {},
+            "computer_vision": {},
+        }
+        skills_data = skill_extractor.extract("")
+        domain_data = domain_classifier.classify("", skills_data)
+        ats_analysis = {
+            "score": 0,
+            "category": "No Resume Uploaded",
+            "suggestions": [],
+            "methodology": {},
+        }
+
+        if resume_file and resume_file.filename:
+            resume_ext = os.path.splitext(resume_file.filename)[1].lower()
+            if resume_ext not in ALLOWED_EXTENSIONS:
+                raise HTTPException(status_code=400, detail="Invalid resume file type. Allowed types: .pdf, .docx")
+
+            resume_content = await resume_file.read()
+            if len(resume_content) > MAX_FILE_SIZE:
+                raise HTTPException(status_code=400, detail="Resume file size exceeds 5MB limit")
+
+            with tempfile.NamedTemporaryFile(delete=False, suffix=resume_ext) as tmp:
+                tmp.write(resume_content)
+                temp_resume_path = tmp.name
+
+            resume_parsed = resume_parser.parse(temp_resume_path, resume_ext)
+            parsing_method = resume_parsed.get("parsing_method", "standard")
+            ocr_confidence = resume_parsed.get("ocr_confidence")
+            skills_data = skill_extractor.extract(resume_parsed["raw_text"])
+            domain_data = domain_classifier.classify(resume_parsed["raw_text"], skills_data)
+            ml_analysis = ml_quality_analyzer.analyze(resume_parsed, skills_data)
+            ats_analysis = ats_scorer.calculate_score(
+                resume_parsed,
+                skills_data,
+                domain_data,
+                parsing_method=parsing_method,
+                ocr_confidence=ocr_confidence,
+                ml_analysis=ml_analysis
+            )
+
+        jd_text = ""
+        comparison = None
+        if jd_file and jd_file.filename:
+            jd_ext = os.path.splitext(jd_file.filename)[1].lower()
+            if jd_ext not in {".pdf", ".docx", ".txt"}:
+                raise HTTPException(status_code=400, detail="Invalid JD file type. Allowed types: .pdf, .docx, .txt")
+
+            jd_content = await jd_file.read()
+            if len(jd_content) > MAX_FILE_SIZE:
+                raise HTTPException(status_code=400, detail="JD file size exceeds 5MB limit")
+
+            with tempfile.NamedTemporaryFile(delete=False, suffix=jd_ext) as tmp:
+                tmp.write(jd_content)
+                temp_jd_path = tmp.name
+
+            jd_text = extract_jd_text(temp_jd_path, jd_ext)
+            comparison = jd_comparator.compare(
+                resume_parsed["raw_text"],
+                {
+                    "programming_languages": skills_data.programming_languages,
+                    "frameworks": skills_data.frameworks,
+                    "tools": skills_data.tools,
+                    "databases": skills_data.databases,
+                    "soft_skills": skills_data.soft_skills,
+                    "other": skills_data.other,
+                },
+                jd_text
+            )
+
+        import json
+        try:
+            parsed_history = json.loads(history) if history else []
+        except Exception:
+            parsed_history = []
+
+        return interview_chatbot.answer(
+            message=message,
+            resume=resume_parsed,
+            skills=skills_data,
+            domain=domain_data,
+            ats_analysis=ats_analysis,
+            jd_text=jd_text,
+            comparison=comparison,
+            history=parsed_history,
+            mode=mode,
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if temp_resume_path and os.path.exists(temp_resume_path):
+            os.unlink(temp_resume_path)
+        if temp_jd_path and os.path.exists(temp_jd_path):
+            os.unlink(temp_jd_path)
+
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)

@@ -7,6 +7,7 @@ from docx import Document
 from typing import Dict, List, Any, Optional
 from app.models.schemas import CandidateInfo, Project, Experience, ExperienceSummary, Education
 from app.services.ocr_service import ocr_service
+from app.services.cv_resume_analyzer import cv_resume_analyzer
 
 
 class ResumeParser:
@@ -23,6 +24,23 @@ class ResumeParser:
     LINKEDIN_PATTERN = r'(?:linkedin\.com/in/|linkedin:?\s*)([a-zA-Z0-9-]+)'
     GITHUB_PATTERN = r'(?:github\.com/|github:?\s*)([a-zA-Z0-9-]+)'
     URL_PATTERN = r'https?://[^\s<>"{}|\\^`\[\]]+'
+    LOCATION_KEYWORDS = [
+        'location', 'address', 'based in', 'current location', 'present address',
+        'residing in', 'residence', 'city'
+    ]
+    LOCATION_HINT_WORDS = [
+        'india', 'usa', 'united states', 'canada', 'uk', 'united kingdom',
+        'australia', 'germany', 'singapore', 'uae', 'remote', 'hybrid',
+        'karnataka', 'maharashtra', 'tamil nadu', 'telangana', 'delhi',
+        'uttar pradesh', 'gujarat', 'kerala', 'rajasthan', 'west bengal'
+    ]
+    COMMON_CITY_WORDS = [
+        'bengaluru', 'bangalore', 'mysuru', 'mysore', 'mumbai', 'pune',
+        'delhi', 'new delhi', 'hyderabad', 'chennai', 'kolkata', 'ahmedabad',
+        'gurugram', 'gurgaon', 'noida', 'kochi', 'cochin', 'jaipur',
+        'lucknow', 'indore', 'bhopal', 'surat', 'vadodara', 'coimbatore',
+        'mangalore', 'mangaluru', 'hubli', 'dharwad', 'belagavi'
+    ]
     
     # Section headers
     SECTION_HEADERS = {
@@ -57,6 +75,7 @@ class ResumeParser:
             raw_text = self._extract_pdf_text(file_path)
             has_tables = self._check_pdf_tables(file_path)
             has_images = self._check_pdf_images(file_path)
+            cv_analysis = cv_resume_analyzer.analyze_pdf(file_path)
             
             # Check if we need OCR fallback (only for PDFs)
             raw_text, parsing_method, ocr_confidence = self._apply_ocr_if_needed(
@@ -67,6 +86,16 @@ class ResumeParser:
             raw_text = self._extract_docx_text(file_path)
             has_tables = self._check_docx_tables(file_path)
             has_images = self._check_docx_images(file_path)
+            cv_analysis = {
+                "available": False,
+                "backend": "docx_not_applicable",
+                "layout_score": 85,
+                "risk_level": "low",
+                "pages_analyzed": 0,
+                "signals": {},
+                "issues": [],
+                "page_reports": [],
+            }
         
         # Parse sections
         sections = self._identify_sections(raw_text)
@@ -88,8 +117,11 @@ class ResumeParser:
                 "has_tables": has_tables,
                 "has_images": has_images,
                 "word_count": len(raw_text.split()),
-                "line_count": len(raw_text.split('\n'))
+                "line_count": len(raw_text.split('\n')),
+                "cv_layout_score": cv_analysis.get("layout_score", 85),
+                "cv_risk_level": cv_analysis.get("risk_level", "unknown")
             },
+            "computer_vision": cv_analysis,
             "parsing_method": parsing_method,
             "ocr_confidence": ocr_confidence
         }
@@ -317,21 +349,85 @@ class ResumeParser:
         )
     
     def _extract_location(self, text: str) -> Optional[str]:
-        """Extract location from resume"""
-        # Common location patterns
-        location_patterns = [
-            r'(?:Location|Address|Based in|City)[:\s]+([A-Za-z\s,]+)',
-            r'([A-Za-z]+,\s*[A-Z]{2})\s*\d{5}',  # City, ST ZIP
-            r'([A-Za-z]+,\s*[A-Za-z\s]+,\s*[A-Za-z]+)',  # City, State, Country
-        ]
-        
-        for pattern in location_patterns:
-            match = re.search(pattern, text[:500], re.IGNORECASE)
-            if match:
-                location = match.group(1).strip()
-                if len(location) > 3 and len(location) < 50:
-                    return location
+        """Extract location from the resume contact block.
+
+        Location appears in many real resumes as a labeled field, a contact-line
+        item beside email/phone, or a city/state/country phrase. This parser
+        favors the first page/contact area and filters links, phones, and section
+        headers to avoid returning noisy text.
+        """
+        head = "\n".join(text.splitlines()[:18])
+        head = re.sub(self.EMAIL_PATTERN, " ", head)
+        head = re.sub(self.URL_PATTERN, " ", head)
+        head = re.sub(self.PHONE_PATTERN, " ", head)
+
+        label = "|".join(re.escape(k) for k in self.LOCATION_KEYWORDS)
+        labeled_match = re.search(
+            rf'(?:{label})\s*[:\-–—|]\s*([^\n\r|•·]+)',
+            head,
+            re.IGNORECASE
+        )
+        if labeled_match:
+            cleaned = self._clean_location(labeled_match.group(1))
+            if cleaned:
+                return cleaned
+
+        candidates = []
+        for raw_line in head.splitlines():
+            line = raw_line.strip()
+            if not line:
+                continue
+
+            parts = re.split(r'\s*(?:\||•|·|;)\s*', line)
+            candidates.extend(parts if len(parts) > 1 else [line])
+
+        for candidate in candidates:
+            cleaned = self._clean_location(candidate)
+            if cleaned and self._looks_like_location(cleaned):
+                return cleaned
+
+        comma_pattern = re.compile(
+            r'\b([A-Z][A-Za-z .-]{2,35},\s*[A-Z][A-Za-z .-]{2,35}(?:,\s*[A-Z][A-Za-z .-]{2,35})?)\b'
+        )
+        for match in comma_pattern.finditer(head):
+            cleaned = self._clean_location(match.group(1))
+            if cleaned and self._looks_like_location(cleaned):
+                return cleaned
+
         return None
+
+    def _clean_location(self, value: str) -> Optional[str]:
+        """Normalize a possible location and reject obvious non-location text."""
+        value = re.sub(r'\s+', ' ', value or '').strip(" ,.-–—|•·")
+        value = re.sub(r'\b(pin|zip|postal code)\s*[:#-]?\s*\d{4,8}\b', '', value, flags=re.IGNORECASE).strip(" ,")
+        value = re.sub(r'\b\d{5,6}\b', '', value).strip(" ,")
+
+        if not value or len(value) < 3 or len(value) > 70:
+            return None
+        if '@' in value or re.search(self.URL_PATTERN, value, re.IGNORECASE):
+            return None
+        if re.search(self.PHONE_PATTERN, value):
+            return None
+        if any(word in value.lower() for word in ['experience', 'education', 'skills', 'project', 'summary', 'github', 'linkedin']):
+            return None
+        if not re.search(r'[A-Za-z]', value):
+            return None
+
+        return value
+
+    def _looks_like_location(self, value: str) -> bool:
+        """Check whether a cleaned phrase has location-like structure."""
+        lower = value.lower()
+        if any(city in lower for city in self.COMMON_CITY_WORDS):
+            return True
+        if any(hint in lower for hint in self.LOCATION_HINT_WORDS):
+            return True
+        if ',' in value:
+            words = re.findall(r'[A-Za-z]+', value)
+            return 1 <= len(words) <= 8
+        if re.match(r'^[A-Z][A-Za-z .-]+$', value) and len(value.split()) <= 4:
+            return any(city in lower for city in self.COMMON_CITY_WORDS)
+        return False
     
     def _extract_experience(self, full_text: str, experience_section: str) -> ExperienceSummary:
         """Extract work experience details"""

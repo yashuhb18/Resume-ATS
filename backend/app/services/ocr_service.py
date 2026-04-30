@@ -18,6 +18,15 @@ try:
 except ImportError:
     OCR_AVAILABLE = False
 
+try:
+    import cv2
+    import numpy as np
+    OPENCV_AVAILABLE = True
+except ImportError:
+    cv2 = None
+    np = None
+    OPENCV_AVAILABLE = False
+
 
 class TimeoutError(Exception):
     """Custom timeout exception for OCR operations"""
@@ -50,10 +59,15 @@ class OCRService:
     
     def __init__(self):
         self.ocr_available = OCR_AVAILABLE
+        self.opencv_available = OPENCV_AVAILABLE
     
     def is_available(self) -> bool:
         """Check if OCR dependencies are available"""
         return self.ocr_available
+
+    def has_opencv(self) -> bool:
+        """Check if OpenCV preprocessing is available."""
+        return self.opencv_available
     
     def needs_ocr(
         self, 
@@ -240,6 +254,9 @@ class OCRService:
         # Convert to grayscale
         if image.mode != 'L':
             image = image.convert('L')
+
+        if self.opencv_available:
+            return self._preprocess_image_with_opencv(image)
         
         # Increase contrast
         enhancer = ImageEnhance.Contrast(image)
@@ -257,6 +274,56 @@ class OCRService:
             image = image.resize((new_width, new_height), Image.LANCZOS)
         
         return image
+
+    def _preprocess_image_with_opencv(self, image: 'Image.Image') -> 'Image.Image':
+        """
+        Preprocess image with OpenCV for more robust OCR.
+
+        Steps:
+        1. Convert PIL image to numpy array
+        2. Denoise while preserving edges
+        3. Deskew based on foreground text angle
+        4. Adaptive threshold for uneven scans/photos
+        """
+        gray = np.array(image)
+        gray = cv2.fastNlMeansDenoising(gray, None, h=10, templateWindowSize=7, searchWindowSize=21)
+        gray = self._deskew(gray)
+        binary = cv2.adaptiveThreshold(
+            gray,
+            255,
+            cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+            cv2.THRESH_BINARY,
+            31,
+            11,
+        )
+        return Image.fromarray(binary)
+
+    def _deskew(self, gray: 'np.ndarray') -> 'np.ndarray':
+        """Deskew text image using the minimum-area rectangle angle."""
+        inverted = cv2.bitwise_not(gray)
+        coords = np.column_stack(np.where(inverted > 0))
+        if coords.size == 0:
+            return gray
+
+        angle = cv2.minAreaRect(coords)[-1]
+        if angle < -45:
+            angle = -(90 + angle)
+        else:
+            angle = -angle
+
+        if abs(angle) < 0.25 or abs(angle) > 15:
+            return gray
+
+        height, width = gray.shape[:2]
+        center = (width // 2, height // 2)
+        matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
+        return cv2.warpAffine(
+            gray,
+            matrix,
+            (width, height),
+            flags=cv2.INTER_CUBIC,
+            borderMode=cv2.BORDER_REPLICATE,
+        )
     
     def _clean_ocr_text(self, text: str) -> str:
         """

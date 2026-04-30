@@ -1,1 +1,1 @@
-# ATS Resume Analyzer Backend
+# ResQ Backend

@@ -49,6 +49,21 @@ class ATSScorer:
     RECOMMENDED_SECTIONS = [
         'summary', 'projects', 'certifications'
     ]
+
+    SCORE_WEIGHTS = {
+        # Closest public ATS behavior: can the resume be parsed into clean fields?
+        'formatting_score': 0.25,
+        # Does the resume carry role/domain language recruiters and search filters use?
+        'keyword_relevance': 0.20,
+        # Are skills merely listed, or backed by experience/projects?
+        'skill_relevance': 0.20,
+        # Are bullets readable, quantified, and recruiter-friendly?
+        'experience_clarity': 0.20,
+        # Are the standard resume sections easy to detect?
+        'section_completeness': 0.10,
+        # Helpful signal, but less universal than experience/skills.
+        'project_impact': 0.05,
+    }
     
     def calculate_score(
         self, 
@@ -56,7 +71,8 @@ class ATSScorer:
         skills: SkillsData, 
         domain: DomainInfo,
         parsing_method: str = "standard",
-        ocr_confidence: str = None
+        ocr_confidence: str = None,
+        ml_analysis: Dict[str, Any] = None
     ) -> Dict[str, Any]:
         """Calculate comprehensive ATS score
         
@@ -68,27 +84,39 @@ class ATSScorer:
             ocr_confidence: "low" | "medium" | "high" (only when OCR used)
         """
         
-        # OCR adjustment factors (reduce strictness for OCR text)
         is_ocr = parsing_method == "ocr"
-        ocr_penalty_reduction = 0.7 if is_ocr else 1.0  # Reduce penalties by 30% for OCR
         ocr_min_score_floor = 25 if is_ocr else 0  # Minimum score floor for OCR
         
         raw_text = parsed_data.get('raw_text', '')
         sections = parsed_data.get('sections', {})
         formatting = parsed_data.get('formatting', {})
+        cv_analysis = parsed_data.get('computer_vision', {})
         candidate = parsed_data.get('candidate', {})
         experience = parsed_data.get('experience', {})
         projects = parsed_data.get('projects', [])
         
-        # Calculate individual scores
-        keyword_score = self._calculate_keyword_score(raw_text, domain.primary)
+        # Calculate individual scores using an explainable readiness model.
+        keyword_score = self._calculate_keyword_score(raw_text, domain.primary, sections)
         section_score = self._calculate_section_score(sections, candidate)
-        formatting_score = self._calculate_formatting_score(
-            formatting, raw_text, is_ocr=is_ocr, penalty_factor=ocr_penalty_reduction
+        formatting_score = self._calculate_parseability_score(
+            formatting,
+            raw_text,
+            sections,
+            candidate,
+            parsing_method=parsing_method,
+            ocr_confidence=ocr_confidence
         )
-        skill_score = self._calculate_skill_score(skills)
-        experience_score = self._calculate_experience_score(experience)
-        project_score = self._calculate_project_score(projects)
+        cv_layout_score = cv_analysis.get("layout_score")
+        if isinstance(cv_layout_score, int):
+            formatting_score = int((formatting_score * 0.75) + (cv_layout_score * 0.25))
+        skill_score = self._calculate_skill_score(skills, raw_text, sections)
+        experience_score = self._calculate_experience_score(experience, raw_text)
+        project_score = self._calculate_project_score(projects, raw_text)
+        ml_quality_score = None
+        if ml_analysis:
+            ml_quality_score = ml_analysis.get("score")
+            if isinstance(ml_quality_score, int):
+                experience_score = int((experience_score * 0.85) + (ml_quality_score * 0.15))
         
         # Create breakdown
         breakdown = ScoreBreakdown(
@@ -100,23 +128,13 @@ class ATSScorer:
             project_impact=project_score
         )
         
-        # Calculate weighted final score
-        weights = {
-            'keyword_relevance': 0.20,
-            'section_completeness': 0.20,
-            'formatting_score': 0.15,
-            'skill_relevance': 0.20,
-            'experience_clarity': 0.15,
-            'project_impact': 0.10
-        }
-        
         final_score = int(
-            keyword_score * weights['keyword_relevance'] +
-            section_score * weights['section_completeness'] +
-            formatting_score * weights['formatting_score'] +
-            skill_score * weights['skill_relevance'] +
-            experience_score * weights['experience_clarity'] +
-            project_score * weights['project_impact']
+            keyword_score * self.SCORE_WEIGHTS['keyword_relevance'] +
+            section_score * self.SCORE_WEIGHTS['section_completeness'] +
+            formatting_score * self.SCORE_WEIGHTS['formatting_score'] +
+            skill_score * self.SCORE_WEIGHTS['skill_relevance'] +
+            experience_score * self.SCORE_WEIGHTS['experience_clarity'] +
+            project_score * self.SCORE_WEIGHTS['project_impact']
         )
         
         # Apply OCR minimum score floor
@@ -128,8 +146,10 @@ class ATSScorer:
         
         # Identify issues
         issues = self._identify_issues(
-            raw_text, sections, formatting, 
-            skills, candidate, experience
+            raw_text, sections, formatting,
+            skills, candidate, experience,
+            parsing_method=parsing_method,
+            ocr_confidence=ocr_confidence
         )
         
         # Add OCR notice if applicable
@@ -141,11 +161,28 @@ class ATSScorer:
                 suggestion='For best results, upload a text-based PDF or DOCX file rather than a scanned document.'
             )
             issues.insert(0, ocr_notice)
+
+        if ml_analysis and ml_analysis.get("label") == "weak":
+            issues.append(ATSIssue(
+                type='content_quality',
+                severity='Medium',
+                description='Content quality signals are weak for recruiter screening',
+                suggestion='Add measurable achievements, stronger action verbs, clearer sections, and evidence-backed skills.'
+            ))
+
+        if cv_analysis.get("available"):
+            for cv_issue in cv_analysis.get("issues", [])[:3]:
+                issues.append(ATSIssue(
+                    type='layout',
+                    severity='High' if cv_analysis.get("risk_level") == "high" else 'Medium',
+                    description=cv_issue,
+                    suggestion='Use a single-column, text-first resume layout with simple section headers and bullet points.'
+                ))
         
         # Generate suggestions
         suggestions = self._generate_suggestions(
             raw_text, domain.primary, skills, 
-            sections, experience, projects
+            sections, experience, projects, ml_analysis=ml_analysis
         )
         
         # Keywords analysis
@@ -157,10 +194,21 @@ class ATSScorer:
             'category': category,
             'issues': issues,
             'suggestions': suggestions,
-            'keywords_analysis': keywords_analysis
+            'keywords_analysis': keywords_analysis,
+            'methodology': self._build_methodology(
+                final_score,
+                keyword_score,
+                section_score,
+                formatting_score,
+                skill_score,
+                experience_score,
+                project_score,
+                ml_analysis=ml_analysis,
+                cv_analysis=cv_analysis
+            )
         }
     
-    def _calculate_keyword_score(self, text: str, domain: str) -> int:
+    def _calculate_keyword_score(self, text: str, domain: str, sections: Dict = None) -> int:
         """Score based on keyword presence and relevance"""
         text_lower = text.lower()
         keywords = self.DOMAIN_KEYWORDS.get(domain, self.DOMAIN_KEYWORDS['General'])
@@ -176,32 +224,103 @@ class ATSScorer:
         
         keyword_ratio = found / len(keywords)
         verb_ratio = min(1.0, verb_count / 5)
+
+        # Reward role language in stronger evidence zones, not just a keyword dump.
+        sections = sections or {}
+        evidence_text = " ".join([
+            sections.get('experience', ''),
+            sections.get('projects', ''),
+            sections.get('summary', '')
+        ]).lower()
+        evidence_hits = sum(1 for kw in keywords if kw in evidence_text)
+        evidence_ratio = evidence_hits / len(keywords)
         
-        score = int((keyword_ratio * 60) + (verb_ratio * 40))
+        score = int((keyword_ratio * 45) + (evidence_ratio * 30) + (verb_ratio * 25))
         return min(100, score)
     
     def _calculate_section_score(self, sections: Dict, candidate: Any) -> int:
         """Score based on section completeness"""
         score = 0
         
-        # Required sections (60 points)
+        # Required sections (54 points)
         for section in self.REQUIRED_SECTIONS:
             if section in sections and len(sections[section].strip()) > 50:
-                score += 20
+                score += 18
         
-        # Contact info (20 points)
+        # Contact info (24 points)
         candidate_dict = candidate.dict() if hasattr(candidate, 'dict') else candidate
+        if candidate_dict.get('name'):
+            score += 6
         if candidate_dict.get('email'):
-            score += 10
+            score += 9
         if candidate_dict.get('phone'):
-            score += 10
+            score += 9
         
-        # Recommended sections (20 points)
+        # Recommended sections (22 points)
         for section in self.RECOMMENDED_SECTIONS:
             if section in sections and len(sections[section].strip()) > 20:
                 score += 7
         
         return min(100, score)
+
+    def _calculate_parseability_score(
+        self,
+        formatting: Dict,
+        text: str,
+        sections: Dict,
+        candidate: Any,
+        parsing_method: str = "standard",
+        ocr_confidence: str = None
+    ) -> int:
+        """Score the closest public ATS behavior: clean text extraction and field parsing."""
+        score = 100
+        word_count = formatting.get('word_count', len(text.split()))
+        line_count = formatting.get('line_count', len(text.split('\n')))
+        candidate_dict = candidate.dict() if hasattr(candidate, 'dict') else candidate
+
+        if parsing_method == "ocr_unavailable":
+            score -= 35
+        elif parsing_method == "ocr":
+            score -= 15
+            if ocr_confidence == "low":
+                score -= 15
+            elif ocr_confidence == "medium":
+                score -= 6
+
+        if formatting.get('has_tables'):
+            score -= 18
+        if formatting.get('has_images'):
+            score -= 10
+
+        if word_count < 150:
+            score -= 28
+        elif word_count < 250:
+            score -= 12
+        elif word_count > 1600:
+            score -= 8
+
+        if line_count < 8 and word_count > 250:
+            score -= 12
+
+        if not candidate_dict.get('email'):
+            score -= 12
+        if not candidate_dict.get('phone'):
+            score -= 8
+
+        if len(sections) < 3:
+            score -= 12
+
+        bullet_count = self._count_bullets(text)
+        if bullet_count < 4 and word_count > 250:
+            score -= 8
+        elif bullet_count > 60:
+            score -= 4
+
+        broken_chars = text.count('\ufffd') + text.count('\x00')
+        if broken_chars:
+            score -= min(12, broken_chars * 2)
+
+        return max(0, min(100, score))
     
     def _calculate_formatting_score(
         self, 
@@ -256,8 +375,8 @@ class ATSScorer:
         
         return max(0, min(100, score))
     
-    def _calculate_skill_score(self, skills: SkillsData) -> int:
-        """Score based on skills quality"""
+    def _calculate_skill_score(self, skills: SkillsData, text: str = "", sections: Dict = None) -> int:
+        """Score based on skill breadth and whether skills are backed by evidence."""
         score = 0
         
         # Base score on skill count
@@ -283,10 +402,32 @@ class ATSScorer:
         # Bonus for soft skills
         if skills.soft_skills:
             score += 10
-        
+
+        all_skills = (
+            skills.programming_languages + skills.frameworks +
+            skills.tools + skills.databases + skills.soft_skills + skills.other
+        )
+        evidence_text = text.lower()
+        if sections:
+            evidence_text = " ".join([
+                sections.get('experience', ''),
+                sections.get('projects', ''),
+                sections.get('summary', '')
+            ]).lower() or evidence_text
+
+        evidence_hits = 0
+        for skill in all_skills:
+            normalized = skill.lower()
+            if normalized and normalized in evidence_text:
+                evidence_hits += 1
+
+        if all_skills:
+            evidence_ratio = evidence_hits / len(all_skills)
+            score = int(score * 0.70 + min(100, evidence_ratio * 100) * 0.30)
+
         return min(100, score)
     
-    def _calculate_experience_score(self, experience: Any) -> int:
+    def _calculate_experience_score(self, experience: Any, text: str = "") -> int:
         """Score based on experience quality"""
         if not experience:
             return 30
@@ -297,7 +438,7 @@ class ATSScorer:
         if not positions:
             return 30
         
-        score = 30  # Base score
+        score = 25  # Base score
         
         # Score for number of positions
         if len(positions) >= 3:
@@ -309,11 +450,17 @@ class ATSScorer:
         
         # Score for bullet quality
         avg_quality = exp_dict.get('overall_quality', 0)
-        score += int(avg_quality * 0.5)
+        score += int(avg_quality * 0.40)
+
+        metric_count = len(re.findall(r'\d+%|\$[\d,]+|\b\d+\s*(users|customers|clients|employees|projects|requests|hours|days|months|revenue|sales)\b', text, re.IGNORECASE))
+        score += min(18, metric_count * 4)
+
+        action_verb_hits = sum(1 for verb in self.DOMAIN_KEYWORDS['General'] if re.search(rf'\b{re.escape(verb)}\b', text, re.IGNORECASE))
+        score += min(12, action_verb_hits * 2)
         
         return min(100, score)
     
-    def _calculate_project_score(self, projects: List) -> int:
+    def _calculate_project_score(self, projects: List, text: str = "") -> int:
         """Score based on projects quality"""
         if not projects:
             return 40  # No projects is not terrible
@@ -325,6 +472,9 @@ class ATSScorer:
             project_dict = project.dict() if hasattr(project, 'dict') else project
             project_score = project_dict.get('score', 0)
             score += project_score * 0.1
+
+        if self._has_metrics(text):
+            score += 8
         
         return min(100, int(score))
     
@@ -341,10 +491,27 @@ class ATSScorer:
     
     def _identify_issues(
         self, text: str, sections: Dict, formatting: Dict,
-        skills: SkillsData, candidate: Any, experience: Any
+        skills: SkillsData, candidate: Any, experience: Any,
+        parsing_method: str = "standard",
+        ocr_confidence: str = None
     ) -> List[ATSIssue]:
         """Identify ATS compatibility issues"""
         issues = []
+
+        if parsing_method == "ocr_unavailable":
+            issues.append(ATSIssue(
+                type='parseability',
+                severity='High',
+                description='Resume may not be fully machine-readable',
+                suggestion='Upload a text-based PDF or DOCX. Scanned resumes can fail parsing in many ATS systems.'
+            ))
+        elif parsing_method == "ocr" and ocr_confidence == "low":
+            issues.append(ATSIssue(
+                type='parseability',
+                severity='High',
+                description='Low-confidence OCR extraction detected',
+                suggestion='Use an exported text PDF or DOCX instead of a scanned/photo-based resume.'
+            ))
         
         # Formatting issues
         if formatting.get('has_tables'):
@@ -352,7 +519,7 @@ class ATSScorer:
                 type='formatting',
                 severity='High',
                 description='Tables detected in resume',
-                suggestion='Replace tables with simple bullet points. ATS systems often cannot parse table content correctly.'
+                suggestion='Replace tables with simple section headings and bullet points. ATS parsers often read table cells in the wrong order.'
             ))
         
         if formatting.get('has_images'):
@@ -426,6 +593,14 @@ class ATSScorer:
                 description='Resume appears too short',
                 suggestion='Add more detail about your experience, projects, and achievements.'
             ))
+
+        if len(sections) < 3:
+            issues.append(ATSIssue(
+                type='structure',
+                severity='Medium',
+                description='Few standard resume sections detected',
+                suggestion='Use clear headings such as Summary, Skills, Experience, Projects, Education, and Certifications.'
+            ))
         
         # Check for generic descriptions
         generic_phrases = [
@@ -450,90 +625,287 @@ class ATSScorer:
                 description='No quantifiable achievements detected',
                 suggestion='Add metrics and numbers to demonstrate impact (e.g., "Increased sales by 25%", "Managed team of 5").'
             ))
+
+        if self._count_bullets(text) < 4 and word_count > 250:
+            issues.append(ATSIssue(
+                type='readability',
+                severity='Medium',
+                description='Limited bullet structure detected',
+                suggestion='Use concise bullets under experience and projects so recruiters and ATS parsers can scan achievements quickly.'
+            ))
         
         return issues
     
     def _generate_suggestions(
         self, text: str, domain: str, skills: SkillsData,
-        sections: Dict, experience: Any, projects: List
+        sections: Dict, experience: Any, projects: List,
+        ml_analysis: Dict[str, Any] = None
     ) -> List[Suggestion]:
-        """Generate improvement suggestions"""
+        """Generate resume-specific suggestions instead of generic domain advice."""
         suggestions = []
+        seen_titles = set()
         text_lower = text.lower()
-        
-        # Skill suggestions
-        missing_skills = self._get_missing_skills(skills, domain)
-        if missing_skills:
+
+        def add_suggestion(category: str, title: str, description: str, priority: str, examples: List[str]):
+            if title in seen_titles:
+                return
+            seen_titles.add(title)
             suggestions.append(Suggestion(
+                category=category,
+                title=title,
+                description=description,
+                priority=priority,
+                examples=examples
+            ))
+
+        word_count = len(text.split())
+        bullet_count = self._count_bullets(text)
+        metric_count = len(re.findall(
+            r'\d+%|\$[\d,]+|\b\d+\s*(users|customers|clients|employees|projects|requests|hours|days|months|revenue|sales|leads|tickets|deployments)\b',
+            text,
+            re.IGNORECASE
+        ))
+        exp_dict = experience.dict() if hasattr(experience, 'dict') else experience or {}
+        positions = exp_dict.get('positions', []) or []
+        all_skills = self._all_skills(skills)
+        top_skills = all_skills[:6]
+        evidence_text = " ".join([
+            sections.get('experience', ''),
+            sections.get('projects', ''),
+            sections.get('summary', '')
+        ]).lower()
+        skills_with_evidence = [
+            skill for skill in all_skills
+            if skill.lower() in evidence_text
+        ]
+        skills_without_evidence = [
+            skill for skill in all_skills
+            if skill.lower() not in evidence_text
+        ]
+
+        missing_sections = [
+            name.title()
+            for name in self.REQUIRED_SECTIONS
+            if name not in sections or len(sections.get(name, '').strip()) < 50
+        ]
+        if missing_sections:
+            add_suggestion(
+                'Structure',
+                f'Add clearer {", ".join(missing_sections[:2])} section{"s" if len(missing_sections[:2]) > 1 else ""}',
+                'The parser could not confidently read every required resume section from this file.',
+                'High',
+                [
+                    'Use exact headings such as Skills, Experience, Projects, and Education',
+                    'Keep section content as selectable text, not inside images or complex tables',
+                    'Place the most relevant section above less important details'
+                ]
+            )
+
+        if metric_count < 2:
+            metric_target = 'project and experience bullets' if projects and positions else 'resume bullets'
+            add_suggestion(
+                'Impact',
+                f'Quantify impact in your {metric_target}',
+                f'The resume only shows {metric_count} measurable achievement signal{"s" if metric_count != 1 else ""}. Recruiters need numbers to judge scale and outcomes.',
+                'High',
+                [
+                    'Reduced processing time by 30% by optimizing API/database queries',
+                    'Built a tool used by 500+ users or processing 10k+ records',
+                    'Automated a workflow and saved 5 hours per week'
+                ]
+            )
+
+        weak_verbs = ['helped', 'worked', 'assisted', 'was responsible', 'responsible for']
+        weak_hits = [verb for verb in weak_verbs if verb in text_lower]
+        if weak_hits:
+            add_suggestion(
+                'Content',
+                'Rewrite weak responsibility phrases',
+                f'The resume contains generic wording such as "{weak_hits[0]}". Replace it with ownership and outcome language.',
+                'High',
+                [
+                    'Replace "worked on a project" with "Built the authentication module using React and FastAPI"',
+                    'Replace "responsible for testing" with "Tested 20+ API flows and reduced release defects"',
+                    'Start bullets with Built, Led, Optimized, Automated, Delivered, or Improved'
+                ]
+            )
+
+        if bullet_count < 4 and word_count > 220:
+            add_suggestion(
+                'Readability',
+                'Convert dense text into achievement bullets',
+                'The resume has enough content, but not enough scannable bullet structure for ATS and recruiter review.',
+                'High',
+                [
+                    'Built X using Y, improving Z by 30%',
+                    'Led X-person team to deliver Y ahead of schedule',
+                    'Automated X workflow, saving Y hours per week'
+                ]
+            )
+
+        if all_skills and len(skills_with_evidence) / max(1, len(all_skills)) < 0.45 and skills_without_evidence:
+            add_suggestion(
                 category='Skills',
-                title='Add in-demand skills',
-                description=f'Consider adding these high-demand skills for {domain} roles:',
+                title='Prove listed skills inside projects or experience',
+                description=f'{len(skills_without_evidence)} detected skill{"s" if len(skills_without_evidence) != 1 else ""} appear weakly connected to work evidence. Move the most important ones into bullets.',
                 priority='High',
-                examples=missing_skills[:5]
-            ))
-        
-        # Action verb suggestions
-        weak_verbs = ['helped', 'worked', 'assisted', 'was responsible']
-        strong_verbs = ['developed', 'implemented', 'architected', 'delivered', 'optimized']
-        
-        has_weak_verbs = any(v in text_lower for v in weak_verbs)
-        if has_weak_verbs:
-            suggestions.append(Suggestion(
-                category='Content',
-                title='Use stronger action verbs',
-                description='Replace weak verbs with powerful action verbs to make your achievements stand out.',
-                priority='High',
-                examples=[f'Instead of "helped develop", use "developed"',
-                         f'Instead of "worked on", use "led" or "implemented"',
-                         f'Instead of "was responsible for", use "managed" or "oversaw"']
-            ))
-        
-        # Quantification suggestions
-        if not re.search(r'\d+%', text):
-            suggestions.append(Suggestion(
-                category='Impact',
-                title='Add quantifiable achievements',
-                description='Include specific metrics and numbers to demonstrate your impact.',
-                priority='High',
-                examples=['Increased efficiency by 40%',
-                         'Reduced costs by $50,000 annually',
-                         'Managed team of 8 engineers',
-                         'Delivered 15 projects on time']
-            ))
-        
-        # Section suggestions
-        if 'summary' not in sections:
-            suggestions.append(Suggestion(
+                examples=[
+                    f'Use {skill} in a project/experience bullet with what you built and the result'
+                    for skill in skills_without_evidence[:4]
+                ]
+            )
+
+        if skills.total_count < 6:
+            add_suggestion(
+                'Skills',
+                'Expand the skills section with tools you actually used',
+                f'The resume has {skills.total_count} detected skill{"s" if skills.total_count != 1 else ""}. Add more real tools from your own projects, coursework, internship, or work experience.',
+                'Medium',
+                [
+                    f'Keep current strengths visible: {", ".join(top_skills[:4])}' if top_skills else 'Add your strongest languages, frameworks, tools, and databases',
+                    'Add only skills you can explain in interview with a project or task',
+                    'Group skills as Languages, Frameworks, Databases, Tools, and Soft Skills'
+                ]
+            )
+
+        if 'summary' not in sections and (top_skills or positions or projects):
+            add_suggestion(
                 category='Structure',
-                title='Add a professional summary',
-                description='A 2-3 sentence summary at the top helps recruiters quickly understand your value proposition.',
+                title='Add a targeted professional summary',
+                description='A short summary should tell HR the role direction, strongest proof, and top technologies before they scan the full resume.',
                 priority='Medium',
-                examples=[f'Results-driven {domain} professional with X years of experience...']
-            ))
-        
-        # Project suggestions
-        if not projects or len(projects) < 2:
-            suggestions.append(Suggestion(
+                examples=[
+                    f'{domain} candidate with hands-on experience in {", ".join(top_skills[:3]) or "relevant tools"}',
+                    'Mention your strongest project, measurable result, and target role in 2-3 lines'
+                ]
+            )
+
+        if (not projects or len(projects) < 2) and len(positions) < 2 and domain in ('Software / IT', 'Data / AI'):
+            add_suggestion(
                 category='Projects',
-                title='Highlight more projects',
-                description='Adding 2-3 relevant projects can significantly strengthen your resume.',
+                title='Add one stronger proof project',
+                description='Because the resume has limited work/project evidence, one detailed project can make the profile more credible.',
                 priority='Medium',
-                examples=['Include project name, technologies used, and measurable impact']
-            ))
-        
-        # Keywords suggestions
-        domain_keywords = self.DOMAIN_KEYWORDS.get(domain, self.DOMAIN_KEYWORDS['General'])
-        missing_keywords = [kw for kw in domain_keywords if kw not in text_lower][:5]
-        if missing_keywords:
-            suggestions.append(Suggestion(
-                category='Keywords',
-                title='Add industry keywords',
-                description=f'These keywords are commonly used in {domain} job descriptions:',
+                examples=[
+                    'Include problem, tech stack, your role, features built, deployment, and measurable outcome',
+                    f'Use your current strengths: {", ".join(top_skills[:4]) or "your core technical stack"}',
+                    'Add GitHub/live link if available'
+                ]
+            )
+
+        if ml_analysis and ml_analysis.get("recommendations"):
+            add_suggestion(
+                category='Content Quality',
+                title='Improve recruiter evidence signals',
+                description='The resume quality model found patterns specific to this file that can be strengthened.',
                 priority='Medium',
-                examples=missing_keywords
-            ))
+                examples=ml_analysis["recommendations"][:4]
+            )
         
-        return suggestions
+        if not suggestions:
+            add_suggestion(
+                'Final Polish',
+                'Tailor the top third of the resume to the exact JD',
+                'The resume does not show a severe generic issue. The best improvement is role-specific tailoring before each application.',
+                'Low',
+                [
+                    'Mirror the JD title and top 3 required skills in the summary when truthful',
+                    'Move the most relevant project or achievement higher',
+                    'Keep every claim backed by a project, metric, or responsibility'
+                ]
+            )
+
+        priority_order = {'High': 0, 'Medium': 1, 'Low': 2}
+        suggestions.sort(key=lambda item: priority_order.get(item.priority, 3))
+        return suggestions[:6]
+
+    def _all_skills(self, skills: SkillsData) -> List[str]:
+        """Return de-duplicated detected skills in display order."""
+        values = (
+            skills.programming_languages + skills.frameworks +
+            skills.tools + skills.databases + skills.soft_skills + skills.other
+        )
+        unique = []
+        seen = set()
+        for value in values:
+            normalized = value.strip().lower()
+            if normalized and normalized not in seen:
+                seen.add(normalized)
+                unique.append(value)
+        return unique
+
+    def _count_bullets(self, text: str) -> int:
+        """Count common bullet styles across text extraction variants."""
+        bullet_lines = 0
+        for line in text.splitlines():
+            stripped = line.strip()
+            if stripped.startswith(('\u2022', '\u25cf', '\u25cb', '-', '*', '\u2013', '\u2014')):
+                bullet_lines += 1
+            elif re.match(r'^\d+[\.)]\s+', stripped):
+                bullet_lines += 1
+        legacy_chars = text.count('â€¢') + text.count('â—') + text.count('â—‹')
+        return bullet_lines + legacy_chars
+
+    def _has_metrics(self, text: str) -> bool:
+        """Detect measurable achievement evidence."""
+        return bool(re.search(
+            r'\d+%|\$[\d,]+|\b\d+\s*(users|customers|clients|employees|projects|requests|hours|days|months|revenue|sales|leads|tickets|deployments)\b',
+            text,
+            re.IGNORECASE
+        ))
+
+    def _build_methodology(
+        self,
+        final_score: int,
+        keyword_score: int,
+        section_score: int,
+        formatting_score: int,
+        skill_score: int,
+        experience_score: int,
+        project_score: int,
+        ml_analysis: Dict[str, Any] = None,
+        cv_analysis: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
+        """Return explainable scoring metadata for UI/reporting."""
+        methodology = {
+            "model": "ATS Parseability + Recruiter Readiness v2",
+            "score": final_score,
+            "weights": {
+                "ATS parseability": int(self.SCORE_WEIGHTS['formatting_score'] * 100),
+                "Role keyword relevance": int(self.SCORE_WEIGHTS['keyword_relevance'] * 100),
+                "Evidence-backed skills": int(self.SCORE_WEIGHTS['skill_relevance'] * 100),
+                "Recruiter readability": int(self.SCORE_WEIGHTS['experience_clarity'] * 100),
+                "Section completeness": int(self.SCORE_WEIGHTS['section_completeness'] * 100),
+                "Project impact": int(self.SCORE_WEIGHTS['project_impact'] * 100),
+            },
+            "signals": {
+                "ATS parseability": formatting_score,
+                "Role keyword relevance": keyword_score,
+                "Evidence-backed skills": skill_score,
+                "Recruiter readability": experience_score,
+                "Section completeness": section_score,
+                "Project impact": project_score,
+            },
+            "note": "This is an explainable approximation. Real ATS products parse and rank differently by vendor and employer configuration."
+        }
+        if ml_analysis:
+            methodology["ml_quality"] = {
+                "backend": ml_analysis.get("backend"),
+                "score": ml_analysis.get("score"),
+                "label": ml_analysis.get("label"),
+                "probabilities": ml_analysis.get("probabilities", {}),
+                "features": ml_analysis.get("features", {}),
+                "training": ml_analysis.get("training", {}),
+            }
+        if cv_analysis:
+            methodology["computer_vision"] = {
+                "backend": cv_analysis.get("backend"),
+                "layout_score": cv_analysis.get("layout_score"),
+                "risk_level": cv_analysis.get("risk_level"),
+                "signals": cv_analysis.get("signals", {}),
+                "issues": cv_analysis.get("issues", []),
+            }
+        return methodology
     
     def _get_missing_skills(self, skills: SkillsData, domain: str) -> List[str]:
         """Get skills that are commonly required but missing"""

@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo   ATS Resume Analyzer - Setup Script
+echo   ResQ - Setup Script
 echo ========================================
 echo.
 
@@ -21,7 +21,6 @@ if %errorlevel% neq 0 (
 )
 
 echo [INFO] Setting up Backend...
-cd backend
 
 REM Create virtual environment if it doesn't exist
 if not exist "venv" (
@@ -32,9 +31,12 @@ if not exist "venv" (
 REM Activate virtual environment and install dependencies
 call venv\Scripts\activate.bat
 echo [INFO] Installing Python dependencies...
-pip install -r requirements.txt -q
+pip install -r backend\requirements.txt -q
 
-cd ..
+echo.
+echo [INFO] PyTorch is optional because it is a large install.
+echo [INFO] To enable the full PyTorch model later, run:
+echo        venv\Scripts\python.exe -m pip install -r backend\requirements-ml.txt
 
 echo.
 echo [INFO] Setting up Frontend...
@@ -55,13 +57,13 @@ echo To start the application:
 echo.
 echo 1. Start Backend (Terminal 1):
 echo    cd backend
-echo    venv\Scripts\activate
-echo    uvicorn app.main:app --reload --port 8000
+echo    ..\venv\Scripts\activate
+echo    python -m uvicorn app.main:app --reload --port 8001
 echo.
 echo 2. Start Frontend (Terminal 2):
 echo    cd frontend
-echo    npm run dev
+echo    npm run dev -- -p 3001
 echo.
-echo Then open http://localhost:3000 in your browser.
+echo Then open http://localhost:3001 in your browser.
 echo.
 pause

@@ -87,10 +87,60 @@ export interface ScoreBreakdown {
   project_impact: number;
 }
 
+export interface ScoreMethodology {
+  model: string;
+  score: number;
+  weights: Record<string, number>;
+  signals: Record<string, number>;
+  note: string;
+  ml_quality?: {
+    backend: string;
+    score: number;
+    label: string;
+    probabilities: Record<string, number>;
+    features: Record<string, number>;
+    training?: Record<string, any>;
+  };
+  computer_vision?: {
+    backend: string;
+    layout_score: number;
+    risk_level: string;
+    signals: Record<string, any>;
+    issues: string[];
+  };
+}
+
 export interface KeywordsAnalysis {
   found: string[];
   missing: string[];
   recommended: string[];
+}
+
+export interface ComputerVisionAnalysis {
+  available: boolean;
+  backend: string;
+  layout_score: number;
+  risk_level: string;
+  pages_analyzed: number;
+  signals: Record<string, any>;
+  issues: string[];
+  page_reports: Record<string, any>[];
+}
+
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface InterviewChatResponse {
+  success: boolean;
+  answer: string;
+  mode: string;
+  suggested_questions: string[];
+  evidence: string[];
+  interviewer_score: number | null;
+  next_step: string | null;
+  provider: 'openai' | 'local_fallback' | string;
 }
 
 export interface AnalysisResult {
@@ -107,7 +157,57 @@ export interface AnalysisResult {
   issues: ATSIssue[];
   suggestions: Suggestion[];
   keywords_analysis: KeywordsAnalysis;
+  score_methodology?: ScoreMethodology;
+  computer_vision?: ComputerVisionAnalysis;
   // OCR metadata
+  parsing_method: 'standard' | 'ocr' | 'ocr_unavailable';
+  ocr_confidence: 'low' | 'medium' | 'high' | null;
+}
+
+// Comparison types
+export interface MatchBreakdown {
+  skill_match: number;
+  keyword_match: number;
+  experience_match: number;
+  overall_match: number;
+}
+
+export interface JDAnalysis {
+  requirements: Record<string, any>;
+  skills: Record<string, string[]>;
+  keywords: string[];
+}
+
+export interface RecruiterReport {
+  fit_rating: string;
+  overall_summary: string;
+  match_breakdown: MatchBreakdown;
+  strengths: string[];
+  gaps: string[];
+  recommendation: string;
+  next_steps: string[];
+}
+
+export interface ComparisonSuggestion {
+  category: string;
+  title: string;
+  description: string;
+  priority: 'High' | 'Medium' | 'Low';
+}
+
+export interface ComparisonResult {
+  success: boolean;
+  candidate: CandidateInfo;
+  ats_score: number;
+  match_percentage: number;
+  match_breakdown: MatchBreakdown;
+  jd_analysis: JDAnalysis;
+  missing_skills: Record<string, string[]>;
+  missing_keywords: string[];
+  suggestions: ComparisonSuggestion[];
+  recruiter_report: RecruiterReport;
+  score_methodology?: ScoreMethodology;
+  computer_vision?: ComputerVisionAnalysis;
   parsing_method: 'standard' | 'ocr' | 'ocr_unavailable';
   ocr_confidence: 'low' | 'medium' | 'high' | null;
 }

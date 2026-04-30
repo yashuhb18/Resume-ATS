@@ -1,0 +1,2 @@
+# Optional local ML backend. Install this only when you have enough free disk space.
+torch==2.5.1

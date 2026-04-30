@@ -1,4 +1,4 @@
-# 📚 ATS Resume Analyzer - Complete Project Documentation
+# 📚 ResQ - Complete Project Documentation
 
 ## A Comprehensive Guide to Understanding Every Aspect of the Project
 
@@ -327,7 +327,7 @@ This is the entry point of our backend. Let's understand each part:
 
 ```python
 """
-ATS Resume Analyzer - FastAPI Backend
+ResQ - FastAPI Backend
 """
 from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -353,7 +353,7 @@ from app.models.schemas import AnalysisResponse
 ```python
 # Create the FastAPI application
 app = FastAPI(
-    title="ATS Resume Analyzer",
+    title="ResQ",
     description="AI-powered resume analysis and ATS scoring",
     version="1.0.0"
 )
@@ -788,7 +788,7 @@ import './globals.css';
 
 // SEO Metadata
 export const metadata: Metadata = {
-  title: 'ATS Resume Analyzer - Free Resume Score',
+  title: 'ResQ - Free Resume Score',
   description: 'Upload your resume and get instant ATS score...',
 };
 
@@ -949,7 +949,7 @@ export default function ResultsDashboard({ results, onReset }) {
     // Create invisible link and click it
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'ats-resume-report.pdf';
+    a.download = 'resq-resume-report.pdf';
     a.click();
     
     // Cleanup
@@ -1510,3 +1510,4 @@ This project demonstrates:
 **Happy Learning! 🚀**
 
 *Feel free to experiment, break things, and learn from the process.*
+

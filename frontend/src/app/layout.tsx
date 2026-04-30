@@ -2,12 +2,10 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'ATS Resume Analyzer - Free AI-Powered Resume Score & ATS Compatibility Check',
-  description: 'Upload your resume and get instant ATS compatibility score, skills analysis, and recruiter-level insights. Free AI-powered resume analyzer with zero data storage. Built with ❤️ for job seekers everywhere. No signup required, 100% open source.',
+  title: 'ResQ - Free AI-Powered Resume Score & ATS Compatibility Check',
+  description: 'Upload your resume and get instant ATS compatibility score, skills analysis, and recruiter-level insights. Free AI-powered resume analyzer with zero data storage and no signup required.',
   keywords: 'ATS resume checker, resume analyzer, ATS score, resume optimization, job search, career tools, free resume scanner, applicant tracking system, resume parser, CV analyzer, job application, resume tips, ATS friendly resume, resume keywords, resume score, free ATS checker, resume grader, job application tips, career advice, resume builder, AI resume analyzer, resume screening, job seeker tools, career optimization, resume feedback, interview preparation, job hunting, recruitment tools, HR technology, resume formatting, professional resume',
-  authors: [{ name: 'Love Patel', url: 'https://linkedin.com/in/love-patel-' }],
-  creator: 'Love Patel',
-  publisher: 'ATS Resume Analyzer',
+  publisher: 'ResQ',
   metadataBase: new URL('https://ats.lovexog.me'),
   alternates: {
     canonical: '/',
@@ -24,25 +22,25 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'ATS Resume Analyzer - See Your Resume Through an ATS Lens',
-    description: 'Get your free ATS score and actionable insights. Zero data storage, 100% privacy-first, open source. Built with ❤️ for job seekers everywhere.',
+    title: 'ResQ - See Your Resume Through an ATS Lens',
+    description: 'Get your free ATS score and actionable insights. Zero data storage, privacy-first resume analysis.',
     type: 'website',
     locale: 'en_US',
     url: 'https://ats.lovexog.me',
-    siteName: 'ATS Resume Analyzer',
+    siteName: 'ResQ',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'ATS Resume Analyzer - Free AI-Powered Resume Score',
+        alt: 'ResQ - Free AI-Powered Resume Score',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ATS Resume Analyzer - Free AI Resume Score & ATS Check',
-    description: 'Upload your resume and get instant ATS compatibility score. Zero data stored, blazingly fast, 100% open source. Built with ❤️ for job seekers.',
+    title: 'ResQ - Free AI Resume Score & ATS Check',
+    description: 'Upload your resume and get instant ATS compatibility score. Zero data stored, fast, and privacy-first.',
     images: ['/og-image.svg'],
   },
   icons: {
@@ -71,29 +69,18 @@ export default function RootLayout({
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'WebApplication',
-              name: 'ATS Resume Analyzer',
+              name: 'ResQ',
               description: 'Free AI-powered resume analyzer that helps job seekers understand how ATS systems read their resumes. Zero data storage, 100% privacy-first, open source.',
               applicationCategory: 'BusinessApplication',
               operatingSystem: 'Any',
               url: 'https://ats.lovexog.me',
               sameAs: [
-                'https://resume-ats-mu.vercel.app',
-                'https://github.com/itslovepatel/Resume-ATS',
-                'https://linkedin.com/in/love-patel-'
+                'https://resume-ats-mu.vercel.app'
               ],
               offers: {
                 '@type': 'Offer',
                 price: '0',
                 priceCurrency: 'USD',
-              },
-              author: {
-                '@type': 'Person',
-                name: 'Love Patel',
-                url: 'https://linkedin.com/in/love-patel-',
-                sameAs: [
-                  'https://github.com/itslovepatel',
-                  'https://linkedin.com/in/love-patel-'
-                ]
               },
               featureList: [
                 'ATS Score Analysis',
@@ -110,7 +97,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-gray-50">
+      <body className="min-h-screen">
         {children}
       </body>
     </html>

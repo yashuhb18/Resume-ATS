@@ -100,6 +100,33 @@ class KeywordsAnalysis(BaseModel):
     recommended: List[str] = []
 
 
+class ComputerVisionAnalysis(BaseModel):
+    available: bool = False
+    backend: str = "unknown"
+    layout_score: int = 0
+    risk_level: str = "unknown"
+    pages_analyzed: int = 0
+    signals: Dict[str, Any] = {}
+    issues: List[str] = []
+    page_reports: List[Dict[str, Any]] = []
+
+
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+
+class InterviewChatResponse(BaseModel):
+    success: bool
+    answer: str
+    mode: str
+    suggested_questions: List[str] = []
+    evidence: List[str] = []
+    interviewer_score: Optional[int] = None
+    next_step: Optional[str] = None
+    provider: str = "local_fallback"
+
+
 class AnalysisResponse(BaseModel):
     success: bool
     candidate: CandidateInfo
@@ -114,6 +141,60 @@ class AnalysisResponse(BaseModel):
     issues: List[ATSIssue] = []
     suggestions: List[Suggestion] = []
     keywords_analysis: KeywordsAnalysis
+    score_methodology: Dict[str, Any] = {}
+    computer_vision: ComputerVisionAnalysis = ComputerVisionAnalysis()
     # OCR metadata
     parsing_method: str = "standard"  # "standard" | "ocr" | "ocr_unavailable"
     ocr_confidence: Optional[str] = None  # "low" | "medium" | "high" (only when OCR used)
+
+
+class JDAnalysis(BaseModel):
+    """Job Description Analysis"""
+    requirements: Dict[str, Any]
+    skills: Dict[str, List[str]]
+    keywords: List[str]
+
+
+class MatchBreakdown(BaseModel):
+    """Match percentage breakdown"""
+    skill_match: int
+    keyword_match: int
+    experience_match: int
+    overall_match: int
+
+
+class RecruiterReport(BaseModel):
+    """Professional recruiter report"""
+    fit_rating: str
+    overall_summary: str
+    match_breakdown: MatchBreakdown
+    strengths: List[str]
+    gaps: List[str]
+    recommendation: str
+    next_steps: List[str]
+
+
+class ComparisonSuggestion(BaseModel):
+    """Suggestion for JD comparison"""
+    category: str
+    title: str
+    description: str
+    priority: str  # High, Medium, Low
+
+
+class ComparisonResponse(BaseModel):
+    """Resume vs Job Description comparison response"""
+    success: bool
+    candidate: CandidateInfo
+    ats_score: int
+    match_percentage: int
+    match_breakdown: MatchBreakdown
+    jd_analysis: JDAnalysis
+    missing_skills: Dict[str, List[str]]
+    missing_keywords: List[str]
+    suggestions: List[ComparisonSuggestion]
+    recruiter_report: RecruiterReport
+    score_methodology: Dict[str, Any] = {}
+    computer_vision: ComputerVisionAnalysis = ComputerVisionAnalysis()
+    parsing_method: str = "standard"
+    ocr_confidence: Optional[str] = None

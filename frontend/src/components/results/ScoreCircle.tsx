@@ -8,78 +8,58 @@ interface ScoreCircleProps {
 }
 
 export default function ScoreCircle({ score, size = 120 }: ScoreCircleProps) {
-  const [animatedScore, setAnimatedScore] = useState(0);
+  const [animated, setAnimated] = useState(0);
   const strokeWidth = size * 0.08;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (animatedScore / 100) * circumference;
+  const radius      = (size - strokeWidth) / 2;
+  const circ        = 2 * Math.PI * radius;
+  const offset      = circ - (animated / 100) * circ;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setAnimatedScore(score);
-    }, 100);
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => setAnimated(score), 120);
+    return () => clearTimeout(t);
   }, [score]);
 
-  const getColor = (s: number) => {
-    if (s >= 80) return { stroke: '#22c55e', bg: '#dcfce7' };
-    if (s >= 60) return { stroke: '#f59e0b', bg: '#fef3c7' };
-    return { stroke: '#ef4444', bg: '#fee2e2' };
-  };
+  const getColor = (s: number) =>
+    s >= 80 ? { stroke: 'var(--emerald-neon)', track: 'rgba(52,211,153,0.12)', label: 'var(--emerald-neon)' } :
+    s >= 60 ? { stroke: '#fbbf24',             track: 'rgba(251,191,36,0.12)',  label: '#fbbf24'             } :
+              { stroke: '#fb7185',             track: 'rgba(251,113,133,0.12)', label: '#fb7185'             };
 
-  const colors = getColor(score);
+  const col = getColor(score);
+
+  const gradId = `scoreGrad-${size}`;
 
   return (
     <div className="relative" style={{ width: size, height: size }}>
-      <svg
-        width={size}
-        height={size}
-        viewBox={`0 0 ${size} ${size}`}
-        className="transform -rotate-90"
-      >
-        {/* Background circle */}
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
+        {/* Gradient def */}
+        <defs>
+          <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stopColor={col.stroke} stopOpacity="0.6" />
+            <stop offset="100%" stopColor={col.stroke} />
+          </linearGradient>
+        </defs>
+        {/* Track */}
+        <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke={col.track} strokeWidth={strokeWidth} />
+        {/* Progress */}
         <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
+          cx={size/2} cy={size/2} r={radius}
           fill="none"
-          stroke="#e5e7eb"
-          strokeWidth={strokeWidth}
-        />
-        {/* Progress circle */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke={colors.stroke}
+          stroke={`url(#${gradId})`}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
-          strokeDasharray={circumference}
+          strokeDasharray={circ}
           strokeDashoffset={offset}
           className="score-circle"
-          style={{
-            transition: 'stroke-dashoffset 1s ease-out',
-          }}
+          style={{ transition: 'stroke-dashoffset 1.4s cubic-bezier(0.34,1.2,0.64,1)', filter: `drop-shadow(0 0 8px ${col.stroke})` }}
         />
       </svg>
-      {/* Score text */}
+
+      {/* Center text */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span
-          className="font-bold"
-          style={{
-            fontSize: size * 0.3,
-            color: colors.stroke,
-          }}
-        >
-          {animatedScore}
+        <span className="font-bold leading-none" style={{ fontSize: size * 0.28, color: col.label, fontFamily: 'Familjen Grotesk, sans-serif' }}>
+          {animated}
         </span>
-        <span
-          className="text-gray-500"
-          style={{ fontSize: size * 0.1 }}
-        >
-          / 100
-        </span>
+        <span style={{ fontSize: size * 0.1, color: 'var(--text-faint)' }}>/ 100</span>
       </div>
     </div>
   );

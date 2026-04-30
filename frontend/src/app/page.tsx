@@ -7,18 +7,21 @@ import HowItWorks from '@/components/HowItWorks';
 import Features from '@/components/Features';
 import UploadSection from '@/components/UploadSection';
 import ResultsDashboard from '@/components/ResultsDashboard';
-import ContactSection from '@/components/ContactSection';
 import PrivacyBanner from '@/components/PrivacyBanner';
 import Footer from '@/components/Footer';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import WakeUpScreen from '@/components/WakeUpScreen';
 import BackendStatusBanner from '@/components/BackendStatusBanner';
-import { AnalysisResult } from '@/types';
+import VirtualInterviewerChat from '@/components/VirtualInterviewerChat';
+import { AnalysisResult, ComparisonResult } from '@/types';
 
 export default function Home() {
   const [isVerified, setIsVerified] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [results, setResults] = useState<AnalysisResult | null>(null);
+  const [comparisonResults, setComparisonResults] = useState<ComparisonResult | null>(null);
+  const [activeResumeFile, setActiveResumeFile] = useState<File | null>(null);
+  const [activeJdFile, setActiveJdFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Check if user already verified in this session
@@ -38,6 +41,9 @@ export default function Home() {
     setIsAnalyzing(true);
     setError(null);
     setResults(null);
+    setComparisonResults(null);
+    setActiveResumeFile(file);
+    setActiveJdFile(null);
 
     const formData = new FormData();
     formData.append('file', file);
@@ -62,8 +68,43 @@ export default function Home() {
     }
   };
 
+  const handleCompare = async (resumeFile: File, jdFile: File) => {
+    setIsAnalyzing(true);
+    setError(null);
+    setResults(null);
+    setComparisonResults(null);
+    setActiveResumeFile(resumeFile);
+    setActiveJdFile(jdFile);
+
+    const formData = new FormData();
+    formData.append('resume_file', resumeFile);
+    formData.append('jd_file', jdFile);
+
+    try {
+      const response = await fetch('/api/compare', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to compare resume with job description');
+      }
+
+      const data = await response.json();
+      setComparisonResults(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   const handleReset = () => {
     setResults(null);
+    setComparisonResults(null);
+    setActiveResumeFile(null);
+    setActiveJdFile(null);
     setError(null);
   };
 
@@ -77,20 +118,30 @@ export default function Home() {
       
       {isAnalyzing && <LoadingOverlay />}
       
-      {results ? (
-        <ResultsDashboard results={results} onReset={handleReset} />
+      {results || comparisonResults ? (
+        <ResultsDashboard 
+          results={results || undefined} 
+          comparisonResults={comparisonResults || undefined}
+          resumeFile={activeResumeFile}
+          jdFile={activeJdFile}
+          onReset={handleReset} 
+        />
       ) : (
         <>
           <Hero />
-          <UploadSection onAnalyze={handleAnalyze} error={error} />
+          <UploadSection 
+            onAnalyze={handleAnalyze} 
+            onCompare={handleCompare}
+            error={error} 
+          />
           <HowItWorks />
           <Features />
           <PrivacyBanner />
-          <ContactSection />
         </>
       )}
       
       <Footer />
+      <VirtualInterviewerChat resumeFile={activeResumeFile} jdFile={activeJdFile} />
     </main>
   );
 }
