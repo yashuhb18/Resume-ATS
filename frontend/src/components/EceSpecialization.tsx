@@ -44,9 +44,16 @@ const trendingJobs = [
 ];
 
 const hotSkills = [
-  'Verilog / VHDL', 'SystemVerilog', 'MATLAB', 
-  'C / C++', 'Python', 'ROS', 'Altium Designer', 
-  'I2C / SPI / UART', 'RTOS', 'FPGA Prototyping'
+  { name: 'Verilog / VHDL', slug: 'verilog-vhdl' },
+  { name: 'SystemVerilog', slug: 'systemverilog' },
+  { name: 'MATLAB', slug: 'matlab' },
+  { name: 'C / C++', slug: 'cpp' },
+  { name: 'Python', slug: 'python' },
+  { name: 'ROS', slug: 'ros' },
+  { name: 'Altium Designer', slug: 'altium' },
+  { name: 'I2C / SPI / UART', slug: 'protocols' },
+  { name: 'RTOS', slug: 'rtos' },
+  { name: 'FPGA Prototyping', slug: 'fpga' }
 ];
 
 const roadmapSteps = [
@@ -185,12 +192,13 @@ export default function EceSpecialization() {
               
               <div className="flex flex-wrap gap-2 mb-10">
                 {hotSkills.map((skill, i) => (
-                  <span 
+                  <Link 
                     key={i} 
-                    className="px-3 py-1.5 rounded-lg text-sm font-medium border border-indigo-500/20 bg-indigo-500/10 text-indigo-200"
+                    href={`/skills/${skill.slug}`}
+                    className="px-3 py-1.5 rounded-lg text-sm font-medium border border-indigo-500/20 bg-indigo-500/10 text-indigo-200 hover:border-indigo-500/50 hover:bg-indigo-500/20 hover:text-white transition-all cursor-pointer"
                   >
-                    {skill}
-                  </span>
+                    {skill.name}
+                  </Link>
                 ))}
               </div>
 
