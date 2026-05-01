@@ -64,7 +64,7 @@ After deploy, confirm these:
 
 ```text
 https://resume-ats-backend-production.up.railway.app/health
-https://your-vercel-domain.vercel.app/health
+https://your-vercel-domain.vercel.app/api/health
 https://your-vercel-domain.vercel.app/api/analyze
 ```
 

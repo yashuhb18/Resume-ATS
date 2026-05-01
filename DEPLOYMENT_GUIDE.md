@@ -54,7 +54,7 @@ NEXT_PUBLIC_API_URL=
 NODE_ENV=production
 ```
 
-The frontend is configured to call same-origin routes such as `/api/analyze`, `/api/compare`, `/api/download-report`, `/api/interview-chat`, and `/health`. Vercel rewrites those requests to Railway.
+The frontend is configured to call same-origin routes such as `/api/analyze`, `/api/compare`, `/api/download-report`, `/api/interview-chat`, and `/api/health`. Vercel rewrites those requests to Railway.
 
 ## Step-by-Step Deploy
 
@@ -65,7 +65,7 @@ The frontend is configured to call same-origin routes such as `/api/analyze`, `/
 5. Set `BACKEND_URL` to `https://resume-ats-backend-production.up.railway.app`.
 6. Keep `NEXT_PUBLIC_API_URL` empty.
 7. Redeploy Vercel from latest `main`.
-8. Visit `https://resume-ats-mu.vercel.app/health`.
+8. Visit `https://resume-ats-mu.vercel.app/api/health`.
 9. Upload a PDF or DOCX resume from the site and confirm analysis completes.
 10. Test resume-vs-JD compare, report download, and interview chat.
 
@@ -73,7 +73,7 @@ The frontend is configured to call same-origin routes such as `/api/analyze`, `/
 
 ```text
 https://resume-ats-backend-production.up.railway.app/health
-https://resume-ats-mu.vercel.app/health
+https://resume-ats-mu.vercel.app/api/health
 https://resume-ats-mu.vercel.app/api/analyze
 ```
 

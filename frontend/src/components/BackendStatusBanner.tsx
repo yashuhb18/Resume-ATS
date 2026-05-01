@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Wifi, WifiOff } from 'lucide-react';
-import { healthUrl } from '@/utils/api';
+import { isBackendReachable } from '@/utils/api';
 
 const POLL_INTERVAL = 30000;
 
@@ -10,15 +10,7 @@ export default function BackendStatusBanner() {
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
 
   const checkHealth = useCallback(async () => {
-    try {
-      const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), 8000);
-      const res = await fetch(healthUrl(), { signal: ctrl.signal });
-      clearTimeout(t);
-      setIsOnline(res.ok);
-    } catch {
-      setIsOnline(false);
-    }
+    setIsOnline(await isBackendReachable(8000));
   }, []);
 
   useEffect(() => {

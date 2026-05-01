@@ -74,6 +74,11 @@ async def health_check():
     return {"status": "healthy"}
 
 
+@app.get("/api/health")
+async def api_health_check():
+    return await health_check()
+
+
 @app.post("/api/analyze", response_model=AnalysisResponse)
 async def analyze_resume(file: UploadFile = File(...)):
     """

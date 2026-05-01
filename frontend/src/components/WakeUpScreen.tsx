@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { ShieldCheck, Loader2, CheckCircle2, WifiOff, RefreshCw } from 'lucide-react';
-import { healthUrl } from '@/utils/api';
+import { isBackendReachable } from '@/utils/api';
 
 interface WakeUpScreenProps {
   onVerified: () => void;
@@ -20,13 +20,7 @@ export default function WakeUpScreen({ onVerified }: WakeUpScreenProps) {
   }, [status]);
 
   const pingBackend = useCallback(async (): Promise<boolean> => {
-    try {
-      const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), 30000);
-      const res = await fetch(healthUrl(), { signal: ctrl.signal });
-      clearTimeout(t);
-      return res.ok;
-    } catch { return false; }
+    return isBackendReachable(30000);
   }, []);
 
   const handleVerify = async () => {

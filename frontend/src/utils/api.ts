@@ -15,5 +15,27 @@ export function apiUrl(path: string) {
 }
 
 export function healthUrl() {
-  return apiUrl('/health');
+  return apiUrl('/api/health');
+}
+
+export async function isBackendReachable(timeoutMs = 8000) {
+  const probePaths = ['/api/health', '/api/analyze'];
+
+  for (const path of probePaths) {
+    const ctrl = new AbortController();
+    const timeout = window.setTimeout(() => ctrl.abort(), timeoutMs);
+
+    try {
+      const response = await fetch(apiUrl(path), { signal: ctrl.signal });
+      if (response.ok || response.status === 405 || response.status === 422) {
+        return true;
+      }
+    } catch {
+      // Try the next probe path before reporting offline.
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  }
+
+  return false;
 }
