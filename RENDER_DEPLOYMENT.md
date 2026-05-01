@@ -2,9 +2,9 @@
 
 ## Overview
 
-When deploying to Render, you need to set environment variables for:
-- **Backend API** (Python/FastAPI) - Port 8001
-- **Frontend** (Next.js) - Port 3000
+When deploying the backend to Render and the frontend to Vercel, you need environment variables for:
+- **Backend API** (Python/FastAPI) - Render assigns the runtime port
+- **Frontend** (Next.js) - Vercel serves the app and rewrites `/api` to Render
 - **Optional:** OpenAI API key for premium chatbot features
 
 ---
@@ -44,8 +44,8 @@ When deploying to Render, you need to set environment variables for:
 5. Fill in:
    - **Name:** `resume-ats-backend`
    - **Environment:** `Python`
-   - **Build Command:** `pip install --no-cache-dir -r backend/requirements-render.txt`
-   - **Start Command:** `cd backend && uvicorn app.main:app --host 0.0.0.0 --port 10000`
+   - **Build Command:** `pip install --upgrade pip setuptools wheel && pip install -r backend/requirements-render.txt`
+   - **Start Command:** `cd backend && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-10000}`
    - **Python Version:** Make sure it's set to `3.10` (NOT 3.11+)
 
 ### Step 2: Add Environment Variables
@@ -68,23 +68,21 @@ Click **"Create Web Service"** and wait for deployment to complete.
 
 ## 🎨 Frontend Environment Variables
 
-### For Render Frontend Service (Next.js)
+### For Vercel Frontend Service (Next.js)
 
-1. **Go to Render Dashboard**
-2. **Create new Static Site** (or Web Service if using Node)
-3. **For Next.js, use Web Service:**
-   - **Environment:** `Node`
-   - **Build Command:** `npm install && npm run build`
-   - **Start Command:** `npm start`
+1. Set the Vercel project root directory to `frontend`
+2. Keep the framework preset as `Next.js`
+3. Use the default build command `npm run build`
 
 ### Add Environment Variables for Frontend:
 
 | Variable | Value | Notes |
 |----------|-------|-------|
-| `NEXT_PUBLIC_API_URL` | `https://resume-ats-backend.onrender.com` | Your backend URL |
+| `BACKEND_URL` | `https://resume-ats-backend.onrender.com` | Used by Next.js rewrites for `/api` and `/health` |
+| `NEXT_PUBLIC_API_URL` | empty, or `https://resume-ats-backend.onrender.com` | Optional direct browser API base URL |
 | `NODE_ENV` | `production` | Production mode |
 
-**Important:** Use `NEXT_PUBLIC_` prefix for frontend-accessible variables!
+**Recommended:** leave `NEXT_PUBLIC_API_URL` empty so browser requests stay on the Vercel domain and use rewrites.
 
 ---
 
@@ -110,7 +108,8 @@ https://resume-ats-backend.onrender.com
 
 Use this in your frontend's `.env.local`:
 ```
-NEXT_PUBLIC_API_URL=https://resume-ats-backend.onrender.com
+BACKEND_URL=https://resume-ats-backend.onrender.com
+NEXT_PUBLIC_API_URL=
 ```
 
 ---
@@ -132,7 +131,8 @@ OLLAMA_MODEL=llama3.1:8b
 **For local Next.js, create `frontend/.env.local`:**
 
 ```bash
-NEXT_PUBLIC_API_URL=http://localhost:8001
+BACKEND_URL=http://localhost:8001
+NEXT_PUBLIC_API_URL=
 ```
 
 ---
@@ -146,9 +146,10 @@ OPENAI_MODEL=gpt-4o
 PYTHONUNBUFFERED=1
 ```
 
-### Frontend (Required on Render)
+### Frontend (Required on Vercel)
 ```
-NEXT_PUBLIC_API_URL=https://your-backend.onrender.com
+BACKEND_URL=https://your-backend.onrender.com
+NEXT_PUBLIC_API_URL=
 NODE_ENV=production
 ```
 
@@ -163,7 +164,8 @@ OLLAMA_MODEL=llama3.1:8b
 ## ✅ Deployment Checklist
 
 - [ ] Backend `.env` or Render environment variables set with `OPENAI_API_KEY`
-- [ ] Frontend environment has `NEXT_PUBLIC_API_URL` pointing to backend
+- [ ] Vercel project root is `frontend`
+- [ ] Frontend environment has `BACKEND_URL` pointing to backend
 - [ ] Backend `render.yaml` configured (see below)
 - [ ] Frontend pointing to correct backend API
 - [ ] Test API endpoint: `https://your-backend.onrender.com/docs`
@@ -181,8 +183,8 @@ services:
     name: resume-ats-backend
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port 8001
+    buildCommand: pip install --upgrade pip setuptools wheel && pip install -r backend/requirements-render.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-10000}
     envVars:
       - key: OPENAI_API_KEY
         sync: false
@@ -262,9 +264,10 @@ services:
 ### Issue: Frontend can't reach Backend
 
 **Fix:**
-1. Set `NEXT_PUBLIC_API_URL` to correct backend URL
-2. Verify backend is running: `https://backend-url.onrender.com/docs`
-3. Check CORS is enabled (it is by default)
+1. Set Vercel `BACKEND_URL` to the correct Render backend URL
+2. Verify backend is running: `https://backend-url.onrender.com/health`
+3. Verify frontend rewrite: `https://frontend-url.vercel.app/health`
+4. Check CORS is enabled (it is by default)
 
 ### Issue: OpenAI API Errors
 
@@ -304,12 +307,13 @@ OPENAI_API_KEY=sk-proj-your-key
 OPENAI_MODEL=gpt-4o
 PYTHONUNBUFFERED=1
 
-# 2. Frontend environment on Render:
-NEXT_PUBLIC_API_URL=https://your-backend.onrender.com
+# 2. Frontend environment on Vercel:
+BACKEND_URL=https://your-backend.onrender.com
+NEXT_PUBLIC_API_URL=
 NODE_ENV=production
 
 # 3. Backend command:
-uvicorn app.main:app --host 0.0.0.0 --port 8001
+cd backend && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-10000}
 
 # 4. Frontend build command:
 npm run build && npm start

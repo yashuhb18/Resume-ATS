@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import { ChatMessage, InterviewChatResponse } from '@/types';
+import { apiUrl } from '@/utils/api';
 
 interface VirtualInterviewerChatProps {
   resumeFile: File | null;
@@ -76,7 +77,7 @@ export default function VirtualInterviewerChat({ resumeFile, jdFile }: VirtualIn
       formData.append('mode', jdFile ? 'interviewer_hr_jd' : resumeFile ? 'interviewer_hr_resume' : 'general_career_hr');
       formData.append('history', JSON.stringify(messages.slice(-8)));
 
-      const response = await fetch('/api/interview-chat', {
+      const response = await fetch(apiUrl('/api/interview-chat'), {
         method: 'POST',
         body: formData,
       });

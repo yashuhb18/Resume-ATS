@@ -6,6 +6,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://resume-ats-backend-xlo8.onrender.com/api/:path*"
+    },
+    {
+      "source": "/health",
+      "destination": "https://resume-ats-backend-xlo8.onrender.com/health"
     }
   ],
   "headers": [

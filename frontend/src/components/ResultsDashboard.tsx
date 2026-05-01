@@ -19,6 +19,7 @@ import SuggestionsCard    from './results/SuggestionsCard';
 import KeywordsCard       from './results/KeywordsCard';
 import IndustryReportCard from './results/IndustryReportCard';
 import OptimizedResumeCard from './results/OptimizedResumeCard';
+import { apiUrl } from '@/utils/api';
 
 interface ResultsDashboardProps {
   results?: AnalysisResult;
@@ -62,7 +63,7 @@ export default function ResultsDashboard({ results, comparisonResults, onReset }
   const handleDownload = async () => {
     setIsDownloading(true);
     try {
-      const res = await fetch('/api/download-report', {
+      const res = await fetch(apiUrl('/api/download-report'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -346,7 +347,7 @@ export default function ResultsDashboard({ results, comparisonResults, onReset }
           </motion.div>
         ) : null}
 
-        {data.score_methodology && (
+        {data.score_methodology?.weights && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

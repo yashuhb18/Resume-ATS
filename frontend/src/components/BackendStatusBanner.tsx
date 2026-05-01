@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Wifi, WifiOff } from 'lucide-react';
+import { healthUrl } from '@/utils/api';
 
-const BACKEND_URL  = 'https://resume-ats-backend-xlo8.onrender.com';
 const POLL_INTERVAL = 30000;
 
 export default function BackendStatusBanner() {
@@ -13,7 +13,7 @@ export default function BackendStatusBanner() {
     try {
       const ctrl = new AbortController();
       const t = setTimeout(() => ctrl.abort(), 8000);
-      const res = await fetch(`${BACKEND_URL}/health`, { signal: ctrl.signal });
+      const res = await fetch(healthUrl(), { signal: ctrl.signal });
       clearTimeout(t);
       setIsOnline(res.ok);
     } catch {

@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { ShieldCheck, Loader2, CheckCircle2, WifiOff, RefreshCw } from 'lucide-react';
-
-const BACKEND_URL = 'https://resume-ats-backend-xlo8.onrender.com';
+import { healthUrl } from '@/utils/api';
 
 interface WakeUpScreenProps {
   onVerified: () => void;
@@ -24,7 +23,7 @@ export default function WakeUpScreen({ onVerified }: WakeUpScreenProps) {
     try {
       const ctrl = new AbortController();
       const t = setTimeout(() => ctrl.abort(), 30000);
-      const res = await fetch(`${BACKEND_URL}/health`, { signal: ctrl.signal });
+      const res = await fetch(healthUrl(), { signal: ctrl.signal });
       clearTimeout(t);
       return res.ok;
     } catch { return false; }

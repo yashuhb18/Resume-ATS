@@ -14,6 +14,7 @@ import WakeUpScreen from '@/components/WakeUpScreen';
 import BackendStatusBanner from '@/components/BackendStatusBanner';
 import VirtualInterviewerChat from '@/components/VirtualInterviewerChat';
 import { AnalysisResult, ComparisonResult } from '@/types';
+import { apiUrl } from '@/utils/api';
 
 export default function Home() {
   const [isVerified, setIsVerified] = useState(false);
@@ -24,7 +25,7 @@ export default function Home() {
   const [activeJdFile, setActiveJdFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Check if user already verified in this session
+  // Check if user already verified in this session.
   useEffect(() => {
     const verified = sessionStorage.getItem('backend_verified');
     if (verified === 'true') {
@@ -49,7 +50,7 @@ export default function Home() {
     formData.append('file', file);
 
     try {
-      const response = await fetch('/api/analyze', {
+      const response = await fetch(apiUrl('/api/analyze'), {
         method: 'POST',
         body: formData,
       });
@@ -81,7 +82,7 @@ export default function Home() {
     formData.append('jd_file', jdFile);
 
     try {
-      const response = await fetch('/api/compare', {
+      const response = await fetch(apiUrl('/api/compare'), {
         method: 'POST',
         body: formData,
       });

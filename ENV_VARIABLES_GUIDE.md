@@ -6,8 +6,8 @@
 
 **Name:** `resume-ats-backend`  
 **Environment:** Python  
-**Build Command:** `pip install -r requirements.txt`  
-**Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port 8001`
+**Build Command:** `pip install --upgrade pip setuptools wheel && pip install -r backend/requirements-render.txt`  
+**Start Command:** `cd backend && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-10000}`
 
 **Add these Environment Variables:**
 ```
@@ -25,7 +25,10 @@ PYTHONUNBUFFERED=1
 
 **Add these Environment Variables:**
 ```
-NEXT_PUBLIC_API_URL=https://resume-ats-backend.onrender.com
+BACKEND_URL=https://your-render-backend.onrender.com
+# Optional: set this only if you want the browser to call Render directly.
+# When empty, the frontend uses same-origin /api and /health rewrites.
+NEXT_PUBLIC_API_URL=
 NODE_ENV=production
 ```
 
@@ -37,7 +40,8 @@ NODE_ENV=production
 |----------|-------|-------|---------|
 | `OPENAI_API_KEY` | Backend (Render) | `sk-proj-...` | OpenAI API authentication |
 | `OPENAI_MODEL` | Backend (Render) | `gpt-4o` | Which AI model to use |
-| `NEXT_PUBLIC_API_URL` | Frontend (Render) | Backend URL | Where frontend calls API |
+| `BACKEND_URL` | Frontend (Vercel) | Backend URL | Where Next.js rewrites `/api` and `/health` |
+| `NEXT_PUBLIC_API_URL` | Frontend (optional) | Backend URL or empty | Browser-side direct backend URL; empty uses rewrites |
 | `NODE_ENV` | Frontend (Render) | `production` | Run in production mode |
 | `PYTHONUNBUFFERED` | Backend (Render) | `1` | Show logs in real-time |
 | `OLLAMA_HOST` | Local only | `http://localhost:11434` | Local AI (FREE) |
@@ -73,7 +77,8 @@ OLLAMA_MODEL=llama3.1:8b
 
 ### Frontend `frontend/.env.local`
 ```
-NEXT_PUBLIC_API_URL=http://localhost:8001
+BACKEND_URL=http://localhost:8001
+NEXT_PUBLIC_API_URL=
 ```
 
 ---
@@ -85,8 +90,9 @@ NEXT_PUBLIC_API_URL=http://localhost:8001
    - Deploy backend
    - Get URL: `https://resume-ats-backend.onrender.com`
 
-2. **Set Frontend Env Vars on Render**
-   - `NEXT_PUBLIC_API_URL=<backend-url>`
+2. **Set Frontend Env Vars on Vercel**
+   - `BACKEND_URL=<backend-url>`
+   - `NEXT_PUBLIC_API_URL=` can stay empty unless you need direct browser calls
    - `NODE_ENV=production`
    - Deploy frontend
 
@@ -105,7 +111,8 @@ NEXT_PUBLIC_API_URL=http://localhost:8001
 - Check Render logs
 
 **Frontend can't reach backend**
-- Verify `NEXT_PUBLIC_API_URL` is correct
+- Verify `BACKEND_URL` is correct in Vercel
+- Test both `https://frontend-url/health` and `https://backend-url/health`
 - Test: Visit backend URL directly in browser
 - Check CORS settings (enabled by default)
 

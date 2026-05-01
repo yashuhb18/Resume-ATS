@@ -25,11 +25,11 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS configuration - allow all origins for production
+# CORS configuration. The app does not use cookies, so wildcard origins are safe.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins (Vercel, localhost, etc.)
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
