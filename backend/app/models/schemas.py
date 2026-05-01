@@ -74,7 +74,8 @@ class SkillsData(BaseModel):
 class DomainInfo(BaseModel):
     primary: str = "General"
     confidence: float = 0.0
-    alternative: Optional[str] = None
+    secondary: Optional[str] = None
+    keywords_matched: List[str] = []
 
 # --- ATS Scoring & Issues Schemas ---
 
@@ -247,7 +248,7 @@ class PulseResponse(BaseModel):
 
 class AnalysisResponse(BaseModel):
     success: bool = True
-    candidate_info: CandidateInfo = CandidateInfo()
+    candidate: CandidateInfo = CandidateInfo()
     experience: ExperienceSummary = ExperienceSummary()
     projects: List[Project] = []
     education: List[Education] = []
@@ -257,6 +258,8 @@ class AnalysisResponse(BaseModel):
     score_category: str = "Good"
     domain: DomainInfo = DomainInfo()
     issues: List[Issue] = []
+    suggestions: List[Suggestion] = []
+    keywords_analysis: KeywordsAnalysis = KeywordsAnalysis()
     optimized_resume: ResumeRewrite = ResumeRewrite()
     industry_report: Optional[IndustryReport] = None
     score_methodology: Dict[str, Any] = {}
