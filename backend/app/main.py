@@ -171,7 +171,7 @@ async def analyze_resume(file: UploadFile = File(...)):
         # Build response
         response = AnalysisResponse(
             success=True,
-            candidate=parsed_data["candidate"],
+            candidate_info=parsed_data["candidate"],
             ats_score=ats_analysis["score"],
             score_breakdown=ats_analysis["breakdown"],
             score_category=ats_analysis["category"],

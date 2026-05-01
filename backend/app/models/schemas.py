@@ -86,11 +86,18 @@ class ScoreBreakdown(BaseModel):
     experience_clarity: int = 0
     project_impact: int = 0
 
-class ATSIssue(BaseModel):
-    type: str
-    severity: str # High, Medium, Low
+class Issue(BaseModel):
+    """Unified Issue model for ATS and Layout analysis."""
+    type: str = "general"
+    category: Optional[str] = None
+    severity: str = "Medium" # High, Medium, Low
     description: str
+    message: Optional[str] = None # For compatibility
     suggestion: str
+
+class ATSIssue(Issue):
+    """Alias for Issue for backward compatibility."""
+    pass
 
 class Suggestion(BaseModel):
     category: str
@@ -111,12 +118,6 @@ class ATSScore(BaseModel):
     keyword_score: int = 0
     experience_score: int = 0
 
-class Issue(BaseModel):
-    category: str
-    severity: str # high, medium, low
-    message: str
-    suggestion: str
-
 # --- Industry Analysis & Rewrite Schemas ---
 
 class IndustryCheck(BaseModel):
@@ -134,8 +135,8 @@ class IndustryCategory(BaseModel):
     checks: List[IndustryCheck]
 
 class IndustryReport(BaseModel):
-    categories: List[IndustryCategory]
-    top_actions: List[str]
+    categories: List[IndustryCategory] = []
+    top_actions: List[str] = []
 
 class Optimization(BaseModel):
     section: str
@@ -162,11 +163,12 @@ class SkillAnalysis(BaseModel):
 
 class ProjectRecommendation(BaseModel):
     title: str
-    description: str
-    difficulty: str # Beginner, Intermediate, Advanced
-    impact: str
-    tech_stack: List[str]
-    github_search_query: str
+    description: str = ""
+    difficulty: str = "Intermediate" # Beginner, Intermediate, Advanced
+    impact: str = "High"
+    tech_stack: List[str] = []
+    github_search_query: str = ""
+    domain: Optional[str] = None
 
 class AssessmentQuestion(BaseModel):
     question: str
@@ -244,13 +246,17 @@ class PulseResponse(BaseModel):
 # --- Final Analysis Response ---
 
 class AnalysisResponse(BaseModel):
-    candidate_info: CandidateInfo
-    experience: ExperienceSummary
-    projects: List[Project]
-    education: List[Education]
-    skills: SkillAnalysis
-    ats_score: ATSScore
-    issues: List[Issue]
+    success: bool = True
+    candidate_info: CandidateInfo = CandidateInfo()
+    experience: ExperienceSummary = ExperienceSummary()
+    projects: List[Project] = []
+    education: List[Education] = []
+    skills: Union[SkillsData, SkillAnalysis] = SkillsData()
+    ats_score: Union[ATSScore, int] = 0
+    score_breakdown: ScoreBreakdown = ScoreBreakdown()
+    score_category: str = "Good"
+    domain: DomainInfo = DomainInfo()
+    issues: List[Issue] = []
     optimized_resume: ResumeRewrite = ResumeRewrite()
     industry_report: Optional[IndustryReport] = None
     score_methodology: Dict[str, Any] = {}
