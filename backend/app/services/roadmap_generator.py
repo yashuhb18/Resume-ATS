@@ -21,45 +21,38 @@ class RoadmapGenerator:
         self.openai_api_key = os.getenv("OPENAI_API_KEY")
 
     def generate(self, domain: str) -> Dict[str, Any]:
-        """Generate a completely distinct 3-phase career roadmap."""
+        """
+        Generate a completely distinct 3-phase career roadmap (Beginner, Intermediate, Advanced)
+        with specific domain terminology and Coursera links.
+        """
         
-        prompt = (
-            f"You are an elite, God-level Engineering Career Strategist for the domain: {domain}. "
-            "Your task is to generate a highly detailed, extremely accurate 15-step career roadmap for them. "
-            "The roadmap MUST be split into THREE distinct, non-overlapping paths: Beginner (0-1), Intermediate (Bridging the gap), and Advanced (Mastery). "
-            "You MUST dictate the EXACT technical skills they need to learn, progressing logically from their current state up to 'Mastery'. "
-            "Provide 100% relevant, industry-standard tools, languages, and hardware frameworks for this specific domain. "
-            "Do not give generic advice. Be highly specific about WHAT to build and exactly WHAT technologies to use. "
-            "Return ONLY a valid JSON object with the following structure, with no markdown formatting or extra text:\n"
-            "{\n"
-            f'  "domain": "{domain}",\n'
-            '  "news_headline": "String (A realistic, exciting current industry trend or news headline related to this domain)",\n'
-            '  "beginner_steps": [\n'
-            '    {\n'
-            '      "title": "String",\n'
-            '      "description": "String",\n'
-            '      "key_skills": ["String", "String", "String"]\n'
-            '    }\n'
-            '    // Exactly 5 steps\n'
-            '  ],\n'
-            '  "intermediate_steps": [\n'
-            '    {\n'
-            '      "title": "String",\n'
-            '      "description": "String",\n'
-            '      "key_skills": ["String", "String", "String"]\n'
-            '    }\n'
-            '    // Exactly 5 steps\n'
-            '  ],\n'
-            '  "advanced_steps": [\n'
-            '    {\n'
-            '      "title": "String",\n'
-            '      "description": "String",\n'
-            '      "key_skills": ["String", "String", "String"]\n'
-            '    }\n'
-            '    // Exactly 5 steps\n'
-            '  ]\n'
-            "}"
-        )
+        prompt = f"""
+        You are an elite Silicon Valley Hardware & Embedded Systems Career Architect.
+        Generate a "God-Level" comprehensive career roadmap for the following ECE domain: {domain}
+
+        Your output MUST be a valid JSON object matching this exact schema:
+        {{
+            "domain": "String (e.g., {domain})",
+            "news_headline": "String (A realistic, exciting current industry trend or news headline related to this domain)",
+            "beginner_steps": [
+                {{
+                    "title": "String",
+                    "description": "String (Technical and actionable)",
+                    "key_skills": ["String", "String"],
+                    "course_link": "String (A direct URL to a relevant Coursera course or specialization)"
+                }}
+            ],
+            "intermediate_steps": [ ... ],
+            "advanced_steps": [ ... ]
+        }}
+
+        CRITICAL REQUIREMENTS:
+        1. There MUST be exactly 5 steps in `beginner_steps`, 5 steps in `intermediate_steps`, and 5 steps in `advanced_steps`.
+        2. ZERO OVERLAP: The roadmaps for VLSI must be completely different from Embedded, etc. Use specific domain keywords (e.g., RTL for VLSI, RTOS for Embedded).
+        3. COURSERA PLUS: Every step must include a `course_link` pointing to a relevant Coursera course that fits the student's Coursera Plus subscription.
+        4. Focus on becoming an elite master ready for top FAANG/Semiconductor roles.
+        5. Do NOT wrap the JSON in markdown blocks. Output raw JSON only.
+        """
 
         roadmap_data = self._generate_with_openai(prompt)
         if not roadmap_data:

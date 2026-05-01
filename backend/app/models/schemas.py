@@ -276,6 +276,7 @@ class RoadmapStep(BaseModel):
     title: str
     description: str
     key_skills: List[str]
+    course_link: Optional[str] = None
 
 
 class RoadmapResponse(BaseModel):
@@ -285,3 +286,16 @@ class RoadmapResponse(BaseModel):
     beginner_steps: List[RoadmapStep]
     intermediate_steps: List[RoadmapStep]
     advanced_steps: List[RoadmapStep]
+
+class SocialHook(BaseModel):
+    """Deep link to a social platform."""
+    platform: str
+    type: str
+    url: str
+    description: str
+
+class PulseResponse(BaseModel):
+    """Response schema for the Pulse engine."""
+    domain: str
+    briefing: str
+    social_hooks: List[SocialHook]

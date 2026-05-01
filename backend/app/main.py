@@ -20,6 +20,7 @@ from app.services.industry_resume_analyzer import industry_resume_analyzer
 from app.services.project_recommender import project_recommender
 from app.services.mock_assessment import mock_assessment_generator
 from app.services.roadmap_generator import roadmap_generator
+from app.services.pulse_engine import pulse_engine
 from app.models.schemas import AnalysisResponse, ComparisonResponse, InterviewChatResponse, ProjectRecommendation, AssessmentResponse, RoadmapRequest, RoadmapResponse
 
 app = FastAPI(
@@ -537,6 +538,18 @@ async def generate_roadmap(request: RoadmapRequest):
             domain=request.domain
         )
         return RoadmapResponse(**roadmap_data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/pulse", response_model=PulseResponse)
+async def get_pulse(request: RoadmapRequest):
+    """
+    Get live social pulse and industry briefing for a domain.
+    """
+    try:
+        pulse_data = pulse_engine.get_pulse(domain=request.domain)
+        return PulseResponse(**pulse_data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
