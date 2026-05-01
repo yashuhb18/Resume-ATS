@@ -134,27 +134,43 @@ export default function Hero() {
 
                 {/* Orbiting Satellite Card 1 */}
                 <motion.div
-                  animate={{ translateZ: [20, 50, 20], rotateY: [0, 5, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  animate={{ 
+                    translateZ: [20, 60, 20], 
+                    rotateY: [0, 10, -10, 0],
+                    scale: [1, 1.05, 1]
+                  }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                   className="absolute -top-10 -right-10 w-48 h-32 card-3d bg-indigo-500 p-6 flex flex-col justify-between shadow-2xl shadow-indigo-500/20"
                 >
-                  <Zap className="w-6 h-6 text-white" />
+                  <Zap className="w-6 h-6 text-white animate-pulse" />
                   <span className="text-xs font-black uppercase tracking-widest text-white/80 leading-tight">Instant Pulse <br /> Detection</span>
                 </motion.div>
 
                 {/* Orbiting Satellite Card 2 */}
                 <motion.div
-                  animate={{ translateZ: [50, 20, 50], rotateX: [0, -5, 0] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                  animate={{ 
+                    translateZ: [60, 20, 60], 
+                    rotateX: [0, -10, 10, 0],
+                    y: [0, -10, 10, 0]
+                  }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
                   className="absolute -bottom-6 -left-10 w-56 h-40 card-3d p-8 border-white/10 bg-[#111420]/80 backdrop-blur-xl"
                 >
                   <div className="flex items-center gap-2 mb-4">
-                    <Activity className="w-4 h-4 text-emerald-400" />
+                    <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Live Domain Feed</span>
                   </div>
                   <div className="space-y-2">
-                    <div className="h-2 w-full bg-white/5 rounded-full" />
-                    <div className="h-2 w-2/3 bg-white/5 rounded-full" />
+                    <motion.div 
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="h-2 w-full bg-white/10 rounded-full" 
+                    />
+                    <motion.div 
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                      className="h-2 w-2/3 bg-white/10 rounded-full" 
+                    />
                   </div>
                 </motion.div>
               </div>

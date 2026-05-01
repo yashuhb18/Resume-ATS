@@ -12,7 +12,7 @@ import {
   Loader2, Rocket, Trophy, Compass,
   BookOpen, ExternalLink, GraduationCap,
   Youtube, Monitor, Terminal, ShieldCheck,
-  Layers, Share2, Zap, Target, FileUp, Search, Info
+  Layers, Share2, Zap, Target, FileUp, Search, Info, Github
 } from 'lucide-react';
 
 const ECE_DOMAINS = [
@@ -29,6 +29,7 @@ interface RoadmapStep {
   key_skills: string[];
   course_link?: string;
   youtube_link?: string;
+  github_repo?: string; // New: Related GitHub repository
   critical_project?: string; // New: Specific project focus
 }
 
@@ -338,6 +339,17 @@ export default function RoadmapPage() {
                                     Masterclass
                                   </a>
                                 )}
+                                {step.github_repo && (
+                                  <a 
+                                    href={step.github_repo} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-indigo-500 transition-all text-xs font-black uppercase tracking-widest group/git"
+                                  >
+                                    <Github className="w-5 h-5 group-hover/git:rotate-12 transition-transform" />
+                                    View Source
+                                  </a>
+                                )}
                               </div>
                             </div>
                             
@@ -345,14 +357,17 @@ export default function RoadmapPage() {
                               {step.description}
                             </p>
 
-                            {/* Critical Project Callout */}
-                            <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 flex items-center gap-6">
-                               <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                                  <Zap className="w-6 h-6 text-emerald-400" />
-                               </div>
-                               <div>
-                                  <span className="block text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-1">Critical Project Milestone</span>
-                                  <p className="text-sm font-bold text-slate-200">{step.critical_project}</p>
+                            {/* Critical Project Highlight (Professional Card) */}
+                            <div className="relative p-8 rounded-3xl border border-indigo-500/20 bg-indigo-500/5 overflow-hidden">
+                               <div className="absolute top-4 right-6 text-[8px] font-black uppercase tracking-[0.4em] text-indigo-400 opacity-50">Core Project Milestone</div>
+                               <div className="flex flex-col md:flex-row items-center gap-6">
+                                  <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                                     <Cpu className="w-7 h-7 text-indigo-400" />
+                                  </div>
+                                  <div>
+                                     <h5 className="text-lg font-black text-white mb-1">Master This Objective</h5>
+                                     <p className="text-sm font-bold text-slate-300">{step.critical_project}</p>
+                                  </div>
                                </div>
                             </div>
                           </div>
