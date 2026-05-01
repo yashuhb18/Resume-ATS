@@ -209,6 +209,18 @@ services:
 
 ## 🚨 Common Issues
 
+### Issue: "pydantic-core" compilation error
+
+**Error:** `maturin failed` or `Read-only file system`
+
+**Fix:**
+This happens when pip tries to compile packages from source. Solution:
+1. We use `requirements-render.txt` with pinned versions that have pre-built wheels
+2. Ensure you're using **Python 3.10** (set in Render service settings)
+3. If error persists, try upgrading pip in your Render service:
+   - Go to Settings → Build Command
+   - Change to: `pip install --upgrade pip setuptools && pip install -r backend/requirements-render.txt`
+
 ### Issue: "Internal Server Error" on Render
 
 **Check:**
