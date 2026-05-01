@@ -172,7 +172,7 @@ async def analyze_resume(file: UploadFile = File(...)):
         response = AnalysisResponse(
             success=True,
             candidate=parsed_data["candidate"],
-            ats_score=ats_analysis["score"],
+            ats_score=int(ats_analysis["score"]),
             score_breakdown=ats_analysis["breakdown"],
             score_category=ats_analysis["category"],
             domain=domain_data,
@@ -186,7 +186,7 @@ async def analyze_resume(file: UploadFile = File(...)):
             industry_report=industry_report,
             optimized_resume=optimized_resume,
             score_methodology=ats_analysis.get("methodology", {}),
-            computer_vision=parsed_data.get("computer_vision", {}),
+            computer_vision=parsed_data.get("computer_vision", ComputerVisionAnalysis()),
             project_recommendations=project_recs,
             assessment=assessment_data,
             # OCR metadata
