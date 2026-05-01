@@ -90,19 +90,9 @@ export default function RoadmapPage() {
       if (!response.ok) throw new Error('Intelligence Matrix Failed.');
       const data = await response.json();
       
-      // Start "Goated" Animation
-      setShowPortalAnimation(true);
-      setPortalComplete(false);
-      
-      setTimeout(() => {
-        setRoadmap(data);
-        setActiveTab('beginner');
-        // Portal finishes after the flash
-        setTimeout(() => {
-          setShowPortalAnimation(false);
-          setPortalComplete(true);
-        }, 300);
-      }, 2500);
+      setRoadmap(data);
+      setActiveTab('beginner');
+      setPortalComplete(true);
 
     } catch (err: any) {
       setError(err.message || 'Quantum Anomaly.');
@@ -404,45 +394,6 @@ export default function RoadmapPage() {
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {showPortalAnimation && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-[#020202] flex items-center justify-center overflow-hidden"
-          >
-             <div className="absolute inset-0 pointer-events-none perspective-[1000px]">
-                {[...Array(50)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ z: -500, opacity: 0, scale: 0.1 }}
-                    animate={{ z: [ -500, 1000 ], opacity: [ 0, 1, 0 ], scale: [ 0.1, 4 ] }}
-                    transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.05, ease: "circIn" }}
-                    className="absolute top-1/2 left-1/2 w-1 h-20 bg-indigo-500/40 blur-[1px] rounded-full"
-                    style={{ transform: `rotate(${i * 7.2}deg) translateY(-200px)` }}
-                  />
-                ))}
-             </div>
-             <motion.div animate={{ opacity: [0, 0.8, 0], scale: [1, 1.1, 1], filter: ["hue-rotate(0deg)", "hue-rotate(90deg)", "hue-rotate(0deg)"] }} transition={{ duration: 0.2, repeat: Infinity }} className="absolute inset-0 pointer-events-none bg-indigo-500/5 mix-blend-screen" />
-             <div className="text-center relative z-10">
-                <motion.div initial={{ scale: 0, rotate: -180 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", damping: 12 }} className="mb-12 relative">
-                   <div className="absolute inset-0 blur-3xl bg-indigo-500/50 animate-pulse" />
-                   <Layers className="w-32 h-32 text-white mx-auto relative z-10" />
-                </motion.div>
-                <div className="space-y-4">
-                  <h2 className="text-5xl font-black tracking-[0.8em] text-white uppercase italic animate-pulse">Synchronizing</h2>
-                  <div className="flex items-center justify-center gap-4">
-                     <div className="h-[2px] w-24 bg-gradient-to-r from-transparent to-indigo-500" />
-                     <span className="text-indigo-400 font-mono text-sm tracking-[0.3em]">DNA_SCAN_ACTIVE</span>
-                     <div className="h-[2px] w-24 bg-gradient-to-l from-transparent to-indigo-500" />
-                  </div>
-                </div>
-             </div>
-             <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0] }} transition={{ delay: 2.2, duration: 0.3 }} className="absolute inset-0 bg-white z-[110]" />
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
