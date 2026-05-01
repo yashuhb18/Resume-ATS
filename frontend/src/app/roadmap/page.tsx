@@ -332,14 +332,15 @@ export default function RoadmapPage() {
                                
                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   {step.projects?.map((project, pIdx) => (
-                                    <div key={pIdx} className="relative p-8 rounded-[2.5rem] bg-indigo-500/5 border border-indigo-500/20 hover:border-indigo-500/40 transition-all group/project">
-                                       <div className="flex flex-col h-full justify-between gap-6">
+                                    <div key={pIdx} className="relative p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/10 hover:border-indigo-500/50 hover:bg-indigo-500/[0.02] transition-all group/project shadow-2xl hover:shadow-indigo-500/10">
+                                       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/0 via-transparent to-indigo-500/0 group-hover/project:from-indigo-500/[0.05] transition-all rounded-[2.5rem]" />
+                                       <div className="flex flex-col h-full justify-between gap-6 relative z-10">
                                           <div>
                                              <div className="flex items-center justify-between mb-4">
-                                                <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.3em]">Module 0{pIdx + 1}</span>
-                                                <Cpu className="w-4 h-4 text-indigo-500 opacity-40 group-hover/project:rotate-12 transition-transform" />
+                                                <span className="text-[9px] font-black text-indigo-400/60 uppercase tracking-[0.4em]">Project Alpha 0{pIdx + 1}</span>
+                                                <Cpu className="w-5 h-5 text-indigo-500 opacity-20 group-hover/project:opacity-100 group-hover/project:rotate-90 transition-all duration-500" />
                                              </div>
-                                             <h5 className="text-xl font-black text-white leading-tight mb-2 uppercase tracking-tight group-hover/project:text-indigo-400 transition-colors">
+                                             <h5 className="text-2xl font-black text-white leading-[1.1] mb-2 uppercase tracking-tighter group-hover/project:text-indigo-400 transition-colors">
                                                 {project.title}
                                              </h5>
                                           </div>
@@ -348,11 +349,11 @@ export default function RoadmapPage() {
                                               href={project.github_repo} 
                                               target="_blank" 
                                               rel="noopener noreferrer"
-                                              className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-indigo-400 hover:text-white transition-all bg-indigo-500/10 px-4 py-2.5 rounded-xl border border-indigo-500/20 w-fit"
+                                              className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-white/50 hover:text-white transition-all bg-white/5 hover:bg-indigo-500 px-5 py-3 rounded-2xl border border-white/10 w-fit"
                                             >
                                                <Github className="w-4 h-4" />
-                                               View Source
-                                               <ExternalLink className="w-3 h-3 opacity-0 group-hover/project:opacity-100 transition-opacity" />
+                                               Sync Repository
+                                               <ExternalLink className="w-3 h-3 opacity-40" />
                                             </a>
                                           )}
                                        </div>
