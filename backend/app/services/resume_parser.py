@@ -81,21 +81,18 @@ class ResumeParser:
             raw_text, parsing_method, ocr_confidence = self._apply_ocr_if_needed(
                 file_path, raw_text
             )
+
+        elif file_ext in ['.txt', '.md', '.text']:
+            raw_text = self._extract_text_file_content(file_path)
+            has_tables = False
+            has_images = False
+            cv_analysis = {"available": False, "layout_score": 50}
         else:
-            # DOCX files are always text-based, never OCR
+            # Assume DOCX
             raw_text = self._extract_docx_text(file_path)
             has_tables = self._check_docx_tables(file_path)
             has_images = self._check_docx_images(file_path)
-            cv_analysis = {
-                "available": False,
-                "backend": "docx_not_applicable",
-                "layout_score": 85,
-                "risk_level": "low",
-                "pages_analyzed": 0,
-                "signals": {},
-                "issues": [],
-                "page_reports": [],
-            }
+            cv_analysis = {"available": False, "layout_score": 85}
         
         # Parse sections
         sections = self._identify_sections(raw_text)
@@ -695,3 +692,10 @@ class ResumeParser:
             education.append(Education(**current_edu))
         
         return education[:3]  # Limit to 3 entries
+    def _extract_text_file_content(self, file_path: str) -> str:
+        """Extract text from plain text files."""
+        try:
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                return f.read()
+        except Exception as e:
+            raise Exception(f"Error reading text file: {str(e)}")

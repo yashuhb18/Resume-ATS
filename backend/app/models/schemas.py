@@ -1,9 +1,10 @@
 """
-Pydantic models for API request/response schemas
+Pydantic schemas for the Resume ATS application.
 """
-from pydantic import BaseModel
-from typing import List, Optional, Dict, Any
+from typing import List, Dict, Any, Optional, Union
+from pydantic import BaseModel, Field
 
+# --- Basic Components ---
 
 class CandidateInfo(BaseModel):
     name: Optional[str] = None
@@ -12,33 +13,6 @@ class CandidateInfo(BaseModel):
     location: Optional[str] = None
     linkedin: Optional[str] = None
     github: Optional[str] = None
-
-
-class SkillCategory(BaseModel):
-    name: str
-    skills: List[str]
-    strength: str  # Strong, Moderate, Weak
-
-
-class SkillsData(BaseModel):
-    programming_languages: List[str] = []
-    frameworks: List[str] = []
-    tools: List[str] = []
-    databases: List[str] = []
-    soft_skills: List[str] = []
-    core_engineering: List[str] = []
-    other: List[str] = []
-    total_count: int = 0
-    skill_categories: List[SkillCategory] = []
-
-
-class Project(BaseModel):
-    title: str
-    technologies: List[str] = []
-    description: Optional[str] = None
-    impact: Optional[str] = None
-    score: int = 0  # 0-100
-
 
 class Experience(BaseModel):
     company: Optional[str] = None
@@ -49,13 +23,18 @@ class Experience(BaseModel):
     has_metrics: bool = False
     action_verbs_count: int = 0
 
-
 class ExperienceSummary(BaseModel):
-    total_years: float = 0
+    total_years: float = 0.0
     total_months: int = 0
     positions: List[Experience] = []
     overall_quality: int = 0
 
+class Project(BaseModel):
+    title: Optional[str] = None
+    technologies: List[str] = []
+    description: Optional[str] = None
+    impact: Optional[str] = None
+    score: int = 0
 
 class Education(BaseModel):
     degree: Optional[str] = None
@@ -63,28 +42,41 @@ class Education(BaseModel):
     year: Optional[str] = None
     gpa: Optional[str] = None
 
+class SectionFormatting(BaseModel):
+    has_tables: bool = False
+    has_images: bool = False
+    word_count: int = 0
+    line_count: int = 0
+    cv_layout_score: int = 85
+    cv_risk_level: str = "low"
+
+class ComputerVisionAnalysis(BaseModel):
+    available: bool = False
+    layout_score: int = 85
+    risk_level: str = "low"
+    issues: List[str] = []
+
+# --- Skills & Domain Schemas ---
+
+class SkillCategory(BaseModel):
+    name: str
+    skills: List[str]
+
+class SkillsData(BaseModel):
+    programming_languages: List[str] = []
+    frameworks: List[str] = []
+    tools: List[str] = []
+    databases: List[str] = []
+    soft_skills: List[str] = []
+    other: List[str] = []
+    total_count: int = 0
 
 class DomainInfo(BaseModel):
-    primary: str
-    confidence: float
-    secondary: Optional[str] = None
-    keywords_matched: List[str] = []
+    primary: str = "General"
+    confidence: float = 0.0
+    alternative: Optional[str] = None
 
-
-class ATSIssue(BaseModel):
-    type: str
-    severity: str  # High, Medium, Low
-    description: str
-    suggestion: str
-
-
-class Suggestion(BaseModel):
-    category: str
-    title: str
-    description: str
-    priority: str  # High, Medium, Low
-    examples: List[str] = []
-
+# --- ATS Scoring & Issues Schemas ---
 
 class ScoreBreakdown(BaseModel):
     keyword_relevance: int = 0
@@ -94,35 +86,62 @@ class ScoreBreakdown(BaseModel):
     experience_clarity: int = 0
     project_impact: int = 0
 
+class ATSIssue(BaseModel):
+    type: str
+    severity: str # High, Medium, Low
+    description: str
+    suggestion: str
+
+class Suggestion(BaseModel):
+    category: str
+    title: str
+    description: str
+    priority: str # High, Medium, Low
+    examples: List[str] = []
 
 class KeywordsAnalysis(BaseModel):
     found: List[str] = []
     missing: List[str] = []
-    recommended: List[str] = []
+    density_score: int = 0
 
+class ATSScore(BaseModel):
+    total_score: int = 0
+    parsing_score: int = 0
+    formatting_score: int = 0
+    keyword_score: int = 0
+    experience_score: int = 0
+
+class Issue(BaseModel):
+    category: str
+    severity: str # high, medium, low
+    message: str
+    suggestion: str
+
+# --- Industry Analysis & Rewrite Schemas ---
 
 class IndustryCheck(BaseModel):
     name: str
-    score: int = 0
-    issue_count: int = 0
-    status: str = "Needs Review"  # Pass, Warning, Needs Review
-    findings: List[str] = []
-    recommendation: str = ""
-
+    score: int
+    issue_count: int
+    status: str
+    findings: List[str]
+    recommendation: str
 
 class IndustryCategory(BaseModel):
     name: str
-    score: int = 0
-    issue_count: int = 0
-    checks: List[IndustryCheck] = []
-
+    score: int
+    issue_count: int
+    checks: List[IndustryCheck]
 
 class IndustryReport(BaseModel):
-    model: str = "Industry Resume Screener v1"
-    benchmark: str = "Parseability, content evidence, section structure, ATS essentials, and tailoring"
-    categories: List[IndustryCategory] = []
-    top_actions: List[str] = []
+    categories: List[IndustryCategory]
+    top_actions: List[str]
 
+class Optimization(BaseModel):
+    section: str
+    original: str
+    optimized: str
+    reason: str
 
 class ResumeRewrite(BaseModel):
     headline: str = ""
@@ -134,147 +153,66 @@ class ResumeRewrite(BaseModel):
     ats_safe_resume: str = ""
     notes: List[str] = []
 
+class SkillAnalysis(BaseModel):
+    found: List[str] = []
+    missing: List[str] = []
+    relevance_score: int = 0
 
-class ComputerVisionAnalysis(BaseModel):
-    available: bool = False
-    backend: str = "unknown"
-    layout_score: int = 0
-    risk_level: str = "unknown"
-    pages_analyzed: int = 0
-    signals: Dict[str, Any] = {}
-    issues: List[str] = []
-    page_reports: List[Dict[str, Any]] = []
-
-
-class ChatMessage(BaseModel):
-    role: str
-    content: str
-
-
-class InterviewChatResponse(BaseModel):
-    success: bool
-    answer: str
-    mode: str
-    suggested_questions: List[str] = []
-    evidence: List[str] = []
-    interviewer_score: Optional[int] = None
-    next_step: Optional[str] = None
-    provider: str = "local_fallback"
-
+# --- Feature-Specific Schemas ---
 
 class ProjectRecommendation(BaseModel):
     title: str
     description: str
-    skills_gained: List[str]
-    difficulty: str
-    domain: str
-
+    difficulty: str # Beginner, Intermediate, Advanced
+    impact: str
+    tech_stack: List[str]
+    github_search_query: str
 
 class AssessmentQuestion(BaseModel):
     question: str
     options: List[str]
-    correct_answer: str
+    correct_answer: int
     explanation: str
 
-
 class AssessmentResponse(BaseModel):
-    title: str
-    description: str
+    domain: str
+    difficulty: str
     questions: List[AssessmentQuestion]
-    total_questions: int
-
-
-class AnalysisResponse(BaseModel):
-    success: bool
-    candidate: CandidateInfo
-    ats_score: int
-    score_breakdown: ScoreBreakdown
-    score_category: str  # Excellent, Good, Needs Improvement, Poor
-    domain: DomainInfo
-    skills: SkillsData
-    projects: List[Project] = []
-    experience: ExperienceSummary
-    education: List[Education] = []
-    issues: List[ATSIssue] = []
-    suggestions: List[Suggestion] = []
-    keywords_analysis: KeywordsAnalysis
-    industry_report: IndustryReport = IndustryReport()
-    optimized_resume: ResumeRewrite = ResumeRewrite()
-    score_methodology: Dict[str, Any] = {}
-    computer_vision: ComputerVisionAnalysis = ComputerVisionAnalysis()
-    # ECE/EEE Additions
-    project_recommendations: List[ProjectRecommendation] = []
-    assessment: Optional[AssessmentResponse] = None
-    # OCR metadata
-    parsing_method: str = "standard"  # "standard" | "ocr" | "ocr_unavailable"
-    ocr_confidence: Optional[str] = None  # "low" | "medium" | "high" (only when OCR used)
-
-
-class JDAnalysis(BaseModel):
-    """Job Description Analysis"""
-    requirements: Dict[str, Any]
-    skills: Dict[str, List[str]]
-    keywords: List[str]
-
-
-class MatchBreakdown(BaseModel):
-    """Match percentage breakdown"""
-    skill_match: int
-    keyword_match: int
-    experience_match: int
-    overall_match: int
-
-
-class RecruiterReport(BaseModel):
-    """Professional recruiter report"""
-    fit_rating: str
-    overall_summary: str
-    match_breakdown: MatchBreakdown
-    strengths: List[str]
-    gaps: List[str]
-    recommendation: str
-    next_steps: List[str]
-
-
-class ComparisonSuggestion(BaseModel):
-    """Suggestion for JD comparison"""
-    category: str
-    title: str
-    description: str
-    priority: str  # High, Medium, Low
-
 
 class ComparisonResponse(BaseModel):
-    """Resume vs Job Description comparison response"""
-    success: bool
-    candidate: CandidateInfo
-    ats_score: int
-    match_percentage: int
-    match_breakdown: MatchBreakdown
-    jd_analysis: JDAnalysis
-    missing_skills: Dict[str, List[str]]
+    jd_match_score: int
     missing_keywords: List[str]
-    suggestions: List[ComparisonSuggestion]
-    recruiter_report: RecruiterReport
-    industry_report: IndustryReport = IndustryReport()
-    optimized_resume: ResumeRewrite = ResumeRewrite()
-    score_methodology: Dict[str, Any] = {}
-    computer_vision: ComputerVisionAnalysis = ComputerVisionAnalysis()
-    project_recommendations: List[ProjectRecommendation] = []
-    assessment: Optional[AssessmentResponse] = None
-    parsing_method: str = "standard"
-    ocr_confidence: Optional[str] = None
+    matching_keywords: List[str]
+    strengths: List[str]
+    weaknesses: List[str]
+    suitability_verdict: str
 
+class InterviewMessage(BaseModel):
+    role: str # user, assistant
+    content: str
+
+class InterviewChatResponse(BaseModel):
+    message: str
+    context: Dict[str, Any] = {}
+
+# --- Roadmap & Global Engine Schemas ---
 
 class RoadmapRequest(BaseModel):
     """Request schema for generating a career roadmap."""
     domain: Optional[str] = None
     resume_text: Optional[str] = None
 
-
 class ProjectDetail(BaseModel):
     title: str
     github_repo: Optional[str] = None
+
+class JobOpening(BaseModel):
+    """Details of a live job opening."""
+    title: str
+    company: Optional[str] = "Top Industry Leader"
+    location: Optional[str] = "Remote / Global"
+    apply_link: str
+    salary_range: Optional[str] = "Competitive Market Rate"
 
 class RoadmapStep(BaseModel):
     """A single step in the career roadmap."""
@@ -286,25 +224,38 @@ class RoadmapStep(BaseModel):
     projects: List[ProjectDetail] = []
     critical_project: Optional[str] = None # For backward compatibility
 
-
 class RoadmapResponse(BaseModel):
     """Response schema containing the career roadmap."""
     domain: str
     role_suitability: str = "Candidate DNA matches industry requirements."
     news_headline: str
+    market_demand_trend: List[int] = [65, 70, 68, 75, 82, 88, 92] # 7-point trend
+    job_openings: List[JobOpening] = []
     beginner_steps: List[RoadmapStep]
     intermediate_steps: List[RoadmapStep]
     advanced_steps: List[RoadmapStep]
 
-class SocialHook(BaseModel):
-    """Deep link to a social platform."""
-    platform: str
-    type: str
-    url: str
-    description: str
-
 class PulseResponse(BaseModel):
-    """Response schema for the Pulse engine."""
+    """Real-time pulse and search hooks."""
     domain: str
     briefing: str
-    social_hooks: List[SocialHook]
+    social_hooks: List[Dict[str, str]]
+
+# --- Final Analysis Response ---
+
+class AnalysisResponse(BaseModel):
+    candidate_info: CandidateInfo
+    experience: ExperienceSummary
+    projects: List[Project]
+    education: List[Education]
+    skills: SkillAnalysis
+    ats_score: ATSScore
+    issues: List[Issue]
+    optimized_resume: ResumeRewrite = ResumeRewrite()
+    industry_report: Optional[IndustryReport] = None
+    score_methodology: Dict[str, Any] = {}
+    computer_vision: ComputerVisionAnalysis = ComputerVisionAnalysis()
+    project_recommendations: List[ProjectRecommendation] = []
+    assessment: Optional[AssessmentResponse] = None
+    parsing_method: str = "standard"
+    ocr_confidence: Optional[str] = None

@@ -562,14 +562,17 @@ async def roadmap_from_file(file: UploadFile = File(...)):
         # 2. Parse the file using our existing robust parser
         from app.services.resume_parser import ResumeParser
         parser = ResumeParser()
-        # Note: parse is synchronous and returns a dict
+        print(f"DEBUG: Parsing file {file.filename} with suffix {suffix}")
         parse_result = parser.parse(temp_path, suffix)
         resume_text = parse_result.get("raw_text", "")
+        print(f"DEBUG: Extracted {len(resume_text)} characters")
         
         # 3. Generate roadmap from extracted text
+        print("DEBUG: Calling Roadmap Generator...")
         roadmap_data = roadmap_generator.generate(
             resume_text=resume_text
         )
+        print("DEBUG: Roadmap Generation Success")
         return RoadmapResponse(**roadmap_data)
     except Exception as e:
         import traceback
