@@ -51,6 +51,7 @@ type StepType = typeof STEPS[number];
 
 // High-End SVG Line Chart Component
 const MarketTrendChart = ({ trend }: { trend: number[] }) => {
+  if (!trend || trend.length < 2) return null;
   const points = trend.map((v, i) => `${(i / (trend.length - 1)) * 100},${100 - v}`).join(' ');
   
   return (
