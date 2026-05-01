@@ -538,7 +538,7 @@ async def generate_roadmap(request: RoadmapRequest):
     Generate a dynamic career roadmap for a specific domain.
     """
     try:
-        roadmap_data = roadmap_generator.generate(
+        roadmap_data = await roadmap_generator.generate_async(
             domain=request.domain
         )
         return RoadmapResponse(**roadmap_data)
@@ -573,7 +573,7 @@ async def roadmap_from_file(file: UploadFile = File(...)):
         
         # 3. Generate roadmap from extracted text
         print("DEBUG: Calling Roadmap Generator...")
-        roadmap_data = roadmap_generator.generate(
+        roadmap_data = await roadmap_generator.generate_async(
             resume_text=resume_text
         )
         print("DEBUG: Roadmap Generation Success")
