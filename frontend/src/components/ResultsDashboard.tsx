@@ -17,6 +17,8 @@ import ProjectsCard       from './results/ProjectsCard';
 import IssuesCard         from './results/IssuesCard';
 import SuggestionsCard    from './results/SuggestionsCard';
 import KeywordsCard       from './results/KeywordsCard';
+import IndustryReportCard from './results/IndustryReportCard';
+import OptimizedResumeCard from './results/OptimizedResumeCard';
 
 interface ResultsDashboardProps {
   results?: AnalysisResult;
@@ -385,6 +387,28 @@ export default function ResultsDashboard({ results, comparisonResults, onReset }
         )}
 
         {/* ── Analysis grid ── */}
+        {data.industry_report && data.industry_report.categories.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.28 }}
+            className="mb-8"
+          >
+            <IndustryReportCard report={data.industry_report} />
+          </motion.div>
+        )}
+
+        {data.optimized_resume && data.optimized_resume.ats_safe_resume && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mb-8"
+          >
+            <OptimizedResumeCard rewrite={data.optimized_resume} />
+          </motion.div>
+        )}
+
         {results && !isComparison && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             {[

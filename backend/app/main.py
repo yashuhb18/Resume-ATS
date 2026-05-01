@@ -16,6 +16,7 @@ from app.services.report_generator import ReportGenerator
 from app.services.jd_comparator import JDComparator
 from app.services.ml_quality_analyzer import ml_quality_analyzer
 from app.services.interview_chatbot import interview_chatbot
+from app.services.industry_resume_analyzer import industry_resume_analyzer
 from app.models.schemas import AnalysisResponse, ComparisonResponse, InterviewChatResponse
 
 app = FastAPI(
@@ -128,9 +129,25 @@ async def analyze_resume(file: UploadFile = File(...)):
             ml_analysis=ml_analysis
         )
         
+        keywords_analysis = ats_analysis["keywords_analysis"]
+        industry_report = industry_resume_analyzer.build_report(
+            parsed_data=parsed_data,
+            skills=skills_data,
+            domain=domain_data,
+            keywords_analysis=keywords_analysis,
+            parsing_method=parsing_method,
+            ocr_confidence=ocr_confidence,
+        )
+        optimized_resume = industry_resume_analyzer.build_rewrite(
+            parsed_data=parsed_data,
+            skills=skills_data,
+            domain=domain_data,
+            keywords_analysis=keywords_analysis,
+        )
+
         # Cleanup temporary file
         os.unlink(tmp_path)
-        
+
         # Build response
         response = AnalysisResponse(
             success=True,
@@ -145,7 +162,9 @@ async def analyze_resume(file: UploadFile = File(...)):
             education=parsed_data["education"],
             issues=ats_analysis["issues"],
             suggestions=ats_analysis["suggestions"],
-            keywords_analysis=ats_analysis["keywords_analysis"],
+            keywords_analysis=keywords_analysis,
+            industry_report=industry_report,
+            optimized_resume=optimized_resume,
             score_methodology=ats_analysis.get("methodology", {}),
             computer_vision=parsed_data.get("computer_vision", {}),
             # OCR metadata
@@ -315,6 +334,23 @@ async def compare_resume_with_jd(
             for s in comparison["suggestions"]
         ]
         
+        industry_report = industry_resume_analyzer.build_report(
+            parsed_data=resume_parsed,
+            skills=skills_data,
+            domain=domain_data,
+            keywords_analysis=ats_analysis["keywords_analysis"],
+            parsing_method=parsing_method,
+            ocr_confidence=ocr_confidence,
+            comparison=comparison,
+        )
+        optimized_resume = industry_resume_analyzer.build_rewrite(
+            parsed_data=resume_parsed,
+            skills=skills_data,
+            domain=domain_data,
+            keywords_analysis=ats_analysis["keywords_analysis"],
+            comparison=comparison,
+        )
+
         # Build response
         response = ComparisonResponse(
             success=True,
@@ -327,6 +363,8 @@ async def compare_resume_with_jd(
             missing_keywords=comparison["missing_keywords"],
             suggestions=suggestions,
             recruiter_report=recruiter_report,
+            industry_report=industry_report,
+            optimized_resume=optimized_resume,
             score_methodology=ats_analysis.get("methodology", {}),
             computer_vision=resume_parsed.get("computer_vision", {}),
             parsing_method=parsing_method,

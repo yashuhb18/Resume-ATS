@@ -116,6 +116,40 @@ export interface KeywordsAnalysis {
   recommended: string[];
 }
 
+export interface IndustryCheck {
+  name: string;
+  score: number;
+  issue_count: number;
+  status: 'Pass' | 'Warning' | 'Needs Review' | string;
+  findings: string[];
+  recommendation: string;
+}
+
+export interface IndustryCategory {
+  name: string;
+  score: number;
+  issue_count: number;
+  checks: IndustryCheck[];
+}
+
+export interface IndustryReport {
+  model: string;
+  benchmark: string;
+  categories: IndustryCategory[];
+  top_actions: string[];
+}
+
+export interface ResumeRewrite {
+  headline: string;
+  summary: string;
+  skills: Record<string, string[]>;
+  experience_bullets: string[];
+  project_bullets: string[];
+  education: string[];
+  ats_safe_resume: string;
+  notes: string[];
+}
+
 export interface ComputerVisionAnalysis {
   available: boolean;
   backend: string;
@@ -157,6 +191,8 @@ export interface AnalysisResult {
   issues: ATSIssue[];
   suggestions: Suggestion[];
   keywords_analysis: KeywordsAnalysis;
+  industry_report?: IndustryReport;
+  optimized_resume?: ResumeRewrite;
   score_methodology?: ScoreMethodology;
   computer_vision?: ComputerVisionAnalysis;
   // OCR metadata
@@ -206,6 +242,8 @@ export interface ComparisonResult {
   missing_keywords: string[];
   suggestions: ComparisonSuggestion[];
   recruiter_report: RecruiterReport;
+  industry_report?: IndustryReport;
+  optimized_resume?: ResumeRewrite;
   score_methodology?: ScoreMethodology;
   computer_vision?: ComputerVisionAnalysis;
   parsing_method: 'standard' | 'ocr' | 'ocr_unavailable';

@@ -100,6 +100,40 @@ class KeywordsAnalysis(BaseModel):
     recommended: List[str] = []
 
 
+class IndustryCheck(BaseModel):
+    name: str
+    score: int = 0
+    issue_count: int = 0
+    status: str = "Needs Review"  # Pass, Warning, Needs Review
+    findings: List[str] = []
+    recommendation: str = ""
+
+
+class IndustryCategory(BaseModel):
+    name: str
+    score: int = 0
+    issue_count: int = 0
+    checks: List[IndustryCheck] = []
+
+
+class IndustryReport(BaseModel):
+    model: str = "Industry Resume Screener v1"
+    benchmark: str = "Parseability, content evidence, section structure, ATS essentials, and tailoring"
+    categories: List[IndustryCategory] = []
+    top_actions: List[str] = []
+
+
+class ResumeRewrite(BaseModel):
+    headline: str = ""
+    summary: str = ""
+    skills: Dict[str, List[str]] = {}
+    experience_bullets: List[str] = []
+    project_bullets: List[str] = []
+    education: List[str] = []
+    ats_safe_resume: str = ""
+    notes: List[str] = []
+
+
 class ComputerVisionAnalysis(BaseModel):
     available: bool = False
     backend: str = "unknown"
@@ -141,6 +175,8 @@ class AnalysisResponse(BaseModel):
     issues: List[ATSIssue] = []
     suggestions: List[Suggestion] = []
     keywords_analysis: KeywordsAnalysis
+    industry_report: IndustryReport = IndustryReport()
+    optimized_resume: ResumeRewrite = ResumeRewrite()
     score_methodology: Dict[str, Any] = {}
     computer_vision: ComputerVisionAnalysis = ComputerVisionAnalysis()
     # OCR metadata
@@ -194,6 +230,8 @@ class ComparisonResponse(BaseModel):
     missing_keywords: List[str]
     suggestions: List[ComparisonSuggestion]
     recruiter_report: RecruiterReport
+    industry_report: IndustryReport = IndustryReport()
+    optimized_resume: ResumeRewrite = ResumeRewrite()
     score_methodology: Dict[str, Any] = {}
     computer_vision: ComputerVisionAnalysis = ComputerVisionAnalysis()
     parsing_method: str = "standard"
