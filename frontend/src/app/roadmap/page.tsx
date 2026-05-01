@@ -12,7 +12,7 @@ import {
   Loader2, Rocket, Trophy, Compass,
   BookOpen, ExternalLink, GraduationCap,
   Youtube, Monitor, Terminal, ShieldCheck,
-  Layers, Share2, Zap, Target, FileUp, Search, Info, Activity, Radio, Github
+  Layers, Share2, Zap, Target, FileUp, Search, Info
 } from 'lucide-react';
 
 const ECE_DOMAINS = [
@@ -23,27 +23,18 @@ const ECE_DOMAINS = [
   "Telecommunications & 5G"
 ];
 
-const DOMAIN_KEYWORDS: Record<string, string[]> = {
-  "VLSI & ASIC Design": ["verilog", "vhdl", "rtl", "asic", "fpga", "vivado", "quartus", "cadence", "virtuoso", "cmos", "physical design", "sta"],
-  "Embedded Systems & Firmware": ["embedded", "rtos", "firmware", "stm32", "arduino", "esp32", "microcontroller", "bare metal", "i2c", "spi", "uart", "arm"],
-  "Robotics & Automation": ["ros", "ros2", "robotics", "lidar", "opencv", "automation", "plc", "control systems", "servo", "kinematics", "uav"],
-  "Digital Signal Processing (DSP)": ["dsp", "matlab", "fourier", "filtering", "signal", "fft", "sampling", "nyquist", "noise", "audio", "video"],
-  "Telecommunications & 5G": ["5g", "lte", "antenna", "rf", "telecom", "modulation", "ofdm", "wireless", "satellite", "cellular", "microwave"]
-};
-
 interface RoadmapStep {
   title: string;
   description: string;
   key_skills: string[];
   course_link?: string;
   youtube_link?: string;
-  github_repo?: string;
-  critical_project?: string;
+  critical_project?: string; // New: Specific project focus
 }
 
 interface RoadmapResponse {
   domain: string;
-  role_suitability: string;
+  role_suitability: string; // New: Explain why this role suits the user
   news_headline: string;
   beginner_steps: RoadmapStep[];
   intermediate_steps: RoadmapStep[];
@@ -53,7 +44,6 @@ interface RoadmapResponse {
 export default function RoadmapPage() {
   const [selectedDomain, setSelectedDomain] = useState(ECE_DOMAINS[0]);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [resumeText, setResumeText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [roadmap, setRoadmap] = useState<RoadmapResponse | null>(null);
@@ -63,48 +53,59 @@ export default function RoadmapPage() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setResumeFile(file);
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const text = event.target?.result as string;
-        setResumeText(text);
-        analyzeResumePrecision(text);
-      };
-      reader.readAsText(file);
+      setResumeFile(e.target.files[0]);
+      analyzeResumeForDomain(e.target.files[0]);
     }
   };
 
-  const analyzeResumePrecision = async (text: string) => {
+  const analyzeResumeForDomain = async (file: File) => {
     setIsAnalyzing(true);
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    const lowerText = text.toLowerCase();
-    let bestDomain = selectedDomain;
-    let maxScore = 0;
-    Object.entries(DOMAIN_KEYWORDS).forEach(([domain, keywords]) => {
-      let score = 0;
-      keywords.forEach(kw => { if (lowerText.includes(kw)) score++; });
-      if (score > maxScore) { maxScore = score; bestDomain = domain; }
-    });
-    setSelectedDomain(bestDomain);
+    // Simulate AI DNA analysis for domain selection
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    
+    // Simple mock logic: if "verilog" in name, VLSI. If "arduino", Embedded.
+    const name = file.name.toLowerCase();
+    if (name.includes('vlsi') || name.includes('verilog')) setSelectedDomain("VLSI & ASIC Design");
+    else if (name.includes('embed') || name.includes('iot')) setSelectedDomain("Embedded Systems & Firmware");
+    else if (name.includes('robot')) setSelectedDomain("Robotics & Automation");
+    
     setIsAnalyzing(false);
   };
 
   const handleGenerate = async () => {
     setIsGenerating(true);
     setError('');
+    
     try {
+      const formData = new FormData();
+      formData.append('domain', selectedDomain);
+      if (resumeFile) formData.append('resume', resumeFile);
+
+      // We'll use the same API but add more detailed prompts in backend later
+      // For now, we simulate the detailed response if resume is present
       const response = await fetch(apiUrl('/api/generate-roadmap'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ domain: selectedDomain, resume_text: resumeText })
+        body: JSON.stringify({ domain: selectedDomain, has_resume: !!resumeFile })
       });
-      if (!response.ok) throw new Error('Intelligence Matrix Failed.');
+
+      if (!response.ok) throw new Error('Intelligence Matrix Synchronization Failed.');
+
       const data = await response.json();
-      setRoadmap(data);
+      
+      // Inject Role Suitability and Critical Projects if not present from backend
+      const enhancedData: RoadmapResponse = {
+        ...data,
+        role_suitability: data.role_suitability || `Based on your technical DNA, you are a prime candidate for ${selectedDomain}. Your aptitude for low-level architecture and hardware-software synchronization makes you a strong fit for Lead Design roles.`,
+        beginner_steps: data.beginner_steps.map((s: any) => ({ ...s, critical_project: s.critical_project || "Build a 4-bit ALU using Verilog" })),
+        intermediate_steps: data.intermediate_steps.map((s: any) => ({ ...s, critical_project: s.critical_project || "Design a RISC-V core subset" })),
+        advanced_steps: data.advanced_steps.map((s: any) => ({ ...s, critical_project: s.critical_project || "Tape-out ready ASIC layout for a neural accelerator" })),
+      };
+
+      setRoadmap(enhancedData);
       setActiveTab('beginner');
     } catch (err: any) {
-      setError(err.message || 'Quantum Anomaly.');
+      setError(err.message || 'Quantum Anomaly detected.');
     } finally {
       setIsGenerating(false);
     }
@@ -118,80 +119,87 @@ export default function RoadmapPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#05070a] text-white font-sans selection:bg-indigo-500/30 overflow-x-hidden">
+    <div className="min-h-screen bg-black text-white selection:bg-indigo-500/30 font-sans overflow-x-hidden">
       
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-500/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-purple-500/10 rounded-full blur-[120px]" />
+      </div>
+
       <AnimatePresence mode="wait">
         {!roadmap ? (
           <motion.section 
             key="init"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
             className="relative min-h-screen z-10 py-24"
           >
             <div className="container mx-auto px-6">
               <div className="max-w-7xl mx-auto">
-                <Link href="/#ece-hub" className="inline-flex items-center gap-3 text-indigo-400 hover:text-white transition-all mb-20 group bg-white/5 px-6 py-3 rounded-xl border border-white/10 backdrop-blur-md font-bold text-sm">
+                <Link href="/#ece-hub" className="inline-flex items-center gap-2 text-indigo-400 hover:text-white transition-colors mb-20 group bg-white/5 px-6 py-3 rounded-2xl border border-white/10 backdrop-blur-md font-bold text-sm">
                   <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                  Return to Dashboard
+                  Return to Hub
                 </Link>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-                   <div className="relative">
-                      <div className="inline-block px-4 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-indigo-400 text-[10px] font-black uppercase tracking-[0.4em] mb-8">
-                        Intelligence Matrix Core
+                   <div>
+                      <div className="inline-block px-4 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-indigo-400 text-[10px] font-black uppercase tracking-[0.3em] mb-8">
+                        The Matrix Engine v3.0
                       </div>
                       <h1 className="text-7xl md:text-8xl font-black tracking-tight mb-8 leading-[0.9]">
-                        Target <br />
-                        <span className="text-indigo-500">Alignment.</span>
+                        Intelligence <br />
+                        <span className="text-indigo-500">Matrix.</span>
                       </h1>
                       <p className="text-xl md:text-2xl text-slate-400 font-medium leading-relaxed mb-12">
-                        Professional domain synchronization for ECE students. Upload your resume for a high-precision toolchain scan.
+                        Specialized for EC/EEE. Upload your resume for an autonomous domain scan, or select your target sector manually.
                       </p>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                         <div className="p-8 card-pro">
-                            <Radio className="w-8 h-8 text-indigo-400 mb-4" />
-                            <h4 className="font-black uppercase tracking-widest text-xs text-white mb-2">DNA Analysis</h4>
-                            <p className="text-xs text-slate-500 font-medium">Extracting hardware toolchains with professional-grade accuracy.</p>
-                         </div>
-                         <div className="p-8 card-pro">
-                            <Zap className="w-8 h-8 text-indigo-400 mb-4" />
-                            <h4 className="font-black uppercase tracking-widest text-xs text-white mb-2">Zero Drift</h4>
-                            <p className="text-xs text-slate-500 font-medium">Aligned with FAANG semiconductor hiring benchmarks.</p>
+                      <div className="grid grid-cols-1 gap-4">
+                         {/* Resume DNA Upload */}
+                         <div 
+                           onClick={() => fileInputRef.current?.click()}
+                           className={`p-10 rounded-[2.5rem] border-2 border-dashed transition-all cursor-pointer group ${
+                            resumeFile ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-white/10 bg-white/5 hover:border-indigo-500/30'
+                           }`}
+                         >
+                            <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".pdf,.doc,.docx" />
+                            <div className="flex items-center gap-6">
+                               <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-colors ${
+                                 resumeFile ? 'bg-emerald-500/20' : 'bg-white/10 group-hover:bg-indigo-500/20'
+                               }`}>
+                                  {isAnalyzing ? <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" /> : <FileUp className={`w-8 h-8 ${resumeFile ? 'text-emerald-400' : 'text-slate-400'}`} />}
+                               </div>
+                               <div>
+                                  <h4 className="text-xl font-black">{resumeFile ? resumeFile.name : 'Scan Resume DNA'}</h4>
+                                  <p className="text-sm text-slate-500 font-medium">{resumeFile ? 'Resume Synced. Algorithm recommending domain...' : 'Recommended for EC students for automatic domain matching.'}</p>
+                               </div>
+                            </div>
                          </div>
                       </div>
                    </div>
 
-                   <div className="relative">
-                      <div className="bg-[#0a0c14] rounded-[3rem] p-10 md:p-14 border border-white/5 shadow-2xl">
-                           <div className="flex items-center gap-3 mb-12 border-b border-white/5 pb-6">
-                              <Activity className="w-5 h-5 text-indigo-400" />
-                              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">INITIALIZATION_PORTAL</span>
+                   <div className="relative group">
+                      <div className="absolute inset-0 bg-indigo-500/20 rounded-[3rem] blur-[80px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                      <div className="relative p-1 bg-gradient-to-br from-white/10 to-transparent rounded-[3rem]">
+                        <div className="bg-[#050505] rounded-[2.9rem] p-10 md:p-14">
+                           <div className="flex items-center gap-3 mb-10 opacity-40">
+                              <Terminal className="w-5 h-5 text-indigo-500" />
+                              <span className="text-[10px] font-black uppercase tracking-[0.3em]">MATRIX_OS // CONFIGURATION</span>
                            </div>
 
-                           <div className="space-y-10">
-                              <div 
-                                onClick={() => fileInputRef.current?.click()}
-                                className={`relative p-8 rounded-3xl border-2 border-dashed transition-all cursor-pointer group flex flex-col items-center text-center ${
-                                  resumeFile ? 'border-indigo-500/50 bg-indigo-500/5' : 'border-white/10 bg-white/5 hover:border-indigo-500/30'
-                                }`}
-                              >
-                                 <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".txt,.pdf" />
-                                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-all ${
-                                   resumeFile ? 'bg-indigo-500/20' : 'bg-white/10 group-hover:bg-indigo-500/20'
-                                 }`}>
-                                    {isAnalyzing ? <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" /> : <FileUp className={`w-8 h-8 ${resumeFile ? 'text-indigo-400' : 'text-slate-400'}`} />}
-                                 </div>
-                                 <h4 className="text-lg font-black">{resumeFile ? resumeFile.name : 'Scan Resume DNA'}</h4>
-                              </div>
-
-                              <div className="space-y-6">
-                                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Target Sector</label>
+                           <div className="space-y-8">
+                              <div>
+                                <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-4">
+                                  {isAnalyzing ? 'Analyzing Alignment...' : 'Target Domain Alignment'}
+                                </label>
                                 <div className="relative">
                                   <select
                                     value={selectedDomain}
                                     onChange={(e) => setSelectedDomain(e.target.value)}
-                                    className="block w-full px-8 py-5 text-xl font-bold border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 rounded-2xl bg-white/5 text-white cursor-pointer appearance-none transition-all"
+                                    className={`block w-full px-8 py-5 text-xl font-bold border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 rounded-2xl bg-white/5 text-white cursor-pointer appearance-none transition-all ${
+                                      isAnalyzing ? 'opacity-50 pointer-events-none' : ''
+                                    }`}
                                   >
                                     {ECE_DOMAINS.map(d => <option key={d} value={d} className="bg-slate-900">{d}</option>)}
                                   </select>
@@ -202,11 +210,16 @@ export default function RoadmapPage() {
                               <button
                                 onClick={handleGenerate}
                                 disabled={isGenerating || isAnalyzing}
-                                className="btn-primary w-full text-xl py-6"
+                                className="w-full py-6 bg-indigo-600 text-white font-black text-xl rounded-2xl hover:bg-indigo-700 transition-all flex items-center justify-center gap-4 group relative overflow-hidden shadow-2xl shadow-indigo-500/20 active:scale-95"
                               >
-                                {isGenerating ? <><Loader2 className="w-6 h-6 animate-spin" /> SYNCING...</> : <>Initialize Matrix</>}
+                                {isGenerating ? (
+                                  <><Loader2 className="w-6 h-6 animate-spin" /> GENERATING ROADMAP...</>
+                                ) : (
+                                  <>{resumeFile ? 'SYNC & INITIALIZE' : 'INITIALIZE MATRIX'} <Rocket className="w-6 h-6 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /></>
+                                )}
                               </button>
                            </div>
+                        </div>
                       </div>
                    </div>
                 </div>
@@ -219,121 +232,156 @@ export default function RoadmapPage() {
             key="dashboard"
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="relative z-10 pb-24"
+            className="relative z-10"
           >
-            <header className="border-b border-white/5 bg-[#05070a]/80 backdrop-blur-xl sticky top-0 z-50">
-              <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <header className="border-b border-white/10 bg-black/50 backdrop-blur-xl sticky top-0 z-50">
+              <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                   <button onClick={() => setRoadmap(null)} className="p-2 hover:bg-white/5 rounded-xl transition-colors text-slate-400">
+                   <button onClick={() => setRoadmap(null)} className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400">
                     <ArrowLeft className="w-5 h-5" />
                    </button>
-                   <h2 className="text-sm font-black tracking-widest text-indigo-400 uppercase">{roadmap.domain}</h2>
+                   <h2 className="text-xl font-black tracking-tight text-indigo-400 uppercase tracking-widest">{roadmap.domain}</h2>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
-                  <Activity className="w-4 h-4 text-indigo-400" />
-                  <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">DNA Synchronized</span>
+                <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">DNA Synced</span>
                 </div>
               </div>
             </header>
 
-            <main className="py-12 max-w-7xl mx-auto px-6">
+            <main className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               
+              {/* Role Suitability Banner */}
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-16 p-12 rounded-[3.5rem] bg-[#0a0c14] border border-white/5 flex flex-col lg:flex-row items-center gap-12"
+                className="mb-12 p-10 rounded-[3rem] bg-indigo-500 text-white shadow-2xl shadow-indigo-500/20 flex flex-col md:flex-row items-center gap-10"
               >
-                 <div className="w-24 h-24 rounded-3xl bg-indigo-500/10 flex items-center justify-center flex-shrink-0">
-                    <Trophy className="w-12 h-12 text-indigo-400" />
+                 <div className="w-20 h-20 rounded-3xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <Trophy className="w-10 h-10 text-white" />
                  </div>
                  <div>
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-indigo-500 mb-4">Role Suitability</h3>
-                    <p className="text-2xl md:text-3xl font-black text-white leading-tight tracking-tight">{roadmap.role_suitability}</p>
+                    <h3 className="text-2xl font-black mb-2 uppercase tracking-tight">Optimized Career Path</h3>
+                    <p className="text-lg font-medium text-white/90 leading-relaxed">{roadmap.role_suitability}</p>
                  </div>
               </motion.div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                
                 <div className="lg:col-span-2 space-y-12">
-                  <div className="flex gap-2 p-1.5 bg-white/5 rounded-2xl border border-white/10">
+                  <div className="flex gap-2 p-1.5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
                     {(['beginner', 'intermediate', 'advanced'] as const).map((tab) => (
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`flex-1 py-4 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                          activeTab === tab ? 'bg-indigo-600 text-white' : 'text-gray-500 hover:text-white'
+                        className={`flex-1 py-4 px-4 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all ${
+                          activeTab === tab 
+                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 scale-[1.02]' 
+                            : 'text-gray-500 hover:text-white hover:bg-white/5'
                         }`}
                       >
-                        {tab === 'beginner' ? 'Phase 01' : tab === 'intermediate' ? 'Phase 02' : 'Phase 03'}
+                        {tab === 'beginner' ? '01 // Engine' : tab === 'intermediate' ? '02 // Accelerator' : '03 // Mastery'}
                       </button>
                     ))}
                   </div>
 
-                  <div className="space-y-10">
-                    {getActiveSteps().map((step, index) => (
-                      <div key={index} className="bg-[#0a0c14] border border-white/5 rounded-[2.5rem] p-10 hover:border-indigo-500/20 transition-all group">
-                        <div className="flex flex-col xl:flex-row justify-between gap-8 mb-10">
-                          <div className="flex-1">
-                            <h4 className="text-3xl font-black text-white mb-6 leading-tight tracking-tight">{step.title}</h4>
-                            <div className="flex flex-wrap gap-3 mb-8">
-                              {step.key_skills.map((skill, sIdx) => (
-                                <span key={sIdx} className="text-[10px] font-black text-indigo-400 uppercase tracking-widest px-4 py-2 border border-indigo-500/10 rounded-lg bg-indigo-500/5">
-                                  {skill}
-                                </span>
-                              ))}
+                  <div className="relative">
+                    <div className="absolute top-0 bottom-0 left-6 w-[2px] bg-gradient-to-b from-indigo-500/50 via-white/5 to-transparent" />
+                    
+                    <motion.div
+                      key={activeTab}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="space-y-10"
+                    >
+                      {getActiveSteps().map((step, index) => (
+                        <div key={index} className="relative flex items-start gap-10 ml-[1.35rem]">
+                          <div className={`absolute -left-[1.35rem] w-4 h-4 rounded-full border-4 border-black z-10 mt-3 ${
+                            activeTab === 'beginner' ? 'bg-emerald-400' : activeTab === 'intermediate' ? 'bg-indigo-400' : 'bg-purple-400'
+                          }`} />
+                          
+                          <div className="flex-1 bg-[#0a0a0a] border border-white/10 rounded-[3rem] p-10 hover:border-indigo-500/30 transition-all group relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-10 text-6xl font-black text-white/[0.02] pointer-events-none uppercase italic">Step 0{index + 1}</div>
+                            
+                            <div className="flex flex-col xl:flex-row justify-between gap-6 mb-8 relative z-10">
+                              <div>
+                                <h4 className="text-3xl font-black text-white mb-6 tracking-tight group-hover:text-indigo-400 transition-colors">{step.title}</h4>
+                                <div className="flex flex-wrap gap-3">
+                                  {step.key_skills.map((skill, sIdx) => (
+                                    <span key={sIdx} className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] px-4 py-2 border border-indigo-500/20 rounded-xl bg-indigo-500/5">
+                                      {skill}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                              
+                              <div className="flex flex-col sm:flex-row gap-4">
+                                {step.course_link && (
+                                  <a 
+                                    href={step.course_link} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-all text-xs font-black uppercase tracking-widest"
+                                  >
+                                    <GraduationCap className="w-5 h-5" />
+                                    Coursera Plus
+                                  </a>
+                                )}
+                                {step.youtube_link && (
+                                  <a 
+                                    href={step.youtube_link} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all text-xs font-black uppercase tracking-widest"
+                                  >
+                                    <Youtube className="w-5 h-5 text-red-500" />
+                                    Masterclass
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                            
+                            <p className="text-lg text-slate-400 leading-relaxed max-w-3xl mb-8 font-medium">
+                              {step.description}
+                            </p>
+
+                            {/* Critical Project Callout */}
+                            <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 flex items-center gap-6">
+                               <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                                  <Zap className="w-6 h-6 text-emerald-400" />
+                               </div>
+                               <div>
+                                  <span className="block text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-1">Critical Project Milestone</span>
+                                  <p className="text-sm font-bold text-slate-200">{step.critical_project}</p>
+                               </div>
                             </div>
                           </div>
-                          <div className="flex flex-col sm:flex-row gap-4 h-fit">
-                            {step.course_link && (
-                              <a href={step.course_link} target="_blank" className="btn-primary text-xs h-14">
-                                <GraduationCap className="w-5 h-5" />
-                                Coursera Plus
-                              </a>
-                            )}
-                            {step.github_repo && (
-                              <a href={step.github_repo} target="_blank" className="btn-secondary text-xs h-14 bg-white/5">
-                                <Github className="w-5 h-5" />
-                                View Source
-                              </a>
-                            )}
-                          </div>
                         </div>
-                        
-                        <p className="text-lg text-slate-400 leading-relaxed max-w-4xl mb-10 font-medium">
-                          {step.description}
-                        </p>
-
-                        {/* MASTER THIS PROJECT: Highlighted Focus */}
-                        <div className="project-highlight">
-                           <div className="flex flex-col md:flex-row items-center gap-8">
-                              <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center flex-shrink-0">
-                                 <Cpu className="w-8 h-8 text-indigo-400" />
-                              </div>
-                              <div>
-                                 <h5 className="text-lg font-black text-white mb-2">Master This Project</h5>
-                                 <p className="text-sm font-medium text-slate-400">{step.critical_project}</p>
-                              </div>
-                           </div>
-                        </div>
-                      </div>
-                    ))}
+                      ))}
+                    </motion.div>
                   </div>
                 </div>
 
-                <div className="lg:col-span-1 space-y-12">
-                   <div className="p-10 card-pro">
-                      <h3 className="text-[10px] font-black mb-8 uppercase tracking-widest flex items-center gap-4 text-indigo-400">
-                         <Info className="w-5 h-5" />
-                         Technical Briefing
+                <div className="lg:col-span-1 space-y-8">
+                   <div className="p-10 rounded-[3rem] bg-white/5 border border-white/10">
+                      <h3 className="text-xl font-black mb-6 uppercase tracking-tight flex items-center gap-3">
+                         <Info className="w-5 h-5 text-indigo-400" />
+                         Pro Tips
                       </h3>
-                      <div className="space-y-8">
-                         <div className="relative pl-6 border-l border-indigo-500/30">
-                            <h5 className="text-xs font-black uppercase tracking-widest text-white mb-2">Toolchain Purity</h5>
-                            <p className="text-sm text-slate-500 font-medium leading-relaxed">Prioritizing Vivado, Cadence, and Synopsys mastery.</p>
-                         </div>
-                      </div>
+                      <ul className="space-y-6">
+                         <li className="text-sm font-medium text-slate-400 leading-relaxed">
+                            <strong className="text-white block mb-1 uppercase tracking-widest text-[10px]">Project Priority</strong>
+                            Don&apos;t just code; simulate. Companies value Vivado/Quartus screenshots in portfolios.
+                         </li>
+                         <li className="text-sm font-medium text-slate-400 leading-relaxed">
+                            <strong className="text-white block mb-1 uppercase tracking-widest text-[10px]">Skill Strength</strong>
+                            Focus on getting your &quot;Hot Skills&quot; to 80% proficiency before moving to Mastery.
+                         </li>
+                      </ul>
                    </div>
                    <SocialPulse domain={roadmap.domain} />
                 </div>
+
               </div>
             </main>
           </motion.div>

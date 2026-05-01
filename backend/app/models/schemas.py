@@ -269,7 +269,6 @@ class ComparisonResponse(BaseModel):
 class RoadmapRequest(BaseModel):
     """Request schema for generating a career roadmap."""
     domain: str
-    resume_text: Optional[str] = None
 
 
 class RoadmapStep(BaseModel):
@@ -279,14 +278,11 @@ class RoadmapStep(BaseModel):
     key_skills: List[str]
     course_link: Optional[str] = None
     youtube_link: Optional[str] = None
-    github_repo: Optional[str] = None
-    critical_project: Optional[str] = None
 
 
 class RoadmapResponse(BaseModel):
     """Response schema containing the career roadmap."""
     domain: str
-    role_suitability: str = ""
     news_headline: str
     beginner_steps: List[RoadmapStep]
     intermediate_steps: List[RoadmapStep]

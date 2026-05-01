@@ -1,153 +1,171 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { 
-  ArrowRight, Cpu, 
-  Layers, Zap, 
-  Terminal, ShieldCheck,
-  ChevronRight, Network, 
-  Activity, Radio, CircuitBoard
-} from 'lucide-react';
+import { ArrowRight, Shield, Zap, ChevronDown, Cpu, Activity, Globe } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Hero() {
   return (
-    <section className="relative pt-32 pb-20 overflow-hidden bg-[#05070a]">
+    <section className="relative min-h-screen flex items-center pt-24 overflow-hidden bg-[#05070a]">
       
-      {/* Background Signal Traces */}
-      <div className="absolute inset-0 pointer-events-none opacity-10">
-        <svg className="w-full h-full" viewBox="0 0 1000 1000">
-          <path d="M100,200 L300,200 L350,250 L600,250 L650,300 L900,300" stroke="white" fill="none" strokeWidth="1" className="animate-pulse" />
-          <path d="M100,500 L400,500 L450,450 L700,450 L750,500 L900,500" stroke="white" fill="none" strokeWidth="1" opacity="0.5" />
-          <circle cx="900" cy="300" r="3" fill="#6366f1" />
-          <circle cx="900" cy="500" r="3" fill="#6366f1" />
-        </svg>
+      {/* Structural Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.03)_0,transparent_70%)]" />
+        <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '100px 100px' }} />
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           
-          {/* Hero Content: Authority Driven */}
-          <div className="lg:col-span-7">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8"
+          {/* Content: Authority & Precision */}
+          <div className="text-left">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-2 mb-8"
             >
-              <Activity className="w-4 h-4 text-indigo-400" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Industry Standard Intelligence</span>
+              <div className="h-px w-8 bg-indigo-500" />
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400">
+                Industry Intelligence Platform
+              </span>
             </motion.div>
 
-            <motion.h1 
+            <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-7xl lg:text-9xl font-black tracking-tight mb-8 leading-[0.9]"
+              className="text-6xl md:text-8xl font-black mb-8 leading-[1.05] tracking-tight"
             >
-              Hardware <br />
-              <span className="text-indigo-500">Mastery.</span>
+              The Next Era of <br />
+              <span className="text-indigo-500">Career Sync.</span>
             </motion.h1>
 
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-xl lg:text-2xl text-slate-400 font-medium leading-relaxed mb-12 max-w-2xl"
+              className="text-lg md:text-xl text-slate-400 max-w-xl mb-12 leading-relaxed"
             >
-              The definitive AI career architect for ECE/EEE professionals. From RTL design to RTOS mastery, we synchronize your DNA with the semiconductor industry.
+              Nimma-MITra provides professional-grade intelligence roadmaps and real-time domain briefings for the global semiconductor and electronics workforce.
             </motion.p>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-6"
+              className="flex flex-wrap gap-6"
             >
-              <Link href="/roadmap" className="btn-primary">
-                Initialize Matrix
+              <a href="#upload" className="btn-primary">
+                Analyze My Resume
                 <ArrowRight className="w-5 h-5" />
+              </a>
+              <Link href="/roadmap" className="btn-secondary">
+                View Career Roadmaps
               </Link>
-              <Link href="#ece-hub" className="btn-secondary">
-                Explore Domains
-              </Link>
+            </motion.div>
+
+            {/* Trust Badges */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="mt-16 flex items-center gap-10 opacity-40 grayscale hover:grayscale-0 transition-all duration-700"
+            >
+              <div className="flex items-center gap-2">
+                <Shield className="w-5 h-5" />
+                <span className="text-xs font-bold uppercase tracking-widest">Secure</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Globe className="w-5 h-5" />
+                <span className="text-xs font-bold uppercase tracking-widest">Global</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Activity className="w-5 h-5" />
+                <span className="text-xs font-bold uppercase tracking-widest">Real-time</span>
+              </div>
             </motion.div>
           </div>
 
-          {/* Hero Visual: Logic Gate / SOC Animation (The "Photo" Re-animation) */}
-          <div className="lg:col-span-5 relative">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              className="relative aspect-square rounded-[4rem] bg-[#0a0c14] border border-white/5 shadow-2xl overflow-hidden flex items-center justify-center group"
+          {/* 3D Visual Column */}
+          <div className="relative perspective-[2000px] hidden lg:block">
+            <motion.div
+              initial={{ opacity: 0, rotateY: 20, rotateX: 10, scale: 0.9 }}
+              animate={{ opacity: 1, rotateY: 0, rotateX: 0, scale: 1 }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              className="relative w-full aspect-square flex items-center justify-center"
             >
-               {/* Animated Logic Schematic */}
-               <svg className="w-3/4 h-3/4" viewBox="0 0 200 200">
-                  {/* Gate 1 */}
-                  <motion.path 
-                    d="M20,50 L60,50 L70,70 L100,70" 
-                    stroke="#6366f1" strokeWidth="2" fill="none"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 2, repeat: Infinity, repeatType: "loop", ease: "linear" }}
-                  />
-                  <rect x="100" y="60" width="30" height="20" rx="4" fill="#6366f1" fillOpacity="0.1" stroke="#6366f1" strokeWidth="1" />
-                  <text x="115" y="74" textAnchor="middle" fill="#6366f1" fontSize="8" fontWeight="bold">AND</text>
-                  
-                  {/* Gate 2 */}
-                  <motion.path 
-                    d="M20,150 L60,150 L70,130 L100,130" 
-                    stroke="#6366f1" strokeWidth="2" fill="none"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 2.5, repeat: Infinity, repeatType: "loop", ease: "linear", delay: 0.5 }}
-                  />
-                  <rect x="100" y="120" width="30" height="20" rx="4" fill="#6366f1" fillOpacity="0.1" stroke="#6366f1" strokeWidth="1" />
-                  <text x="115" y="134" textAnchor="middle" fill="#6366f1" fontSize="8" fontWeight="bold">OR</text>
+              {/* The "Intelligence Core" - 3D Floating Structure */}
+              <div className="relative w-96 h-96 animate-float">
+                
+                {/* Main Card */}
+                <div className="absolute inset-0 card-3d flex flex-col p-10 justify-between bg-gradient-to-br from-[#111420] to-[#0a0c14] border-white/5">
+                  <div className="flex justify-between items-start">
+                    <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
+                      <Cpu className="w-8 h-8 text-indigo-400" />
+                    </div>
+                    <div className="text-right">
+                      <span className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Status</span>
+                      <span className="text-emerald-400 font-bold flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        SYNCED
+                      </span>
+                    </div>
+                  </div>
 
-                  {/* Convergence */}
-                  <motion.path 
-                    d="M130,70 L150,70 L160,100 L180,100" 
-                    stroke="#6366f1" strokeWidth="2" fill="none"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 1.5, repeat: Infinity, repeatType: "loop", ease: "linear", delay: 2 }}
-                  />
-                  <motion.path 
-                    d="M130,130 L150,130 L160,100" 
-                    stroke="#6366f1" strokeWidth="2" fill="none"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 1.5, repeat: Infinity, repeatType: "loop", ease: "linear", delay: 2.5 }}
-                  />
-                  
-                  {/* Output Node */}
-                  <motion.circle 
-                    cx="185" cy="100" r="4" fill="#6366f1" 
-                    animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
-                    transition={{ duration: 1, repeat: Infinity }}
-                  />
-               </svg>
+                  <div>
+                    <h3 className="text-4xl font-black mb-4 tracking-tighter">98%</h3>
+                    <p className="text-slate-500 text-xs font-bold uppercase tracking-[0.2em] mb-6">Market Alignment Quotient</p>
+                    <div className="space-y-3">
+                      <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: "98%" }}
+                          transition={{ duration: 2, delay: 1 }}
+                          className="h-full bg-indigo-500" 
+                        />
+                      </div>
+                      <div className="flex justify-between text-[10px] font-black text-slate-600">
+                        <span>BASELINE</span>
+                        <span>TARGET ATTAINED</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
-               <div className="absolute bottom-10 left-10">
-                  <div className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400 mb-2">SOC Logic Analysis</div>
-                  <div className="text-xl font-bold">Hardware Synthesis Active</div>
-               </div>
-            </motion.div>
-            
-            {/* Float Floating Elements */}
-            <motion.div 
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4, repeat: Infinity }}
-              className="absolute -top-6 -right-6 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl"
-            >
-               <CircuitBoard className="w-8 h-8 text-indigo-400" />
+                {/* Orbiting Satellite Card 1 */}
+                <motion.div
+                  animate={{ translateZ: [20, 50, 20], rotateY: [0, 5, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute -top-10 -right-10 w-48 h-32 card-3d bg-indigo-500 p-6 flex flex-col justify-between shadow-2xl shadow-indigo-500/20"
+                >
+                  <Zap className="w-6 h-6 text-white" />
+                  <span className="text-xs font-black uppercase tracking-widest text-white/80 leading-tight">Instant Pulse <br /> Detection</span>
+                </motion.div>
+
+                {/* Orbiting Satellite Card 2 */}
+                <motion.div
+                  animate={{ translateZ: [50, 20, 50], rotateX: [0, -5, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                  className="absolute -bottom-6 -left-10 w-56 h-40 card-3d p-8 border-white/10 bg-[#111420]/80 backdrop-blur-xl"
+                >
+                  <div className="flex items-center gap-2 mb-4">
+                    <Activity className="w-4 h-4 text-emerald-400" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Live Domain Feed</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-2 w-full bg-white/5 rounded-full" />
+                    <div className="h-2 w-2/3 bg-white/5 rounded-full" />
+                  </div>
+                </motion.div>
+              </div>
             </motion.div>
           </div>
-
         </div>
       </div>
+
+      {/* Background Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none" />
+
     </section>
   );
 }

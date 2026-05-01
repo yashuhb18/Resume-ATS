@@ -534,13 +534,8 @@ async def generate_roadmap(request: RoadmapRequest):
     Generate a dynamic career roadmap for a specific domain.
     """
     try:
-        # If resume is provided in request (via state or previous upload), we should use it.
-        # For simplicity, we assume the frontend might send resume_text in the request body
-        # Or we could fetch it from a previous analysis session if we had sessions.
-        # Let's add resume_text to RoadmapRequest schema.
         roadmap_data = roadmap_generator.generate(
-            domain=request.domain,
-            resume_text=getattr(request, 'resume_text', None)
+            domain=request.domain
         )
         return RoadmapResponse(**roadmap_data)
     except Exception as e:
