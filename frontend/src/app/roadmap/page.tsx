@@ -337,7 +337,7 @@ export default function RoadmapPage() {
                     </div>
 
                     <div className="space-y-6">
-                      {roadmap[`${activeTab}_steps` as keyof RoadmapResponse].map((step, idx) => (
+                      {(roadmap[`${activeTab}_steps` as keyof RoadmapResponse] as RoadmapStep[]).map((step, idx) => (
                         <motion.div
                           key={idx}
                           initial={{ opacity: 0, x: -20 }}
