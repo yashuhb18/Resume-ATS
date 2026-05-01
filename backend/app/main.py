@@ -19,7 +19,8 @@ from app.services.interview_chatbot import interview_chatbot
 from app.services.industry_resume_analyzer import industry_resume_analyzer
 from app.services.project_recommender import project_recommender
 from app.services.mock_assessment import mock_assessment_generator
-from app.models.schemas import AnalysisResponse, ComparisonResponse, InterviewChatResponse, ProjectRecommendation, AssessmentResponse
+from app.services.roadmap_generator import roadmap_generator
+from app.models.schemas import AnalysisResponse, ComparisonResponse, InterviewChatResponse, ProjectRecommendation, AssessmentResponse, RoadmapRequest, RoadmapResponse
 
 app = FastAPI(
     title="ResQ",
@@ -524,6 +525,18 @@ async def interview_chat(
             os.unlink(temp_resume_path)
         if temp_jd_path and os.path.exists(temp_jd_path):
             os.unlink(temp_jd_path)
+
+
+@app.post("/api/generate-roadmap", response_model=RoadmapResponse)
+async def generate_roadmap(request: RoadmapRequest):
+    """
+    Generate a dynamic career roadmap for a specific domain.
+    """
+    try:
+        roadmap_data = roadmap_generator.generate(request.domain)
+        return RoadmapResponse(**roadmap_data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":

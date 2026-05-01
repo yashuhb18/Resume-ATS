@@ -264,3 +264,21 @@ class ComparisonResponse(BaseModel):
     assessment: Optional[AssessmentResponse] = None
     parsing_method: str = "standard"
     ocr_confidence: Optional[str] = None
+
+
+class RoadmapRequest(BaseModel):
+    """Request schema for generating a career roadmap."""
+    domain: str
+
+
+class RoadmapStep(BaseModel):
+    """A single step in the career roadmap."""
+    title: str
+    description: str
+    key_skills: List[str]
+
+
+class RoadmapResponse(BaseModel):
+    """Response schema containing the career roadmap."""
+    domain: str
+    steps: List[RoadmapStep]

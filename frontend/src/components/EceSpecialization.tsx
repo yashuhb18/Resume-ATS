@@ -1,11 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Cpu, Zap, Code2, CircuitBoard, 
   TrendingUp, Compass, Target, 
   Briefcase, CheckCircle2, ChevronRight 
 } from 'lucide-react';
+import RoadmapModal from './RoadmapModal';
 
 const domains = [
   {
@@ -75,6 +77,8 @@ const itemVariants = {
 };
 
 export default function EceSpecialization() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <section id="ece-hub" className="relative py-24 overflow-hidden border-t border-white/5" style={{ background: 'var(--surface-base)' }}>
       
@@ -224,7 +228,10 @@ export default function EceSpecialization() {
                 ))}
               </div>
 
-              <button className="w-full mt-6 flex items-center justify-center gap-2 py-3 rounded-xl bg-purple-500 hover:bg-purple-600 transition-colors text-white font-semibold group shadow-lg shadow-purple-500/25">
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="w-full mt-6 flex items-center justify-center gap-2 py-3 rounded-xl bg-purple-500 hover:bg-purple-600 transition-colors text-white font-semibold group shadow-lg shadow-purple-500/25"
+              >
                 Generate Your Custom Roadmap
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
@@ -233,6 +240,8 @@ export default function EceSpecialization() {
 
         </motion.div>
       </div>
+
+      <RoadmapModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </section>
   );
 }
