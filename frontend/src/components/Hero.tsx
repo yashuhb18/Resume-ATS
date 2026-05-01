@@ -1,23 +1,24 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, CheckCircle2, Shield, Zap, ChevronDown } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Shield, Zap, ChevronDown, Rocket, Compass, Cpu } from 'lucide-react';
+import Link from 'next/link';
 
-const trustItems = [
-  { icon: Zap,           label: 'Blazingly Fast ⚡',   color: 'var(--accent-ice)' },
-  { icon: Shield,        label: 'Zero Data Stored 🔒',  color: 'var(--emerald-neon)' },
-  { icon: CheckCircle2,  label: '100% Open Source',     color: 'var(--violet-electric)' },
+const intelligenceItems = [
+  { icon: Cpu,           label: 'Domain Intelligence 🧠', color: 'var(--accent-ice)' },
+  { icon: Rocket,        label: 'Career Accelerator 🚀',  color: 'var(--emerald-neon)' },
+  { icon: Compass,       label: 'Real-time Guidance 🧭',   color: 'var(--violet-electric)' },
 ];
 
 export default function Hero() {
   return (
-    <section className="relative pt-32 pb-24 overflow-hidden bg-gradient-hero">
+    <section className="relative pt-32 pb-24 overflow-hidden bg-gradient-hero min-h-[90vh] flex flex-col justify-center">
 
       {/* Morphing blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="blob blob-brand absolute w-[520px] h-[520px] -top-32 -left-24 opacity-25" />
-        <div className="blob blob-violet absolute w-[420px] h-[420px] -bottom-16 -right-20 opacity-18" style={{ animationDelay: '2s' }} />
-        <div className="blob blob-accent absolute w-[280px] h-[280px] top-1/3 right-1/4 opacity-12" style={{ animationDelay: '4s' }} />
+        <div className="blob blob-brand absolute w-[600px] h-[600px] -top-32 -left-24 opacity-20" />
+        <div className="blob blob-violet absolute w-[500px] h-[500px] -bottom-16 -right-20 opacity-15" style={{ animationDelay: '2s' }} />
+        <div className="blob blob-accent absolute w-[300px] h-[300px] top-1/3 right-1/4 opacity-10" style={{ animationDelay: '4s' }} />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,12 +29,11 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2.5 px-4 py-2 card-glass rounded-full mb-8"
+            className="inline-flex items-center gap-2.5 px-4 py-2 bg-white/5 border border-white/10 backdrop-blur-md rounded-full mb-8 shadow-xl"
           >
             <span className="w-2 h-2 rounded-full bg-[var(--emerald-neon)] animate-pulse" />
-            <Zap className="w-3.5 h-3.5 text-[var(--accent-ice)]" />
-            <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
-              AI-Powered Resume Intelligence
+            <span className="text-xs font-bold uppercase tracking-widest text-indigo-300">
+              Intelligence Engine v2.0
             </span>
           </motion.div>
 
@@ -42,12 +42,12 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.1 }}
-            className="font-display mb-6"
+            className="font-display mb-6 text-6xl md:text-8xl font-black tracking-tighter"
             style={{ color: 'var(--text-primary)' }}
           >
-            See Your Resume Through
+            Engineering Your
             <br />
-            <span className="text-gradient">an ATS Lens</span>
+            <span className="text-gradient">Hardware Mastery</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -55,11 +55,10 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
+            className="text-lg sm:text-2xl max-w-3xl mx-auto mb-10 leading-relaxed font-medium"
             style={{ color: 'var(--text-secondary)' }}
           >
-            Upload your resume and get an ATS score, skills analysis, and recruiter-level
-            insights in seconds. No signup required.
+            Welcome to <span className="text-white font-bold">Nimma-MITra</span>. Beyond the ATS lens—we provide real-time ECE intelligence, live career roadmaps, and a direct pulse on the global hardware market.
           </motion.p>
 
           <motion.div
@@ -70,128 +69,98 @@ export default function Hero() {
           >
             <a 
               href="#ece-hub" 
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border bg-black/20 backdrop-blur-md hover:bg-black/40 transition-all group"
-              style={{ borderColor: 'rgba(139,92,246,0.3)' }}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full border bg-indigo-500/5 backdrop-blur-xl hover:bg-indigo-500/10 transition-all group border-indigo-500/30"
             >
-              <span className="w-2 h-2 rounded-full bg-[var(--brand-glow-core)] animate-pulse" />
-              <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
-                Specially engineered for EC & EEE professionals.
+              <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
+              <span className="text-sm font-bold text-indigo-200 uppercase tracking-widest">
+                Optimized for Semiconductor & Embedded Ecosystems
               </span>
-              <span className="text-sm font-medium ml-1 flex items-center gap-1 group-hover:text-white" style={{ color: 'var(--violet-electric)' }}>
-                See why
-                <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
-              </span>
+              <ChevronDown className="w-4 h-4 text-indigo-400 group-hover:translate-y-0.5 transition-transform" />
             </a>
           </motion.div>
 
-          {/* CTA */}
+          {/* CTA Group */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            className="flex flex-col sm:flex-row items-center justify-center gap-6"
           >
-            <a href="#upload" className="btn-primary text-lg px-8 py-4 inline-flex items-center gap-2 group">
-              Analyze Your Resume
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            <a href="#upload" className="btn-primary text-xl px-10 py-5 inline-flex items-center gap-3 group shadow-2xl shadow-indigo-500/20">
+              Start Intelligence Scan
+              <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
             </a>
-            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-              Supports PDF &amp; DOCX • Max 5MB • Free forever
-            </p>
+            <Link href="/roadmap" className="px-10 py-5 bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl font-bold text-xl hover:bg-white/10 transition-all">
+              Initialize Roadmap
+            </Link>
           </motion.div>
 
-          {/* Trust indicators */}
+          {/* New Intelligence Indicators */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex flex-wrap items-center justify-center gap-8 mt-14"
+            className="flex flex-wrap items-center justify-center gap-10 mt-16"
           >
-            {trustItems.map(({ icon: Icon, label, color }) => (
-              <div key={label} className="flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
-                <Icon className="w-4 h-4 flex-shrink-0" style={{ color }} />
-                <span className="text-sm font-medium">{label}</span>
+            {intelligenceItems.map(({ icon: Icon, label, color }) => (
+              <div key={label} className="flex items-center gap-3 group cursor-default" style={{ color: 'var(--text-secondary)' }}>
+                <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform border border-white/5">
+                  <Icon className="w-5 h-5 flex-shrink-0" style={{ color }} />
+                </div>
+                <span className="text-sm font-bold uppercase tracking-widest text-gray-400 group-hover:text-white transition-colors">{label}</span>
               </div>
             ))}
           </motion.div>
 
-          {/* Humour privacy badge */}
+          {/* Privacy & Trust */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
-            className="mt-8 inline-flex items-center gap-2 px-4 py-2 card-glass rounded-full"
-            style={{ borderColor: 'rgba(52,211,153,0.15)' }}
+            className="mt-12 inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-500/5 border border-emerald-500/10 rounded-full"
           >
-            <Shield className="w-4 h-4" style={{ color: 'var(--emerald-neon)' }} />
-            <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-              Your data? We literally can&apos;t afford the storage to keep it 😅
+            <Shield className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs font-bold uppercase tracking-widest text-emerald-200/60">
+              Ephemeral Security: Your data is never persisted.
             </span>
           </motion.div>
         </div>
 
-        {/* Dashboard mockup */}
+        {/* Dashboard Mockup - Refined */}
         <motion.div
-          initial={{ opacity: 0, y: 48 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.55 }}
-          className="mt-20 relative"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="mt-20 relative max-w-5xl mx-auto"
         >
-          <div className="relative mx-auto max-w-4xl">
-            <div className="absolute inset-0 bg-gradient-to-r from-[rgba(139,92,246,0.2)] to-[rgba(168,85,247,0.2)] rounded-3xl blur-3xl" />
-            <div className="relative card-glass rounded-2xl p-8">
-              {/* Window chrome */}
-              <div className="flex items-center gap-2 mb-6">
-                <span className="w-3 h-3 rounded-full bg-[rgba(251,113,133,0.7)]" />
-                <span className="w-3 h-3 rounded-full bg-[rgba(251,191,36,0.6)]" />
-                <span className="w-3 h-3 rounded-full bg-[rgba(52,211,153,0.7)]" />
-                <div className="ml-3 flex-1 h-5 rounded-full max-w-xs" style={{ background: 'var(--surface-muted)' }} />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Score */}
-                <div className="col-span-1 space-y-4">
-                  <div className="h-32 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--brand-glow-core)] to-[var(--violet-deep)] shadow-brand">
-                    <div className="text-center">
-                      <span className="text-4xl font-bold text-white block">85</span>
-                      <span className="text-white/70 text-xs font-medium">ATS Score</span>
-                    </div>
-                  </div>
-                  <div className="h-3 rounded-full" style={{ background: 'var(--surface-muted)' }} />
-                  <div className="h-3 rounded-full w-2/3" style={{ background: 'var(--surface-muted)' }} />
+          <div className="absolute inset-0 bg-indigo-500/10 rounded-[2.5rem] blur-[80px]" />
+          <div className="relative bg-black/40 border border-white/10 rounded-[2.5rem] p-1 shadow-2xl overflow-hidden backdrop-blur-md">
+             <div className="bg-[#050505] rounded-[2.25rem] p-8 md:p-12">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-12">
+                   <div className="flex items-center gap-4">
+                      <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-2xl">
+                         <span className="text-3xl font-black text-white tracking-tighter">88</span>
+                      </div>
+                      <div>
+                         <h4 className="text-2xl font-bold text-white tracking-tight">Intelligence Quotient</h4>
+                         <p className="text-indigo-400 font-mono text-xs uppercase tracking-widest">VLSI Engineer // Level 4</p>
+                      </div>
+                   </div>
+                   <div className="flex gap-3">
+                      <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 text-[10px] font-black uppercase tracking-widest">Matched</div>
+                      <div className="px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-indigo-400 text-[10px] font-black uppercase tracking-widest">Ready</div>
+                   </div>
                 </div>
-
-                {/* Details */}
-                <div className="col-span-2 space-y-3">
-                  <div className="h-5 rounded-full w-1/2" style={{ background: 'var(--surface-muted)' }} />
-                  <div className="h-3 rounded-full" style={{ background: 'var(--surface-muted)' }} />
-                  <div className="h-3 rounded-full w-5/6" style={{ background: 'var(--surface-muted)' }} />
-                  <div className="h-3 rounded-full w-4/6" style={{ background: 'var(--surface-muted)' }} />
-                  <div className="flex gap-2 mt-5 flex-wrap">
-                    {['Python', 'React', 'FastAPI', 'Docker'].map(s => (
-                      <span
-                        key={s}
-                        className="px-3 py-1 rounded-full text-xs font-medium"
-                        style={{
-                          background: 'rgba(139,92,246,0.12)',
-                          border: '1px solid rgba(139,92,246,0.2)',
-                          color: 'var(--accent-ice)',
-                        }}
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="mt-3 progress-bar">
-                    <div className="progress-fill" style={{ width: '82%' }} />
-                  </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                   {[1,2,3,4].map(i => (
+                      <div key={i} className="h-24 bg-white/5 border border-white/5 rounded-2xl animate-pulse" />
+                   ))}
                 </div>
-              </div>
-            </div>
+             </div>
           </div>
         </motion.div>
       </div>
     </section>
   );
 }
-

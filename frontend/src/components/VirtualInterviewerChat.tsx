@@ -28,7 +28,7 @@ export default function VirtualInterviewerChat({ resumeFile, jdFile }: VirtualIn
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: 'Hi, I am ResQ Interview Coach. I can review your resume like HR, compare it with a JD, ask mock interview questions, and give direct next steps.',
+      content: 'Hello! I am your Nimma-MITra Intelligence Guide. I can review your resume, run mock hardware interviews, and provide domain-specific career acceleration strategies.',
     },
   ]);
   const [input, setInput] = useState(

@@ -2,6 +2,7 @@
 
 import { FileText, Menu, X, Zap, MessageCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -45,19 +46,33 @@ export default function Header() {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-7">
             {[
-              { href: '#how-it-works', label: 'How It Works' },
-              { href: '#features',     label: 'Features'     },
+              { href: '/roadmap',      label: 'Intelligence Matrix' },
+              { href: '#ece-hub',      label: 'Community Pulse'     },
+              { href: '#how-it-works', label: 'How It Works'        },
             ].map(({ href, label }) => (
-              <a
-                key={href}
-                href={href}
-                className="text-sm font-medium transition-colors duration-200"
-                style={{ color: 'var(--text-secondary)' }}
-                onMouseEnter={e => ((e.target as HTMLElement).style.color = 'var(--text-primary)')}
-                onMouseLeave={e => ((e.target as HTMLElement).style.color = 'var(--text-secondary)')}
-              >
-                {label}
-              </a>
+              href.startsWith('/') ? (
+                <Link
+                  key={href}
+                  href={href}
+                  className="text-sm font-bold transition-colors duration-200"
+                  style={{ color: 'var(--text-secondary)' }}
+                  onMouseEnter={e => ((e.target as HTMLElement).style.color = 'var(--text-primary)')}
+                  onMouseLeave={e => ((e.target as HTMLElement).style.color = 'var(--text-secondary)')}
+                >
+                  {label}
+                </Link>
+              ) : (
+                <a
+                  key={href}
+                  href={href}
+                  className="text-sm font-medium transition-colors duration-200"
+                  style={{ color: 'var(--text-secondary)' }}
+                  onMouseEnter={e => ((e.target as HTMLElement).style.color = 'var(--text-primary)')}
+                  onMouseLeave={e => ((e.target as HTMLElement).style.color = 'var(--text-secondary)')}
+                >
+                  {label}
+                </a>
+              )
             ))}
             
             {/* Chat Icon Button */}
@@ -96,18 +111,31 @@ export default function Header() {
           >
             <div className="flex flex-col gap-1 px-2">
               {[
-                { href: '#how-it-works', label: 'How It Works' },
-                { href: '#features',     label: 'Features'     },
+                { href: '/roadmap',      label: 'Intelligence Matrix' },
+                { href: '#ece-hub',      label: 'Community Pulse'     },
+                { href: '#how-it-works', label: 'How It Works'        },
               ].map(({ href, label }) => (
-                <a
-                  key={href}
-                  href={href}
-                  className="font-medium px-4 py-3 rounded-xl transition-all"
-                  style={{ color: 'var(--text-secondary)' }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {label}
-                </a>
+                href.startsWith('/') ? (
+                  <Link
+                    key={href}
+                    href={href}
+                    className="font-bold px-4 py-3 rounded-xl transition-all"
+                    style={{ color: 'var(--text-secondary)' }}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {label}
+                  </Link>
+                ) : (
+                  <a
+                    key={href}
+                    href={href}
+                    className="font-medium px-4 py-3 rounded-xl transition-all"
+                    style={{ color: 'var(--text-secondary)' }}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {label}
+                  </a>
+                )
               ))}
               <button
                 onClick={() => {

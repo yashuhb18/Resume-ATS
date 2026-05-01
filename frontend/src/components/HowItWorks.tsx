@@ -1,29 +1,29 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Upload, Cpu, BarChart3 } from 'lucide-react';
+import { Upload, Cpu, BarChart3, Rocket, Compass, Zap } from 'lucide-react';
 
 const steps = [
   {
     icon: Upload,
-    title: 'Upload Resume',
-    description: 'Drag & drop your PDF or DOCX resume file. We accept any ATS-format document.',
+    title: 'Input Profile',
+    description: 'Upload your resume. Our engine instantly extracts your technical DNA and hardware competencies.',
     gradient: 'from-[#8b5cf6] to-[#7c3aed]',
     glow: 'rgba(139,92,246,0.35)',
     num: '01',
   },
   {
     icon: Cpu,
-    title: 'AI Analyzes',
-    description: 'Our AI parser dissects every section and scores your resume in seconds.',
+    title: 'Intelligence Sync',
+    description: 'Nimma-MITra cross-references your profile with the live semiconductor and electronics job market.',
     gradient: 'from-[#7c3aed] to-[#9b7ef7]',
     glow: 'rgba(168,85,247,0.35)',
     num: '02',
   },
   {
-    icon: BarChart3,
-    title: 'Get Insights',
-    description: 'Receive your ATS score, skill gaps, issues and recruiter-grade improvements.',
+    icon: Rocket,
+    title: 'Accelerate Mastery',
+    description: 'Get an Intelligence Matrix roadmap, live industry pulses, and mock interview coaching.',
     gradient: 'from-[#a855f7] to-[#38bdf8]',
     glow: 'rgba(192,132,252,0.35)',
     num: '03',
@@ -34,9 +34,12 @@ export default function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="py-24"
+      className="py-24 relative overflow-hidden"
       style={{ background: 'var(--surface-base)' }}
     >
+      {/* Background glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Heading */}
@@ -48,18 +51,19 @@ export default function HowItWorks() {
           className="text-center mb-20"
         >
           <div
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold mb-5 border"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-5 border"
             style={{
               background: 'rgba(139,92,246,0.08)',
               borderColor: 'rgba(139,92,246,0.2)',
               color: 'var(--accent-ice)',
             }}
           >
-            Simple 3-Step Process
+            <Zap className="w-3 h-3" />
+            Neural Synchronization
           </div>
-          <h2 className="section-title text-3xl sm:text-4xl mb-4">How It Works</h2>
-          <p className="section-subtitle max-w-xl mx-auto">
-            Get your ATS score in three simple steps. No signup, no hassle, no data stored.
+          <h2 className="section-title text-4xl sm:text-5xl mb-4 font-black tracking-tighter">The Intelligence Cycle</h2>
+          <p className="section-subtitle max-w-xl mx-auto text-gray-400 font-medium">
+            Bridging the gap between your current skills and global hardware mastery in three atomic steps.
           </p>
         </motion.div>
 
@@ -80,27 +84,26 @@ export default function HowItWorks() {
               transition={{ duration: 0.5, delay: i * 0.12 }}
               className="relative group"
             >
-              <div className="card-hover p-8 text-center h-full">
+              <div className="card-hover p-8 text-center h-full bg-white/[0.02] border border-white/5 rounded-3xl group-hover:border-indigo-500/30 transition-all">
                 {/* Step number */}
                 <div
-                  className="absolute top-4 right-4 text-xs font-bold font-mono"
-                  style={{ color: 'var(--text-faint)' }}
+                  className="absolute top-6 right-8 text-xs font-black font-mono text-indigo-500/40"
                 >
                   {step.num}
                 </div>
 
                 {/* Icon */}
                 <div
-                  className={`w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${step.gradient} flex items-center justify-center`}
-                  style={{ boxShadow: `0 0 28px ${step.glow}` }}
+                  className={`w-20 h-20 mx-auto mb-8 rounded-2xl bg-gradient-to-br ${step.gradient} flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform`}
+                  style={{ boxShadow: `0 0 40px ${step.glow}` }}
                 >
-                  <step.icon className="w-8 h-8 text-white" />
+                  <step.icon className="w-10 h-10 text-white" />
                 </div>
 
-                <h3 className="text-xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>
+                <h3 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
                   {step.title}
                 </h3>
-                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                <p className="text-sm leading-relaxed text-gray-400 font-medium">
                   {step.description}
                 </p>
               </div>
@@ -111,4 +114,3 @@ export default function HowItWorks() {
     </section>
   );
 }
-
