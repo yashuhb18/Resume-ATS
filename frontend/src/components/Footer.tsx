@@ -27,9 +27,7 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             {/* Logo */}
             <div className="flex items-center gap-2.5 mb-5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#3b82f6] to-[#06b6d4] flex items-center justify-center shadow-brand-sm">
-                <span className="text-white text-xl font-bold font-display">NM</span>
-              </div>
+              <img src="/images/logo.png" alt="Nimma-MITra Logo" className="w-10 h-10 rounded-xl shadow-brand-sm bg-white object-contain" />
               <span className="text-xl font-bold font-display" style={{ color: 'var(--text-primary)' }}>
                 Nimma-<span className="text-gradient-brand">MITra</span>
               </span>
