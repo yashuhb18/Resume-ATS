@@ -112,6 +112,44 @@ export default function RoadmapPage() {
     }
   };
 
+  const [showPortalAnimation, setShowPortalAnimation] = useState(false);
+  const [portalComplete, setPortalComplete] = useState(false);
+
+  // Trigger portal animation when roadmap is first received
+  const triggerMatrixEntry = () => {
+    setShowPortalAnimation(true);
+    setTimeout(() => {
+      setPortalComplete(true);
+      setShowPortalAnimation(false);
+    }, 2500);
+  };
+
+  const handleGenerateWithAnimation = async () => {
+    setIsGenerating(true);
+    setError('');
+    
+    try {
+      const response = await fetch(apiUrl('/api/generate-roadmap'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ domain: selectedDomain, has_resume: !!resumeFile })
+      });
+
+      if (!response.ok) throw new Error('Intelligence Matrix Failed.');
+      const data = await response.json();
+      
+      // Start the "Goated" Animation Sequence
+      triggerMatrixEntry();
+      
+      setRoadmap(data);
+      setActiveTab('beginner');
+    } catch (err: any) {
+      setError(err.message || 'Quantum Anomaly.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const getActiveSteps = () => {
     if (!roadmap) return [];
     if (activeTab === 'beginner') return roadmap.beginner_steps;
@@ -209,12 +247,12 @@ export default function RoadmapPage() {
                               </div>
 
                               <button
-                                onClick={handleGenerate}
+                                onClick={handleGenerateWithAnimation}
                                 disabled={isGenerating || isAnalyzing}
                                 className="w-full py-6 bg-indigo-600 text-white font-black text-xl rounded-2xl hover:bg-indigo-700 transition-all flex items-center justify-center gap-4 group relative overflow-hidden shadow-2xl shadow-indigo-500/20 active:scale-95"
                               >
                                 {isGenerating ? (
-                                  <><Loader2 className="w-6 h-6 animate-spin" /> GENERATING ROADMAP...</>
+                                  <><Loader2 className="w-6 h-6 animate-spin" /> SYNCHRONIZING...</>
                                 ) : (
                                   <>{resumeFile ? 'SYNC & INITIALIZE' : 'INITIALIZE MATRIX'} <Rocket className="w-6 h-6 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /></>
                                 )}
@@ -226,14 +264,61 @@ export default function RoadmapPage() {
                 </div>
               </div>
             </div>
+
+            {/* "Goated" Entry Animation Overlay */}
+            <AnimatePresence>
+              {showPortalAnimation && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden"
+                >
+                   <div className="absolute inset-0 pointer-events-none">
+                      {[...Array(20)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ scale: 0.1, opacity: 0 }}
+                          animate={{ scale: 10, opacity: [0, 1, 0] }}
+                          transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.1, ease: "easeIn" }}
+                          className="absolute inset-0 border border-indigo-500/20 rounded-full"
+                        />
+                      ))}
+                   </div>
+                   
+                   <div className="text-center relative z-10">
+                      <motion.div 
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: [0.8, 1.2, 1], opacity: 1 }}
+                        className="mb-8"
+                      >
+                         <Layers className="w-24 h-24 text-indigo-500 mx-auto animate-pulse" />
+                      </motion.div>
+                      <motion.h2 
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="text-4xl font-black tracking-[0.5em] text-white uppercase italic"
+                      >
+                        Entering the Matrix
+                      </motion.h2>
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: "100%" }}
+                        className="h-1 bg-indigo-500 mt-6 mx-auto"
+                      />
+                   </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.section>
         ) : (
           /* ACTIVE INTELLIGENCE MATRIX VIEW */
           <motion.div 
             key="dashboard"
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="relative z-10"
+            initial={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
+            animate={portalComplete ? { opacity: 1, scale: 1, filter: "blur(0px)" } : {}}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="relative z-10 pb-24"
           >
             <header className="border-b border-white/10 bg-black/50 backdrop-blur-xl sticky top-0 z-50">
               <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
@@ -361,12 +446,12 @@ export default function RoadmapPage() {
                             <div className="relative p-8 rounded-3xl border border-indigo-500/20 bg-indigo-500/5 overflow-hidden">
                                <div className="absolute top-4 right-6 text-[8px] font-black uppercase tracking-[0.4em] text-indigo-400 opacity-50">Core Project Milestone</div>
                                <div className="flex flex-col md:flex-row items-center gap-6">
-                                  <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                                  <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 flex items-center justify-center flex-shrink-0 border border-indigo-500/30">
                                      <Cpu className="w-7 h-7 text-indigo-400" />
                                   </div>
                                   <div>
-                                     <h5 className="text-lg font-black text-white mb-1">Master This Objective</h5>
-                                     <p className="text-sm font-bold text-slate-300">{step.critical_project}</p>
+                                     <h5 className="text-xl font-black text-white mb-2 uppercase tracking-tight">Master This Project</h5>
+                                     <p className="text-md font-extrabold text-indigo-400 leading-snug">{step.critical_project}</p>
                                   </div>
                                </div>
                             </div>
