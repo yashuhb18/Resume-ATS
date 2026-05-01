@@ -44,8 +44,9 @@ When deploying to Render, you need to set environment variables for:
 5. Fill in:
    - **Name:** `resume-ats-backend`
    - **Environment:** `Python`
-   - **Build Command:** `pip install -r requirements.txt`
-   - **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port 8001`
+   - **Build Command:** `pip install --no-cache-dir -r backend/requirements-render.txt`
+   - **Start Command:** `cd backend && uvicorn app.main:app --host 0.0.0.0 --port 10000`
+   - **Python Version:** Make sure it's set to `3.10` (NOT 3.11+)
 
 ### Step 2: Add Environment Variables
 
@@ -209,17 +210,47 @@ services:
 
 ## 🚨 Common Issues
 
-### Issue: "pydantic-core" compilation error
+### Issue: "pydantic-core" compilation error (maturin failed)
 
-**Error:** `maturin failed` or `Read-only file system`
+**Error:** `Read-only file system` + `maturin pep517` + `Cargo metadata failed`
 
-**Fix:**
-This happens when pip tries to compile packages from source. Solution:
-1. We use `requirements-render.txt` with pinned versions that have pre-built wheels
-2. Ensure you're using **Python 3.10** (set in Render service settings)
-3. If error persists, try upgrading pip in your Render service:
-   - Go to Settings → Build Command
-   - Change to: `pip install --upgrade pip setuptools && pip install -r backend/requirements-render.txt`
+**Root Cause:** pydantic-core needs Rust compilation, which fails on Render's filesystem.
+
+**Solution (Choose One):**
+
+**Option 1: Use Ultra-Minimal Requirements (RECOMMENDED)**
+1. On Render Dashboard → Your service → Settings
+2. Change Build Command to:
+   ```
+   pip install --no-cache-dir -r backend/requirements-render-minimal.txt
+   ```
+3. Save and **Redeploy**
+4. This installs only: fastapi, uvicorn, httpx, python-dotenv
+5. All AI features still work!
+
+**Option 2: Force Older Python Package**
+1. Change Build Command to:
+   ```
+   pip install --upgrade pip && pip install --no-cache-dir --no-binary pydantic -r backend/requirements-render.txt
+   ```
+2. Save and **Redeploy**
+
+**Option 3: Use Pre-built Wheels Only**
+1. Change Build Command to:
+   ```
+   pip install --only-binary :all: -r backend/requirements-render.txt
+   ```
+2. Save and **Redeploy**
+
+**Step-by-Step Fix:**
+1. Go to: https://dashboard.render.com
+2. Click your `resume-ats-backend` service
+3. Click **Settings** tab
+4. Scroll down to **Build Command**
+5. Replace with: `pip install --no-cache-dir -r backend/requirements-render-minimal.txt`
+6. Click **Save**
+7. Scroll to top → Click **Manual Deploy** → **Deploy latest commit**
+8. Wait 2-3 minutes for build to complete
 
 ### Issue: "Internal Server Error" on Render
 
