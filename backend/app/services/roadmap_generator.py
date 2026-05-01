@@ -39,8 +39,12 @@ class RoadmapGenerator:
                     "title": "String",
                     "description": "String (Technical and actionable)",
                     "key_skills": ["String", "String"],
-                    "course_link": "String (A direct URL to a relevant Coursera course)",
-                    "youtube_link": "String (A direct URL to a relevant YouTube technical playlist)"
+                    "course_link": "String",
+                    "youtube_link": "String",
+                    "projects": [
+                        {"title": "Project 1", "github_repo": "GitHub URL"},
+                        {"title": "Project 2", "github_repo": "GitHub URL"}
+                    ]
                 }}
             ],
             "intermediate_steps": [ ... ],

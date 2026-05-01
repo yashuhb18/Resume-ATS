@@ -271,6 +271,10 @@ class RoadmapRequest(BaseModel):
     domain: str
 
 
+class ProjectDetail(BaseModel):
+    title: str
+    github_repo: Optional[str] = None
+
 class RoadmapStep(BaseModel):
     """A single step in the career roadmap."""
     title: str
@@ -278,6 +282,8 @@ class RoadmapStep(BaseModel):
     key_skills: List[str]
     course_link: Optional[str] = None
     youtube_link: Optional[str] = None
+    projects: List[ProjectDetail] = []
+    critical_project: Optional[str] = None # For backward compatibility
 
 
 class RoadmapResponse(BaseModel):

@@ -23,13 +23,18 @@ const ECE_DOMAINS = [
   "Telecommunications & 5G"
 ];
 
+interface ProjectDetail {
+  title: string;
+  github_repo?: string;
+}
+
 interface RoadmapStep {
   title: string;
   description: string;
   key_skills: string[];
   course_link?: string;
   youtube_link?: string;
-  github_repo?: string;
+  projects?: ProjectDetail[]; // Updated: Multi-project support
   critical_project?: string;
 }
 
@@ -312,28 +317,63 @@ export default function RoadmapPage() {
                                     Coursera Plus
                                   </a>
                                 )}
-                                {step.github_repo && (
-                                  <a href={step.github_repo} target="_blank" className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-indigo-500 transition-all text-xs font-black uppercase tracking-widest group/git">
-                                    <Github className="w-5 h-5 group-hover/git:rotate-12 transition-transform" />
-                                    View Source
-                                  </a>
-                                )}
                               </div>
                             </div>
                             
-                            <p className="text-lg text-slate-400 leading-relaxed max-w-3xl mb-8 font-medium">{step.description}</p>
+                            <p className="text-lg text-slate-400 leading-relaxed max-w-3xl mb-10 font-medium">{step.description}</p>
 
-                            <div className="relative p-8 rounded-3xl border border-indigo-500/20 bg-indigo-500/5 overflow-hidden">
-                               <div className="absolute top-4 right-6 text-[8px] font-black uppercase tracking-[0.4em] text-indigo-400 opacity-50">Core Project Milestone</div>
-                               <div className="flex flex-col md:flex-row items-center gap-6">
-                                  <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 flex items-center justify-center flex-shrink-0 border border-indigo-500/30">
-                                     <Cpu className="w-7 h-7 text-indigo-400" />
-                                  </div>
-                                  <div>
-                                     <h5 className="text-xl font-black text-white mb-2 uppercase tracking-tight">Master This Project</h5>
-                                     <p className="text-md font-extrabold text-indigo-400 leading-snug">{step.critical_project}</p>
-                                  </div>
+                            {/* BOLD MULTI-PROJECT MASTERY SECTION */}
+                            <div className="space-y-6">
+                               <div className="flex items-center gap-3 opacity-60">
+                                  <div className="h-[1px] flex-1 bg-white/10" />
+                                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400">Core Project Milestones</span>
+                                  <div className="h-[1px] flex-1 bg-white/10" />
                                </div>
+                               
+                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  {step.projects?.map((project, pIdx) => (
+                                    <div key={pIdx} className="relative p-8 rounded-[2.5rem] bg-indigo-500/5 border border-indigo-500/20 hover:border-indigo-500/40 transition-all group/project">
+                                       <div className="flex flex-col h-full justify-between gap-6">
+                                          <div>
+                                             <div className="flex items-center justify-between mb-4">
+                                                <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.3em]">Module 0{pIdx + 1}</span>
+                                                <Cpu className="w-4 h-4 text-indigo-500 opacity-40 group-hover/project:rotate-12 transition-transform" />
+                                             </div>
+                                             <h5 className="text-xl font-black text-white leading-tight mb-2 uppercase tracking-tight group-hover/project:text-indigo-400 transition-colors">
+                                                {project.title}
+                                             </h5>
+                                          </div>
+                                          {project.github_repo && (
+                                            <a 
+                                              href={project.github_repo} 
+                                              target="_blank" 
+                                              rel="noopener noreferrer"
+                                              className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-indigo-400 hover:text-white transition-all bg-indigo-500/10 px-4 py-2.5 rounded-xl border border-indigo-500/20 w-fit"
+                                            >
+                                               <Github className="w-4 h-4" />
+                                               View Source
+                                               <ExternalLink className="w-3 h-3 opacity-0 group-hover/project:opacity-100 transition-opacity" />
+                                            </a>
+                                          )}
+                                       </div>
+                                    </div>
+                                  ))}
+                               </div>
+
+                               {/* Legacy Fallback */}
+                               {(!step.projects || step.projects.length === 0) && step.critical_project && (
+                                 <div className="relative p-8 rounded-3xl border border-indigo-500/20 bg-indigo-500/5 overflow-hidden">
+                                   <div className="flex flex-col md:flex-row items-center gap-6">
+                                      <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 flex items-center justify-center flex-shrink-0 border border-indigo-500/30">
+                                         <Cpu className="w-7 h-7 text-indigo-400" />
+                                      </div>
+                                      <div>
+                                         <h5 className="text-xl font-black text-white mb-2 uppercase tracking-tight">Master This Project</h5>
+                                         <p className="text-md font-extrabold text-indigo-400 leading-snug">{step.critical_project}</p>
+                                      </div>
+                                   </div>
+                                 </div>
+                               )}
                             </div>
                           </div>
                         </div>
