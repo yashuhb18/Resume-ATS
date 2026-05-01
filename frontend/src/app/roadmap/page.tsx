@@ -265,48 +265,85 @@ export default function RoadmapPage() {
               </div>
             </div>
 
-            {/* "Goated" Entry Animation Overlay */}
+            {/* "GOATED" Digital Wormhole Entry Animation Overlay */}
             <AnimatePresence>
               {showPortalAnimation && (
                 <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden"
+                  className="fixed inset-0 z-[100] bg-[#020202] flex items-center justify-center overflow-hidden"
                 >
-                   <div className="absolute inset-0 pointer-events-none">
-                      {[...Array(20)].map((_, i) => (
+                   {/* High-Velocity Particle Tunnel */}
+                   <div className="absolute inset-0 pointer-events-none perspective-[1000px]">
+                      {[...Array(50)].map((_, i) => (
                         <motion.div
                           key={i}
-                          initial={{ scale: 0.1, opacity: 0 }}
-                          animate={{ scale: 10, opacity: [0, 1, 0] }}
-                          transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.1, ease: "easeIn" }}
-                          className="absolute inset-0 border border-indigo-500/20 rounded-full"
+                          initial={{ z: -500, opacity: 0, scale: 0.1 }}
+                          animate={{ 
+                            z: [ -500, 1000 ], 
+                            opacity: [ 0, 1, 0 ],
+                            scale: [ 0.1, 4 ]
+                          }}
+                          transition={{ 
+                            duration: 1.2, 
+                            repeat: Infinity, 
+                            delay: i * 0.05, 
+                            ease: "circIn" 
+                          }}
+                          className="absolute top-1/2 left-1/2 w-1 h-20 bg-indigo-500/40 blur-[1px] rounded-full"
+                          style={{
+                            transform: `rotate(${i * 7.2}deg) translateY(-200px)`
+                          }}
                         />
                       ))}
                    </div>
+
+                   {/* Spectral Glitch Distortions */}
+                   <motion.div 
+                      animate={{ 
+                        opacity: [0, 0.8, 0],
+                        scale: [1, 1.1, 1],
+                        filter: ["hue-rotate(0deg)", "hue-rotate(90deg)", "hue-rotate(0deg)"]
+                      }}
+                      transition={{ duration: 0.2, repeat: Infinity }}
+                      className="absolute inset-0 pointer-events-none bg-indigo-500/5 mix-blend-screen"
+                   />
                    
                    <div className="text-center relative z-10">
                       <motion.div 
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: [0.8, 1.2, 1], opacity: 1 }}
-                        className="mb-8"
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ type: "spring", damping: 12 }}
+                        className="mb-12 relative"
                       >
-                         <Layers className="w-24 h-24 text-indigo-500 mx-auto animate-pulse" />
+                         <div className="absolute inset-0 blur-3xl bg-indigo-500/50 animate-pulse" />
+                         <Layers className="w-32 h-32 text-white mx-auto relative z-10" />
                       </motion.div>
-                      <motion.h2 
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        className="text-4xl font-black tracking-[0.5em] text-white uppercase italic"
+                      
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="space-y-4"
                       >
-                        Entering the Matrix
-                      </motion.h2>
-                      <motion.div 
-                        initial={{ width: 0 }}
-                        animate={{ width: "100%" }}
-                        className="h-1 bg-indigo-500 mt-6 mx-auto"
-                      />
+                        <h2 className="text-5xl font-black tracking-[0.8em] text-white uppercase italic animate-pulse">
+                          Synchronizing
+                        </h2>
+                        <div className="flex items-center justify-center gap-4">
+                           <div className="h-[2px] w-24 bg-gradient-to-r from-transparent to-indigo-500" />
+                           <span className="text-indigo-400 font-mono text-sm tracking-[0.3em]">DNA_SCAN_ACTIVE</span>
+                           <div className="h-[2px] w-24 bg-gradient-to-l from-transparent to-indigo-500" />
+                        </div>
+                      </motion.div>
                    </div>
+
+                   {/* Flash Out Sequence */}
+                   <motion.div 
+                     initial={{ opacity: 0 }}
+                     animate={{ opacity: [0, 1, 0] }}
+                     transition={{ delay: 2.2, duration: 0.3 }}
+                     className="absolute inset-0 bg-white z-[110]"
+                   />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -315,9 +352,9 @@ export default function RoadmapPage() {
           /* ACTIVE INTELLIGENCE MATRIX VIEW */
           <motion.div 
             key="dashboard"
-            initial={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
-            animate={portalComplete ? { opacity: 1, scale: 1, filter: "blur(0px)" } : {}}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            initial={{ opacity: 0, scale: 2, rotateX: 45, filter: "brightness(0) blur(20px)" }}
+            animate={portalComplete ? { opacity: 1, scale: 1, rotateX: 0, filter: "brightness(1) blur(0px)" } : {}}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             className="relative z-10 pb-24"
           >
             <header className="border-b border-white/10 bg-black/50 backdrop-blur-xl sticky top-0 z-50">
