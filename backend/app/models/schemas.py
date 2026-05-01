@@ -26,6 +26,7 @@ class SkillsData(BaseModel):
     tools: List[str] = []
     databases: List[str] = []
     soft_skills: List[str] = []
+    core_engineering: List[str] = []
     other: List[str] = []
     total_count: int = 0
     skill_categories: List[SkillCategory] = []
@@ -161,6 +162,28 @@ class InterviewChatResponse(BaseModel):
     provider: str = "local_fallback"
 
 
+class ProjectRecommendation(BaseModel):
+    title: str
+    description: str
+    skills_gained: List[str]
+    difficulty: str
+    domain: str
+
+
+class AssessmentQuestion(BaseModel):
+    question: str
+    options: List[str]
+    correct_answer: str
+    explanation: str
+
+
+class AssessmentResponse(BaseModel):
+    title: str
+    description: str
+    questions: List[AssessmentQuestion]
+    total_questions: int
+
+
 class AnalysisResponse(BaseModel):
     success: bool
     candidate: CandidateInfo
@@ -179,6 +202,9 @@ class AnalysisResponse(BaseModel):
     optimized_resume: ResumeRewrite = ResumeRewrite()
     score_methodology: Dict[str, Any] = {}
     computer_vision: ComputerVisionAnalysis = ComputerVisionAnalysis()
+    # ECE/EEE Additions
+    project_recommendations: List[ProjectRecommendation] = []
+    assessment: Optional[AssessmentResponse] = None
     # OCR metadata
     parsing_method: str = "standard"  # "standard" | "ocr" | "ocr_unavailable"
     ocr_confidence: Optional[str] = None  # "low" | "medium" | "high" (only when OCR used)
@@ -234,5 +260,7 @@ class ComparisonResponse(BaseModel):
     optimized_resume: ResumeRewrite = ResumeRewrite()
     score_methodology: Dict[str, Any] = {}
     computer_vision: ComputerVisionAnalysis = ComputerVisionAnalysis()
+    project_recommendations: List[ProjectRecommendation] = []
+    assessment: Optional[AssessmentResponse] = None
     parsing_method: str = "standard"
     ocr_confidence: Optional[str] = None

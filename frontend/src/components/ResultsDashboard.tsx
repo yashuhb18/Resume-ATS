@@ -19,6 +19,8 @@ import SuggestionsCard    from './results/SuggestionsCard';
 import KeywordsCard       from './results/KeywordsCard';
 import IndustryReportCard from './results/IndustryReportCard';
 import OptimizedResumeCard from './results/OptimizedResumeCard';
+import ProjectRecommendationsCard from './results/ProjectRecommendationsCard';
+import AssessmentDashboard from './results/AssessmentDashboard';
 import { apiUrl } from '@/utils/api';
 
 interface ResultsDashboardProps {
@@ -476,6 +478,29 @@ export default function ResultsDashboard({ results, comparisonResults, onReset }
               <SuggestionsCard suggestions={results.suggestions} />
             </motion.div>
           </div>
+        )}
+
+        {/* ── ECE Features: Project Recommendations & Mock Assessment ── */}
+        {data.project_recommendations && data.project_recommendations.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="mb-8"
+          >
+            <ProjectRecommendationsCard recommendations={data.project_recommendations} />
+          </motion.div>
+        )}
+
+        {data.assessment && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.62 }}
+            className="mb-8"
+          >
+            <AssessmentDashboard assessment={data.assessment} />
+          </motion.div>
         )}
 
         {/* ── Comparison suggestions ── */}

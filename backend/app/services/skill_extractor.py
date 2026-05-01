@@ -118,6 +118,17 @@ class SkillExtractor:
         'networking', 'persuasion', 'accountability', 'resourcefulness'
     }
     
+    CORE_ENGINEERING = {
+        # ECE & EEE Core Skills
+        'vlsi', 'embedded systems', 'matlab', 'dsp', 'pcb design', 'iot', 'fpga', 
+        'verilog', 'vhdl', 'communication systems', 'robotics', 'signal processing',
+        'microcontrollers', 'arduino', 'raspberry pi', 'circuit design', 'control systems',
+        'power electronics', 'analog electronics', 'digital electronics', 'rtos', 
+        'arm cortex', 'spice', 'altium', 'eagle', 'cadence', 'simulink', 'labview',
+        'plc', 'scada', 'antenna design', 'rf engineering', 'telecommunications',
+        'semiconductor', 'asic', 'cmos', 'microprocessors'
+    }
+    
     # Industry-specific certifications
     CERTIFICATIONS = {
         # Technology
@@ -146,7 +157,8 @@ class SkillExtractor:
             'frameworks': {s.lower() for s in self.FRAMEWORKS},
             'tools': {s.lower() for s in self.TOOLS},
             'databases': {s.lower() for s in self.DATABASES},
-            'soft_skills': {s.lower() for s in self.SOFT_SKILLS}
+            'soft_skills': {s.lower() for s in self.SOFT_SKILLS},
+            'core_engineering': {s.lower() for s in self.CORE_ENGINEERING}
         }
     
     def extract(self, text: str) -> SkillsData:
@@ -159,6 +171,7 @@ class SkillExtractor:
             'tools': [],
             'databases': [],
             'soft_skills': [],
+            'core_engineering': [],
             'other': []
         }
         
@@ -189,6 +202,7 @@ class SkillExtractor:
             tools=found_skills['tools'],
             databases=found_skills['databases'],
             soft_skills=found_skills['soft_skills'],
+            core_engineering=found_skills['core_engineering'],
             other=found_skills['other'],
             total_count=total_count,
             skill_categories=skill_categories
@@ -201,7 +215,8 @@ class SkillExtractor:
             'frameworks': self.FRAMEWORKS,
             'tools': self.TOOLS,
             'databases': self.DATABASES,
-            'soft_skills': self.SOFT_SKILLS
+            'soft_skills': self.SOFT_SKILLS,
+            'core_engineering': self.CORE_ENGINEERING
         }
         
         source_set = skill_maps.get(category, set())
@@ -219,7 +234,8 @@ class SkillExtractor:
             'frameworks': 'Frameworks & Libraries',
             'tools': 'Tools & Platforms',
             'databases': 'Databases',
-            'soft_skills': 'Soft Skills'
+            'soft_skills': 'Soft Skills',
+            'core_engineering': 'Core Engineering'
         }
         
         for key, display_name in category_names.items():
@@ -242,7 +258,8 @@ class SkillExtractor:
             'frameworks': {'strong': 4, 'moderate': 2},
             'tools': {'strong': 5, 'moderate': 3},
             'databases': {'strong': 2, 'moderate': 1},
-            'soft_skills': {'strong': 4, 'moderate': 2}
+            'soft_skills': {'strong': 4, 'moderate': 2},
+            'core_engineering': {'strong': 3, 'moderate': 1}
         }
         
         t = thresholds.get(category, {'strong': 3, 'moderate': 2})
@@ -281,7 +298,11 @@ class SkillExtractor:
             
             # Engineering
             'Mechanical Engineering': ['SolidWorks', 'AutoCAD', 'CATIA', 'ANSYS', 'GD&T', 'FEA', 'Manufacturing'],
-            'Electrical / Electronics': ['Altium', 'MATLAB', 'Embedded C', 'PCB Design', 'FPGA', 'Verilog', 'Circuit Analysis'],
+            'VLSI & ASIC Design': ['Verilog', 'SystemVerilog', 'Cadence', 'Synopsys', 'TCL', 'Python', 'Physical Design', 'UVM'],
+            'Embedded Systems & IoT': ['C', 'C++', 'Python', 'RTOS', 'Arduino', 'Raspberry Pi', 'I2C', 'SPI', 'ARM Cortex'],
+            'Signal Processing & Communications': ['MATLAB', 'Simulink', 'DSP', 'Python', 'RF Design', '5G', 'GNU Radio'],
+            'Electrical Power Systems': ['MATLAB', 'Simulink', 'ETAP', 'AutoCAD Electrical', 'PLC', 'SCADA', 'Power Electronics'],
+            'Robotics & Automation': ['ROS', 'Python', 'C++', 'PLC Programming', 'Computer Vision', 'Control Systems', 'Mechatronics'],
             'Civil / Construction': ['AutoCAD', 'Revit', 'Civil 3D', 'Primavera', 'Structural Analysis', 'Project Management'],
             
             # Other Industries

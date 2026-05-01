@@ -60,6 +60,10 @@ export default function Hero() {
           >
             Upload your resume and get an ATS score, skills analysis, and recruiter-level
             insights in seconds. No signup required.
+            <br />
+            <span className="font-semibold block mt-3" style={{ color: 'var(--accent-ice)' }}>
+              Specially designed for the professionals in the EC and EEE domains in a more professional and unique way.
+            </span>
           </motion.p>
 
           {/* CTA */}

@@ -315,22 +315,79 @@ class DomainClassifier:
                 'test engineer', 'quality engineer', 'cae engineer'
             ]
         },
-        'Electrical / Electronics': {
+        'VLSI & ASIC Design': {
             'keywords': [
-                'electrical', 'electronics', 'circuit', 'pcb', 'embedded',
-                'firmware', 'fpga', 'microcontroller', 'power systems',
-                'control systems', 'signal processing', 'rf', 'wireless',
-                'semiconductor', 'vlsi', 'asic', 'iot', 'sensors'
+                'vlsi', 'asic', 'fpga', 'soc', 'semiconductor', 'cmos', 
+                'verilog', 'vhdl', 'systemverilog', 'physical design', 
+                'verification', 'eda', 'tapeout', 'integrated circuit'
             ],
             'skills': [
-                'altium', 'eagle', 'kicad', 'orcad', 'spice',
-                'verilog', 'vhdl', 'matlab', 'labview',
-                'c', 'c++', 'python', 'arduino', 'raspberry pi'
+                'cadence', 'synopsys', 'mentor graphics', 'spice',
+                'verilog', 'vhdl', 'systemverilog', 'c++', 'python', 'tcl'
             ],
             'titles': [
-                'electrical engineer', 'electronics engineer', 'hardware engineer',
-                'embedded engineer', 'firmware engineer', 'rf engineer',
-                'power systems engineer', 'control systems engineer'
+                'vlsi engineer', 'asic design engineer', 'verification engineer',
+                'fpga engineer', 'physical design engineer', 'hardware engineer'
+            ]
+        },
+        'Embedded Systems & IoT': {
+            'keywords': [
+                'embedded', 'iot', 'microcontroller', 'microprocessor',
+                'firmware', 'rtos', 'arm cortex', 'sensors', 'actuators',
+                'bluetooth', 'wifi', 'zigbee', 'spi', 'i2c', 'uart', 'can bus'
+            ],
+            'skills': [
+                'c', 'c++', 'python', 'assembly', 'arduino', 'raspberry pi',
+                'freertos', 'keil', 'stm32', 'esp32'
+            ],
+            'titles': [
+                'embedded software engineer', 'firmware engineer', 'iot engineer',
+                'embedded systems engineer', 'hardware engineer'
+            ]
+        },
+        'Signal Processing & Communications': {
+            'keywords': [
+                'signal processing', 'dsp', 'telecommunications', 'wireless',
+                'rf', 'antenna', '5g', '4g', 'radar', 'modulation',
+                'filter design', 'image processing', 'audio processing'
+            ],
+            'skills': [
+                'matlab', 'simulink', 'c', 'c++', 'python', 'labview',
+                'gnu radio', 'hfss', 'cst'
+            ],
+            'titles': [
+                'dsp engineer', 'rf engineer', 'communications engineer',
+                'telecom engineer', 'signal processing engineer'
+            ]
+        },
+        'Electrical Power Systems': {
+            'keywords': [
+                'electrical', 'power systems', 'high voltage', 'smart grid',
+                'renewable energy', 'solar', 'wind', 'motor control',
+                'power electronics', 'switchgear', 'transformer', 'substation'
+            ],
+            'skills': [
+                'etap', 'pscad', 'matlab', 'simulink', 'autocad electrical',
+                'plc', 'scada', 'dialux'
+            ],
+            'titles': [
+                'electrical engineer', 'power systems engineer', 'power electronics engineer',
+                'substation engineer', 'renewable energy engineer'
+            ]
+        },
+        'Robotics & Automation': {
+            'keywords': [
+                'robotics', 'automation', 'plc', 'scada', 'control systems',
+                'pid', 'mechatronics', 'ros', 'kinematics', 'machine vision',
+                'industrial automation', 'hmi', 'vfd'
+            ],
+            'skills': [
+                'ros', 'python', 'c++', 'matlab', 'simulink', 'labview',
+                'plc programming', 'autocad', 'solidworks'
+            ],
+            'titles': [
+                'robotics engineer', 'automation engineer', 'control systems engineer',
+                'mechatronics engineer', 'plc programmer'
             ]
         },
         'Civil / Construction': {
@@ -577,7 +634,8 @@ class DomainClassifier:
         all_user_skills = set(
             s.lower() for s in 
             skills.programming_languages + skills.frameworks + 
-            skills.tools + skills.databases
+            skills.tools + skills.databases + 
+            getattr(skills, 'core_engineering', [])
         )
         
         for skill in domain_data['skills']:
@@ -614,7 +672,11 @@ class DomainClassifier:
             
             # Engineering
             'Mechanical Engineering': 'Mechanical design, manufacturing, and product development',
-            'Electrical / Electronics': 'Circuit design, embedded systems, and electronics',
+            'VLSI & ASIC Design': 'Integrated circuit design, verification, and semiconductor technology',
+            'Embedded Systems & IoT': 'Microcontroller programming, RTOS, and Internet of Things',
+            'Signal Processing & Communications': 'DSP, telecommunications, RF, and wireless systems',
+            'Electrical Power Systems': 'Power generation, smart grids, and renewable energy',
+            'Robotics & Automation': 'Industrial automation, control systems, and mechatronics',
             'Civil / Construction': 'Structural engineering, construction, and infrastructure',
             
             # Other

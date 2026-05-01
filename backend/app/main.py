@@ -17,7 +17,9 @@ from app.services.jd_comparator import JDComparator
 from app.services.ml_quality_analyzer import ml_quality_analyzer
 from app.services.interview_chatbot import interview_chatbot
 from app.services.industry_resume_analyzer import industry_resume_analyzer
-from app.models.schemas import AnalysisResponse, ComparisonResponse, InterviewChatResponse
+from app.services.project_recommender import project_recommender
+from app.services.mock_assessment import mock_assessment_generator
+from app.models.schemas import AnalysisResponse, ComparisonResponse, InterviewChatResponse, ProjectRecommendation, AssessmentResponse
 
 app = FastAPI(
     title="ResQ",
@@ -149,6 +151,13 @@ async def analyze_resume(file: UploadFile = File(...)):
             domain=domain_data,
             keywords_analysis=keywords_analysis,
         )
+        
+        # ECE features
+        missing_skills = ats_analysis.get("issues", [])
+        # Extract missing skill names if possible, else empty
+        missing_skill_names = [issue.suggestion for issue in missing_skills if issue.type == "Missing Skill"]
+        project_recs = project_recommender.recommend(domain=domain_data, missing_skills=missing_skill_names)
+        assessment_data = mock_assessment_generator.generate_assessment(domain=domain_data, skills=skills_data)
 
         # Cleanup temporary file
         os.unlink(tmp_path)
@@ -172,6 +181,8 @@ async def analyze_resume(file: UploadFile = File(...)):
             optimized_resume=optimized_resume,
             score_methodology=ats_analysis.get("methodology", {}),
             computer_vision=parsed_data.get("computer_vision", {}),
+            project_recommendations=project_recs,
+            assessment=assessment_data,
             # OCR metadata
             parsing_method=parsing_method,
             ocr_confidence=ocr_confidence
@@ -356,6 +367,11 @@ async def compare_resume_with_jd(
             comparison=comparison,
         )
 
+        # ECE Features
+        missing_skills_list = comparison.get("missing_keywords", [])
+        project_recs = project_recommender.recommend(domain=domain_data, missing_skills=missing_skills_list)
+        assessment_data = mock_assessment_generator.generate_assessment(domain=domain_data, skills=skills_data)
+
         # Build response
         response = ComparisonResponse(
             success=True,
@@ -372,6 +388,8 @@ async def compare_resume_with_jd(
             optimized_resume=optimized_resume,
             score_methodology=ats_analysis.get("methodology", {}),
             computer_vision=resume_parsed.get("computer_vision", {}),
+            project_recommendations=project_recs,
+            assessment=assessment_data,
             parsing_method=parsing_method,
             ocr_confidence=ocr_confidence
         )

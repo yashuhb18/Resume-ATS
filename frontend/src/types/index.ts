@@ -177,6 +177,28 @@ export interface InterviewChatResponse {
   provider: 'openai' | 'local_fallback' | string;
 }
 
+export interface ProjectRecommendation {
+  title: string;
+  description: string;
+  skills_gained: string[];
+  difficulty: string;
+  domain: string;
+}
+
+export interface AssessmentQuestion {
+  question: string;
+  options: string[];
+  correct_answer: string;
+  explanation: string;
+}
+
+export interface AssessmentResponse {
+  title: string;
+  description: string;
+  questions: AssessmentQuestion[];
+  total_questions: number;
+}
+
 export interface AnalysisResult {
   success: boolean;
   candidate: CandidateInfo;
@@ -195,6 +217,8 @@ export interface AnalysisResult {
   optimized_resume?: ResumeRewrite;
   score_methodology?: ScoreMethodology;
   computer_vision?: ComputerVisionAnalysis;
+  project_recommendations?: ProjectRecommendation[];
+  assessment?: AssessmentResponse;
   // OCR metadata
   parsing_method: 'standard' | 'ocr' | 'ocr_unavailable';
   ocr_confidence: 'low' | 'medium' | 'high' | null;
@@ -246,6 +270,8 @@ export interface ComparisonResult {
   optimized_resume?: ResumeRewrite;
   score_methodology?: ScoreMethodology;
   computer_vision?: ComputerVisionAnalysis;
+  project_recommendations?: ProjectRecommendation[];
+  assessment?: AssessmentResponse;
   parsing_method: 'standard' | 'ocr' | 'ocr_unavailable';
   ocr_confidence: 'low' | 'medium' | 'high' | null;
 }
