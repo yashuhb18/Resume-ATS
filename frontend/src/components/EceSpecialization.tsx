@@ -182,10 +182,15 @@ export default function EceSpecialization() {
                 <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
                   <h4 className="text-xs font-black uppercase tracking-widest text-slate-500 mb-4">Trending Sector Roles</h4>
                   <ul className="space-y-4">
-                    {['ASIC Verification', 'Embedded RTOS Dev', 'FPGA Systems'].map((job, i) => (
-                      <li key={i} className="flex items-center gap-3 text-sm font-bold text-slate-300">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        {job}
+                    {['ASIC Verification Engineer', 'Embedded Firmware Developer', 'IoT Solutions Architect', 'Hardware Systems Designer'].map((job, i) => (
+                      <li key={i}>
+                        <button 
+                          onClick={() => handleJobClick(job)}
+                          className="w-full text-left flex items-center gap-3 text-sm font-bold text-slate-300 hover:text-emerald-400 transition-colors group"
+                        >
+                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 group-hover:scale-150 transition-transform" />
+                          {job}
+                        </button>
                       </li>
                     ))}
                   </ul>

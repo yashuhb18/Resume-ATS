@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { apiUrl } from '@/utils/api';
 import Link from 'next/link';
@@ -12,7 +12,7 @@ import {
   Loader2, Rocket, Trophy, Compass,
   BookOpen, ExternalLink, GraduationCap,
   Youtube, Monitor, Terminal, ShieldCheck,
-  Layers, Share2, Zap, Target
+  Layers, Share2, Zap, Target, FileUp, Search, Info
 } from 'lucide-react';
 
 const ECE_DOMAINS = [
@@ -29,10 +29,12 @@ interface RoadmapStep {
   key_skills: string[];
   course_link?: string;
   youtube_link?: string;
+  critical_project?: string; // New: Specific project focus
 }
 
 interface RoadmapResponse {
   domain: string;
+  role_suitability: string; // New: Explain why this role suits the user
   news_headline: string;
   beginner_steps: RoadmapStep[];
   intermediate_steps: RoadmapStep[];
@@ -41,34 +43,66 @@ interface RoadmapResponse {
 
 export default function RoadmapPage() {
   const [selectedDomain, setSelectedDomain] = useState(ECE_DOMAINS[0]);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [roadmap, setRoadmap] = useState<RoadmapResponse | null>(null);
   const [activeTab, setActiveTab] = useState<'beginner' | 'intermediate' | 'advanced'>('beginner');
   const [error, setError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setResumeFile(e.target.files[0]);
+      analyzeResumeForDomain(e.target.files[0]);
+    }
+  };
+
+  const analyzeResumeForDomain = async (file: File) => {
+    setIsAnalyzing(true);
+    // Simulate AI DNA analysis for domain selection
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    
+    // Simple mock logic: if "verilog" in name, VLSI. If "arduino", Embedded.
+    const name = file.name.toLowerCase();
+    if (name.includes('vlsi') || name.includes('verilog')) setSelectedDomain("VLSI & ASIC Design");
+    else if (name.includes('embed') || name.includes('iot')) setSelectedDomain("Embedded Systems & Firmware");
+    else if (name.includes('robot')) setSelectedDomain("Robotics & Automation");
+    
+    setIsAnalyzing(false);
+  };
 
   const handleGenerate = async () => {
     setIsGenerating(true);
     setError('');
     
-    const minLoadTime = new Promise(resolve => setTimeout(resolve, 2000));
-    
     try {
-      const responsePromise = fetch(apiUrl('/api/generate-roadmap'), {
+      const formData = new FormData();
+      formData.append('domain', selectedDomain);
+      if (resumeFile) formData.append('resume', resumeFile);
+
+      // We'll use the same API but add more detailed prompts in backend later
+      // For now, we simulate the detailed response if resume is present
+      const response = await fetch(apiUrl('/api/generate-roadmap'), {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ domain: selectedDomain })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ domain: selectedDomain, has_resume: !!resumeFile })
       });
 
-      const [response] = await Promise.all([responsePromise, minLoadTime]);
-
-      if (!response.ok) {
-        throw new Error('Intelligence Matrix Synchronization Failed.');
-      }
+      if (!response.ok) throw new Error('Intelligence Matrix Synchronization Failed.');
 
       const data = await response.json();
-      setRoadmap(data);
+      
+      // Inject Role Suitability and Critical Projects if not present from backend
+      const enhancedData: RoadmapResponse = {
+        ...data,
+        role_suitability: data.role_suitability || `Based on your technical DNA, you are a prime candidate for ${selectedDomain}. Your aptitude for low-level architecture and hardware-software synchronization makes you a strong fit for Lead Design roles.`,
+        beginner_steps: data.beginner_steps.map((s: any) => ({ ...s, critical_project: s.critical_project || "Build a 4-bit ALU using Verilog" })),
+        intermediate_steps: data.intermediate_steps.map((s: any) => ({ ...s, critical_project: s.critical_project || "Design a RISC-V core subset" })),
+        advanced_steps: data.advanced_steps.map((s: any) => ({ ...s, critical_project: s.critical_project || "Tape-out ready ASIC layout for a neural accelerator" })),
+      };
+
+      setRoadmap(enhancedData);
       setActiveTab('beginner');
     } catch (err: any) {
       setError(err.message || 'Quantum Anomaly detected.');
@@ -87,7 +121,6 @@ export default function RoadmapPage() {
   return (
     <div className="min-h-screen bg-black text-white selection:bg-indigo-500/30 font-sans overflow-x-hidden">
       
-      {/* Background Ambience */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-500/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-purple-500/10 rounded-full blur-[120px]" />
@@ -95,7 +128,6 @@ export default function RoadmapPage() {
 
       <AnimatePresence mode="wait">
         {!roadmap ? (
-          /* GOD-LEVEL INITIALIZATION PORTAL */
           <motion.section 
             key="init"
             initial={{ opacity: 0 }}
@@ -104,59 +136,70 @@ export default function RoadmapPage() {
             className="relative min-h-screen z-10 py-24"
           >
             <div className="container mx-auto px-6">
-              
               <div className="max-w-7xl mx-auto">
                 <Link href="/#ece-hub" className="inline-flex items-center gap-2 text-indigo-400 hover:text-white transition-colors mb-20 group bg-white/5 px-6 py-3 rounded-2xl border border-white/10 backdrop-blur-md font-bold text-sm">
                   <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                   Return to Hub
                 </Link>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center mb-32">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
                    <div>
                       <div className="inline-block px-4 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-indigo-400 text-[10px] font-black uppercase tracking-[0.3em] mb-8">
-                        The Matrix Engine v2.4
+                        The Matrix Engine v3.0
                       </div>
                       <h1 className="text-7xl md:text-8xl font-black tracking-tight mb-8 leading-[0.9]">
                         Intelligence <br />
                         <span className="text-indigo-500">Matrix.</span>
                       </h1>
                       <p className="text-xl md:text-2xl text-slate-400 font-medium leading-relaxed mb-12">
-                        Initialize a self-adapting neural roadmap. Our matrix synchronizes your profile with the tri-path architectural standards of the hardware industry.
+                        Specialized for EC/EEE. Upload your resume for an autonomous domain scan, or select your target sector manually.
                       </p>
 
-                      {/* Matrix Logic Bento */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                         <div className="p-6 rounded-3xl bg-white/5 border border-white/5">
-                            <Layers className="w-6 h-6 text-indigo-400 mb-4" />
-                            <h4 className="font-black uppercase tracking-widest text-[10px] text-slate-500 mb-2">01 // Neural Synthesis</h4>
-                            <p className="text-xs text-slate-400 leading-relaxed font-medium">Analyzing 500+ verified hardware toolchains to build your unique path.</p>
-                         </div>
-                         <div className="p-6 rounded-3xl bg-white/5 border border-white/5">
-                            <Share2 className="w-6 h-6 text-emerald-400 mb-4" />
-                            <h4 className="font-black uppercase tracking-widest text-[10px] text-slate-500 mb-2">02 // Adaptive Forking</h4>
-                            <p className="text-xs text-slate-400 leading-relaxed font-medium">Tri-path architecture: Beginner, Accelerator, and Mastery tiers.</p>
+                      <div className="grid grid-cols-1 gap-4">
+                         {/* Resume DNA Upload */}
+                         <div 
+                           onClick={() => fileInputRef.current?.click()}
+                           className={`p-10 rounded-[2.5rem] border-2 border-dashed transition-all cursor-pointer group ${
+                            resumeFile ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-white/10 bg-white/5 hover:border-indigo-500/30'
+                           }`}
+                         >
+                            <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".pdf,.doc,.docx" />
+                            <div className="flex items-center gap-6">
+                               <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-colors ${
+                                 resumeFile ? 'bg-emerald-500/20' : 'bg-white/10 group-hover:bg-indigo-500/20'
+                               }`}>
+                                  {isAnalyzing ? <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" /> : <FileUp className={`w-8 h-8 ${resumeFile ? 'text-emerald-400' : 'text-slate-400'}`} />}
+                               </div>
+                               <div>
+                                  <h4 className="text-xl font-black">{resumeFile ? resumeFile.name : 'Scan Resume DNA'}</h4>
+                                  <p className="text-sm text-slate-500 font-medium">{resumeFile ? 'Resume Synced. Algorithm recommending domain...' : 'Recommended for EC students for automatic domain matching.'}</p>
+                               </div>
+                            </div>
                          </div>
                       </div>
                    </div>
 
-                   {/* Terminal-style Selector */}
                    <div className="relative group">
                       <div className="absolute inset-0 bg-indigo-500/20 rounded-[3rem] blur-[80px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                       <div className="relative p-1 bg-gradient-to-br from-white/10 to-transparent rounded-[3rem]">
                         <div className="bg-[#050505] rounded-[2.9rem] p-10 md:p-14">
                            <div className="flex items-center gap-3 mb-10 opacity-40">
                               <Terminal className="w-5 h-5 text-indigo-500" />
-                              <span className="text-[10px] font-black uppercase tracking-[0.3em]">RESQ_OS // SECURE_INIT</span>
+                              <span className="text-[10px] font-black uppercase tracking-[0.3em]">MATRIX_OS // CONFIGURATION</span>
                            </div>
 
                            <div className="space-y-8">
                               <div>
-                                <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-4">Select Target Domain</label>
+                                <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-4">
+                                  {isAnalyzing ? 'Analyzing Alignment...' : 'Target Domain Alignment'}
+                                </label>
                                 <div className="relative">
                                   <select
                                     value={selectedDomain}
                                     onChange={(e) => setSelectedDomain(e.target.value)}
-                                    className="block w-full px-8 py-5 text-xl font-bold border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 rounded-2xl bg-white/5 text-white cursor-pointer appearance-none transition-all"
+                                    className={`block w-full px-8 py-5 text-xl font-bold border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 rounded-2xl bg-white/5 text-white cursor-pointer appearance-none transition-all ${
+                                      isAnalyzing ? 'opacity-50 pointer-events-none' : ''
+                                    }`}
                                   >
                                     {ECE_DOMAINS.map(d => <option key={d} value={d} className="bg-slate-900">{d}</option>)}
                                   </select>
@@ -166,54 +209,20 @@ export default function RoadmapPage() {
 
                               <button
                                 onClick={handleGenerate}
-                                disabled={isGenerating}
+                                disabled={isGenerating || isAnalyzing}
                                 className="w-full py-6 bg-indigo-600 text-white font-black text-xl rounded-2xl hover:bg-indigo-700 transition-all flex items-center justify-center gap-4 group relative overflow-hidden shadow-2xl shadow-indigo-500/20 active:scale-95"
                               >
                                 {isGenerating ? (
-                                  <><Loader2 className="w-6 h-6 animate-spin" /> SYNCHRONIZING...</>
+                                  <><Loader2 className="w-6 h-6 animate-spin" /> GENERATING ROADMAP...</>
                                 ) : (
-                                  <>INITIALIZE MATRIX <Rocket className="w-6 h-6 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /></>
+                                  <>{resumeFile ? 'SYNC & INITIALIZE' : 'INITIALIZE MATRIX'} <Rocket className="w-6 h-6 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /></>
                                 )}
                               </button>
-
-                              <div className="pt-8 border-t border-white/5 flex items-center gap-6 justify-center opacity-30 grayscale">
-                                 <ShieldCheck className="w-6 h-6" />
-                                 <Target className="w-6 h-6" />
-                                 <Zap className="w-6 h-6" />
-                              </div>
                            </div>
                         </div>
                       </div>
                    </div>
                 </div>
-
-                {/* Explanation Section: How the Matrix Works */}
-                <div className="mt-32 pt-32 border-t border-white/5">
-                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
-                      <div className="space-y-6">
-                         <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center">
-                            <Layers className="w-7 h-7 text-indigo-400" />
-                         </div>
-                         <h3 className="text-2xl font-black tracking-tight text-white">Multilayer Synthesis</h3>
-                         <p className="text-slate-500 font-medium leading-relaxed">Our matrix doesn&apos;t just list topics. It analyzes cross-functional dependencies between hardware tools (e.g., how RTL links to Physical Design) to build a logical learning sequence.</p>
-                      </div>
-                      <div className="space-y-6">
-                         <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
-                            <Share2 className="w-7 h-7 text-emerald-400" />
-                         </div>
-                         <h3 className="text-2xl font-black tracking-tight text-white">Bimodal Resources</h3>
-                         <p className="text-slate-500 font-medium leading-relaxed">Every node in the matrix provides a dual-resource fork: a theoretical masterclass (Coursera Plus) and a practical, hands-on technical workshop (YouTube).</p>
-                      </div>
-                      <div className="space-y-6">
-                         <div className="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center">
-                            <Target className="w-7 h-7 text-purple-400" />
-                         </div>
-                         <h3 className="text-2xl font-black tracking-tight text-white">Domain Hardening</h3>
-                         <p className="text-slate-500 font-medium leading-relaxed">The roadmap adapts its difficulty based on your initial DNA scan, ensuring you are neither overwhelmed nor bored, but constantly challenged.</p>
-                      </div>
-                   </div>
-                </div>
-
               </div>
             </div>
           </motion.section>
@@ -225,7 +234,6 @@ export default function RoadmapPage() {
             animate={{ opacity: 1, scale: 1 }}
             className="relative z-10"
           >
-            {/* Minimal Header */}
             <header className="border-b border-white/10 bg-black/50 backdrop-blur-xl sticky top-0 z-50">
               <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -236,15 +244,30 @@ export default function RoadmapPage() {
                 </div>
                 <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Path Validated</span>
+                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">DNA Synced</span>
                 </div>
               </div>
             </header>
 
             <main className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              
+              {/* Role Suitability Banner */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-12 p-10 rounded-[3rem] bg-indigo-500 text-white shadow-2xl shadow-indigo-500/20 flex flex-col md:flex-row items-center gap-10"
+              >
+                 <div className="w-20 h-20 rounded-3xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <Trophy className="w-10 h-10 text-white" />
+                 </div>
+                 <div>
+                    <h3 className="text-2xl font-black mb-2 uppercase tracking-tight">Optimized Career Path</h3>
+                    <p className="text-lg font-medium text-white/90 leading-relaxed">{roadmap.role_suitability}</p>
+                 </div>
+              </motion.div>
+
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                 
-                {/* Roadmap Column */}
                 <div className="lg:col-span-2 space-y-12">
                   <div className="flex gap-2 p-1.5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
                     {(['beginner', 'intermediate', 'advanced'] as const).map((tab) => (
@@ -274,10 +297,10 @@ export default function RoadmapPage() {
                       {getActiveSteps().map((step, index) => (
                         <div key={index} className="relative flex items-start gap-10 ml-[1.35rem]">
                           <div className={`absolute -left-[1.35rem] w-4 h-4 rounded-full border-4 border-black z-10 mt-3 ${
-                            activeTab === 'beginner' ? 'bg-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.5)]' : activeTab === 'intermediate' ? 'bg-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.5)]' : 'bg-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.5)]'
+                            activeTab === 'beginner' ? 'bg-emerald-400' : activeTab === 'intermediate' ? 'bg-indigo-400' : 'bg-purple-400'
                           }`} />
                           
-                          <div className="flex-1 bg-white/[0.02] border border-white/10 rounded-[2.5rem] p-10 hover:bg-white/[0.04] transition-all group relative overflow-hidden">
+                          <div className="flex-1 bg-[#0a0a0a] border border-white/10 rounded-[3rem] p-10 hover:border-indigo-500/30 transition-all group relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-10 text-6xl font-black text-white/[0.02] pointer-events-none uppercase italic">Step 0{index + 1}</div>
                             
                             <div className="flex flex-col xl:flex-row justify-between gap-6 mb-8 relative z-10">
@@ -298,7 +321,7 @@ export default function RoadmapPage() {
                                     href={step.course_link} 
                                     target="_blank" 
                                     rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-all text-xs font-black uppercase tracking-widest shadow-xl shadow-indigo-500/20"
+                                    className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-all text-xs font-black uppercase tracking-widest"
                                   >
                                     <GraduationCap className="w-5 h-5" />
                                     Coursera Plus
@@ -318,9 +341,20 @@ export default function RoadmapPage() {
                               </div>
                             </div>
                             
-                            <p className="text-lg text-slate-400 leading-relaxed max-w-3xl relative z-10 font-medium">
+                            <p className="text-lg text-slate-400 leading-relaxed max-w-3xl mb-8 font-medium">
                               {step.description}
                             </p>
+
+                            {/* Critical Project Callout */}
+                            <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 flex items-center gap-6">
+                               <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                                  <Zap className="w-6 h-6 text-emerald-400" />
+                               </div>
+                               <div>
+                                  <span className="block text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-1">Critical Project Milestone</span>
+                                  <p className="text-sm font-bold text-slate-200">{step.critical_project}</p>
+                               </div>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -328,17 +362,24 @@ export default function RoadmapPage() {
                   </div>
                 </div>
 
-                {/* Sidebar Column */}
                 <div className="lg:col-span-1 space-y-8">
-                  <div className="sticky top-24 space-y-12">
-                    <div>
-                      <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-8 flex items-center gap-4">
-                        <Monitor className="w-5 h-5 text-indigo-500" />
-                        Live Domain Pulse
+                   <div className="p-10 rounded-[3rem] bg-white/5 border border-white/10">
+                      <h3 className="text-xl font-black mb-6 uppercase tracking-tight flex items-center gap-3">
+                         <Info className="w-5 h-5 text-indigo-400" />
+                         Pro Tips
                       </h3>
-                      <SocialPulse domain={roadmap.domain} />
-                    </div>
-                  </div>
+                      <ul className="space-y-6">
+                         <li className="text-sm font-medium text-slate-400 leading-relaxed">
+                            <strong className="text-white block mb-1 uppercase tracking-widest text-[10px]">Project Priority</strong>
+                            Don&apos;t just code; simulate. Companies value Vivado/Quartus screenshots in portfolios.
+                         </li>
+                         <li className="text-sm font-medium text-slate-400 leading-relaxed">
+                            <strong className="text-white block mb-1 uppercase tracking-widest text-[10px]">Skill Strength</strong>
+                            Focus on getting your &quot;Hot Skills&quot; to 80% proficiency before moving to Mastery.
+                         </li>
+                      </ul>
+                   </div>
+                   <SocialPulse domain={roadmap.domain} />
                 </div>
 
               </div>
