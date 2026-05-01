@@ -39,7 +39,8 @@ class RoadmapGenerator:
                     "title": "String",
                     "description": "String (Technical and actionable)",
                     "key_skills": ["String", "String"],
-                    "course_link": "String (A direct URL to a relevant Coursera course or specialization)"
+                    "course_link": "String (A direct URL to a relevant Coursera course)",
+                    "youtube_link": "String (A direct URL to a relevant YouTube technical playlist)"
                 }}
             ],
             "intermediate_steps": [ ... ],

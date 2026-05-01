@@ -277,6 +277,7 @@ class RoadmapStep(BaseModel):
     description: str
     key_skills: List[str]
     course_link: Optional[str] = None
+    youtube_link: Optional[str] = None
 
 
 class RoadmapResponse(BaseModel):
