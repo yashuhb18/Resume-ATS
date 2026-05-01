@@ -58,7 +58,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/images/logo.png" type="image/png" />
         <link rel="apple-touch-icon" href="/images/logo.png" />
@@ -77,6 +77,7 @@ export default function RootLayout({
               sameAs: [
                 'https://nimma-mitra.com'
               ],
+              themeColor: '#3B82F6',
               offers: {
                 '@type': 'Offer',
                 price: '0',
@@ -97,7 +98,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen">
+      <body className="min-h-screen" suppressHydrationWarning>
         {children}
       </body>
     </html>

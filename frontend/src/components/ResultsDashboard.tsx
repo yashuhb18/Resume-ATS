@@ -126,7 +126,7 @@ export default function ResultsDashboard({ results, comparisonResults, onReset }
                 {isComparison ? 'Resume vs JD Comparison' : 'Resume Analysis Results'}
               </h1>
               <p className="text-sm mt-0.5" style={{ color: 'var(--text-muted)' }}>
-                {data.candidate.name || 'Your Resume'} • Analyzed just now
+                {data.candidate?.name || 'Your Resume'} • Analyzed just now
               </p>
             </div>
           </div>
@@ -268,12 +268,12 @@ export default function ResultsDashboard({ results, comparisonResults, onReset }
             </div>
             <div className="space-y-3">
               {[
-                { icon: User,     val: data.candidate.name     },
-                { icon: Mail,     val: data.candidate.email    },
-                { icon: Phone,    val: data.candidate.phone    },
-                { icon: MapPin,   val: data.candidate.location },
-                { icon: Linkedin, val: data.candidate.linkedin },
-                { icon: Github,   val: data.candidate.github   },
+                { icon: User,     val: data.candidate?.name     },
+                { icon: Mail,     val: data.candidate?.email    },
+                { icon: Phone,    val: data.candidate?.phone    },
+                { icon: MapPin,   val: data.candidate?.location },
+                { icon: Linkedin, val: data.candidate?.linkedin },
+                { icon: Github,   val: data.candidate?.github   },
               ].filter(r => r.val).map(({ icon: Icon, val }) => (
                 <div key={val} className="flex items-center gap-3">
                   <Icon className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--text-faint)' }} />
@@ -293,14 +293,14 @@ export default function ResultsDashboard({ results, comparisonResults, onReset }
                 <h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Fit Rating</h2>
               </div>
               <div className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
-                {comparisonResults.recruiter_report.fit_rating}
+                {comparisonResults?.recruiter_report?.fit_rating || 'Analysis Pending'}
               </div>
               <p className="text-sm mb-3" style={{ color: 'var(--text-muted)' }}>
-                {comparisonResults.recruiter_report.overall_summary}
+                {comparisonResults?.recruiter_report?.overall_summary || 'Reviewing your profile compatibility...'}
               </p>
               <p className="text-xs font-semibold mb-1" style={{ color: 'var(--text-secondary)' }}>Recommendation:</p>
               <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                {comparisonResults.recruiter_report.recommendation}
+                {comparisonResults?.recruiter_report?.recommendation || 'Optimizing candidate alignment...'}
               </p>
             </div>
           ) : results ? (
@@ -311,20 +311,20 @@ export default function ResultsDashboard({ results, comparisonResults, onReset }
                 </div>
                 <h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Detected Domain</h2>
               </div>
-              <div className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{results.domain.primary}</div>
+              <div className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{results?.domain?.primary || 'General'}</div>
               <div className="flex items-center gap-3 mb-3">
                 <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'var(--surface-muted)' }}>
                   <div
                     className="h-full rounded-full transition-all duration-700"
                     style={{
-                      width: `${results.domain.confidence * 100}%`,
+                      width: `${(results?.domain?.confidence || 0) * 100}%`,
                       background: 'linear-gradient(90deg, var(--violet-deep), var(--violet-electric))',
                       boxShadow: '0 0 8px rgba(155,126,247,0.5)',
                     }}
                   />
                 </div>
                 <span className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>
-                  {Math.round(results.domain.confidence * 100)}%
+                  {Math.round((results?.domain?.confidence || 0) * 100)}%
                 </span>
               </div>
               {results.domain.secondary && (
