@@ -8,6 +8,7 @@ import {
   Briefcase, CheckCircle2, ChevronRight 
 } from 'lucide-react';
 import RoadmapModal from './RoadmapModal';
+import TrendingJobModal from './TrendingJobModal';
 
 const domains = [
   {
@@ -78,6 +79,13 @@ const itemVariants = {
 
 export default function EceSpecialization() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isJobModalOpen, setIsJobModalOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<string | null>(null);
+
+  const handleJobClick = (job: string) => {
+    setSelectedJob(job);
+    setIsJobModalOpen(true);
+  };
 
   return (
     <section id="ece-hub" className="relative py-24 overflow-hidden border-t border-white/5" style={{ background: 'var(--surface-base)' }}>
@@ -188,9 +196,15 @@ export default function EceSpecialization() {
 
               <ul className="space-y-3">
                 {trendingJobs.map((job, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                    <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>{job}</span>
+                  <li key={i}>
+                    <button
+                      onClick={() => handleJobClick(job)}
+                      className="w-full text-left flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-emerald-500/10 transition-colors group"
+                    >
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                      <span className="text-sm font-medium group-hover:text-emerald-300 transition-colors" style={{ color: 'var(--text-secondary)' }}>{job}</span>
+                      <ChevronRight className="w-4 h-4 text-emerald-500/0 group-hover:text-emerald-500/50 ml-auto -translate-x-2 group-hover:translate-x-0 transition-all" />
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -242,6 +256,7 @@ export default function EceSpecialization() {
       </div>
 
       <RoadmapModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <TrendingJobModal isOpen={isJobModalOpen} onClose={() => setIsJobModalOpen(false)} jobName={selectedJob} />
     </section>
   );
 }
