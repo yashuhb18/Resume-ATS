@@ -45,9 +45,9 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/images/logo.png', type: 'image/png' },
     ],
-    apple: '/apple-touch-icon.svg',
+    apple: '/images/logo.png',
   },
   category: 'Career Tools',
 };
@@ -60,8 +60,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
+        <link rel="icon" href="/images/logo.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/images/logo.png" />
         <meta name="theme-color" content="#3B82F6" />
         <script
           type="application/ld+json"

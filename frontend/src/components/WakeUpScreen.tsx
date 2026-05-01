@@ -56,7 +56,7 @@ export default function WakeUpScreen({ onVerified }: WakeUpScreenProps) {
         >
           {/* Logo */}
           <div className="mb-6">
-            <img src="/images/logo.png" alt="Nimma-MITra Logo" className="w-16 h-16 mx-auto rounded-2xl mb-4 shadow-brand bg-white object-contain" />
+            <img src="/images/logo.png" alt="Nimma-MITra Logo" className="w-16 h-16 mx-auto rounded-2xl mb-4 shadow-brand object-contain" />
             <h1 className="text-2xl font-bold font-display" style={{ color: 'var(--text-primary)' }}>
               Nimma-<span className="text-gradient-brand">MITra</span>
             </h1>

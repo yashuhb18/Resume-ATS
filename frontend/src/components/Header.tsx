@@ -36,7 +36,7 @@ export default function Header() {
 
           {/* Logo */}
           <div className="flex items-center gap-2.5">
-            <img src="/images/logo.png" alt="Nimma-MITra Logo" className="w-10 h-10 rounded-xl shadow-brand-sm bg-white object-contain" />
+            <img src="/images/logo.png" alt="Nimma-MITra Logo" className="w-10 h-10 rounded-xl shadow-brand-sm object-contain" />
             <span className="text-lg font-bold font-display" style={{ color: 'var(--text-primary)' }}>
               Nimma-<span className="text-gradient-brand">MITra</span>
             </span>
