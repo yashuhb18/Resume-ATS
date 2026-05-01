@@ -29,13 +29,13 @@ interface RoadmapStep {
   key_skills: string[];
   course_link?: string;
   youtube_link?: string;
-  github_repo?: string; // New: Related GitHub repository
-  critical_project?: string; // New: Specific project focus
+  github_repo?: string;
+  critical_project?: string;
 }
 
 interface RoadmapResponse {
   domain: string;
-  role_suitability: string; // New: Explain why this role suits the user
+  role_suitability: string;
   news_headline: string;
   beginner_steps: RoadmapStep[];
   intermediate_steps: RoadmapStep[];
@@ -52,6 +52,9 @@ export default function RoadmapPage() {
   const [error, setError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [showPortalAnimation, setShowPortalAnimation] = useState(false);
+  const [portalComplete, setPortalComplete] = useState(false);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setResumeFile(e.target.files[0]);
@@ -61,73 +64,17 @@ export default function RoadmapPage() {
 
   const analyzeResumeForDomain = async (file: File) => {
     setIsAnalyzing(true);
-    // Simulate AI DNA analysis for domain selection
     await new Promise(resolve => setTimeout(resolve, 2500));
-    
-    // Simple mock logic: if "verilog" in name, VLSI. If "arduino", Embedded.
     const name = file.name.toLowerCase();
     if (name.includes('vlsi') || name.includes('verilog')) setSelectedDomain("VLSI & ASIC Design");
     else if (name.includes('embed') || name.includes('iot')) setSelectedDomain("Embedded Systems & Firmware");
     else if (name.includes('robot')) setSelectedDomain("Robotics & Automation");
-    
     setIsAnalyzing(false);
-  };
-
-  const handleGenerate = async () => {
-    setIsGenerating(true);
-    setError('');
-    
-    try {
-      const formData = new FormData();
-      formData.append('domain', selectedDomain);
-      if (resumeFile) formData.append('resume', resumeFile);
-
-      // We'll use the same API but add more detailed prompts in backend later
-      // For now, we simulate the detailed response if resume is present
-      const response = await fetch(apiUrl('/api/generate-roadmap'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ domain: selectedDomain, has_resume: !!resumeFile })
-      });
-
-      if (!response.ok) throw new Error('Intelligence Matrix Synchronization Failed.');
-
-      const data = await response.json();
-      
-      // Inject Role Suitability and Critical Projects if not present from backend
-      const enhancedData: RoadmapResponse = {
-        ...data,
-        role_suitability: data.role_suitability || `Based on your technical DNA, you are a prime candidate for ${selectedDomain}. Your aptitude for low-level architecture and hardware-software synchronization makes you a strong fit for Lead Design roles.`,
-        beginner_steps: data.beginner_steps.map((s: any) => ({ ...s, critical_project: s.critical_project || "Build a 4-bit ALU using Verilog" })),
-        intermediate_steps: data.intermediate_steps.map((s: any) => ({ ...s, critical_project: s.critical_project || "Design a RISC-V core subset" })),
-        advanced_steps: data.advanced_steps.map((s: any) => ({ ...s, critical_project: s.critical_project || "Tape-out ready ASIC layout for a neural accelerator" })),
-      };
-
-      setRoadmap(enhancedData);
-      setActiveTab('beginner');
-    } catch (err: any) {
-      setError(err.message || 'Quantum Anomaly detected.');
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  const [showPortalAnimation, setShowPortalAnimation] = useState(false);
-  const [portalComplete, setPortalComplete] = useState(false);
-
-  // Trigger portal animation when roadmap is first received
-  const triggerMatrixEntry = () => {
-    setShowPortalAnimation(true);
-    setTimeout(() => {
-      setPortalComplete(true);
-      setShowPortalAnimation(false);
-    }, 2500);
   };
 
   const handleGenerateWithAnimation = async () => {
     setIsGenerating(true);
     setError('');
-    
     try {
       const response = await fetch(apiUrl('/api/generate-roadmap'), {
         method: 'POST',
@@ -138,11 +85,20 @@ export default function RoadmapPage() {
       if (!response.ok) throw new Error('Intelligence Matrix Failed.');
       const data = await response.json();
       
-      // Start the "Goated" Animation Sequence
-      triggerMatrixEntry();
+      // Start "Goated" Animation
+      setShowPortalAnimation(true);
+      setPortalComplete(false);
       
-      setRoadmap(data);
-      setActiveTab('beginner');
+      setTimeout(() => {
+        setRoadmap(data);
+        setActiveTab('beginner');
+        // Portal finishes after the flash
+        setTimeout(() => {
+          setShowPortalAnimation(false);
+          setPortalComplete(true);
+        }, 300);
+      }, 2500);
+
     } catch (err: any) {
       setError(err.message || 'Quantum Anomaly.');
     } finally {
@@ -195,7 +151,6 @@ export default function RoadmapPage() {
                       </p>
 
                       <div className="grid grid-cols-1 gap-4">
-                         {/* Resume DNA Upload */}
                          <div 
                            onClick={() => fileInputRef.current?.click()}
                            className={`p-10 rounded-[2.5rem] border-2 border-dashed transition-all cursor-pointer group ${
@@ -264,89 +219,6 @@ export default function RoadmapPage() {
                 </div>
               </div>
             </div>
-
-            {/* "GOATED" Digital Wormhole Entry Animation Overlay */}
-            <AnimatePresence>
-              {showPortalAnimation && (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="fixed inset-0 z-[100] bg-[#020202] flex items-center justify-center overflow-hidden"
-                >
-                   {/* High-Velocity Particle Tunnel */}
-                   <div className="absolute inset-0 pointer-events-none perspective-[1000px]">
-                      {[...Array(50)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ z: -500, opacity: 0, scale: 0.1 }}
-                          animate={{ 
-                            z: [ -500, 1000 ], 
-                            opacity: [ 0, 1, 0 ],
-                            scale: [ 0.1, 4 ]
-                          }}
-                          transition={{ 
-                            duration: 1.2, 
-                            repeat: Infinity, 
-                            delay: i * 0.05, 
-                            ease: "circIn" 
-                          }}
-                          className="absolute top-1/2 left-1/2 w-1 h-20 bg-indigo-500/40 blur-[1px] rounded-full"
-                          style={{
-                            transform: `rotate(${i * 7.2}deg) translateY(-200px)`
-                          }}
-                        />
-                      ))}
-                   </div>
-
-                   {/* Spectral Glitch Distortions */}
-                   <motion.div 
-                      animate={{ 
-                        opacity: [0, 0.8, 0],
-                        scale: [1, 1.1, 1],
-                        filter: ["hue-rotate(0deg)", "hue-rotate(90deg)", "hue-rotate(0deg)"]
-                      }}
-                      transition={{ duration: 0.2, repeat: Infinity }}
-                      className="absolute inset-0 pointer-events-none bg-indigo-500/5 mix-blend-screen"
-                   />
-                   
-                   <div className="text-center relative z-10">
-                      <motion.div 
-                        initial={{ scale: 0, rotate: -180 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        transition={{ type: "spring", damping: 12 }}
-                        className="mb-12 relative"
-                      >
-                         <div className="absolute inset-0 blur-3xl bg-indigo-500/50 animate-pulse" />
-                         <Layers className="w-32 h-32 text-white mx-auto relative z-10" />
-                      </motion.div>
-                      
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="space-y-4"
-                      >
-                        <h2 className="text-5xl font-black tracking-[0.8em] text-white uppercase italic animate-pulse">
-                          Synchronizing
-                        </h2>
-                        <div className="flex items-center justify-center gap-4">
-                           <div className="h-[2px] w-24 bg-gradient-to-r from-transparent to-indigo-500" />
-                           <span className="text-indigo-400 font-mono text-sm tracking-[0.3em]">DNA_SCAN_ACTIVE</span>
-                           <div className="h-[2px] w-24 bg-gradient-to-l from-transparent to-indigo-500" />
-                        </div>
-                      </motion.div>
-                   </div>
-
-                   {/* Flash Out Sequence */}
-                   <motion.div 
-                     initial={{ opacity: 0 }}
-                     animate={{ opacity: [0, 1, 0] }}
-                     transition={{ delay: 2.2, duration: 0.3 }}
-                     className="absolute inset-0 bg-white z-[110]"
-                   />
-                </motion.div>
-              )}
-            </AnimatePresence>
           </motion.section>
         ) : (
           /* ACTIVE INTELLIGENCE MATRIX VIEW */
@@ -373,8 +245,6 @@ export default function RoadmapPage() {
             </header>
 
             <main className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              
-              {/* Role Suitability Banner */}
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -390,7 +260,6 @@ export default function RoadmapPage() {
               </motion.div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                
                 <div className="lg:col-span-2 space-y-12">
                   <div className="flex gap-2 p-1.5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
                     {(['beginner', 'intermediate', 'advanced'] as const).map((tab) => (
@@ -410,7 +279,6 @@ export default function RoadmapPage() {
 
                   <div className="relative">
                     <div className="absolute top-0 bottom-0 left-6 w-[2px] bg-gradient-to-b from-indigo-500/50 via-white/5 to-transparent" />
-                    
                     <motion.div
                       key={activeTab}
                       initial={{ opacity: 0, x: 20 }}
@@ -437,37 +305,15 @@ export default function RoadmapPage() {
                                   ))}
                                 </div>
                               </div>
-                              
                               <div className="flex flex-col sm:flex-row gap-4">
                                 {step.course_link && (
-                                  <a 
-                                    href={step.course_link} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-all text-xs font-black uppercase tracking-widest"
-                                  >
+                                  <a href={step.course_link} target="_blank" className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-all text-xs font-black uppercase tracking-widest">
                                     <GraduationCap className="w-5 h-5" />
                                     Coursera Plus
                                   </a>
                                 )}
-                                {step.youtube_link && (
-                                  <a 
-                                    href={step.youtube_link} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all text-xs font-black uppercase tracking-widest"
-                                  >
-                                    <Youtube className="w-5 h-5 text-red-500" />
-                                    Masterclass
-                                  </a>
-                                )}
                                 {step.github_repo && (
-                                  <a 
-                                    href={step.github_repo} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-indigo-500 transition-all text-xs font-black uppercase tracking-widest group/git"
-                                  >
+                                  <a href={step.github_repo} target="_blank" className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-indigo-500 transition-all text-xs font-black uppercase tracking-widest group/git">
                                     <Github className="w-5 h-5 group-hover/git:rotate-12 transition-transform" />
                                     View Source
                                   </a>
@@ -475,11 +321,8 @@ export default function RoadmapPage() {
                               </div>
                             </div>
                             
-                            <p className="text-lg text-slate-400 leading-relaxed max-w-3xl mb-8 font-medium">
-                              {step.description}
-                            </p>
+                            <p className="text-lg text-slate-400 leading-relaxed max-w-3xl mb-8 font-medium">{step.description}</p>
 
-                            {/* Critical Project Highlight (Professional Card) */}
                             <div className="relative p-8 rounded-3xl border border-indigo-500/20 bg-indigo-500/5 overflow-hidden">
                                <div className="absolute top-4 right-6 text-[8px] font-black uppercase tracking-[0.4em] text-indigo-400 opacity-50">Core Project Milestone</div>
                                <div className="flex flex-col md:flex-row items-center gap-6">
@@ -510,17 +353,52 @@ export default function RoadmapPage() {
                             <strong className="text-white block mb-1 uppercase tracking-widest text-[10px]">Project Priority</strong>
                             Don&apos;t just code; simulate. Companies value Vivado/Quartus screenshots in portfolios.
                          </li>
-                         <li className="text-sm font-medium text-slate-400 leading-relaxed">
-                            <strong className="text-white block mb-1 uppercase tracking-widest text-[10px]">Skill Strength</strong>
-                            Focus on getting your &quot;Hot Skills&quot; to 80% proficiency before moving to Mastery.
-                         </li>
                       </ul>
                    </div>
                    <SocialPulse domain={roadmap.domain} />
                 </div>
-
               </div>
             </main>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showPortalAnimation && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-[#020202] flex items-center justify-center overflow-hidden"
+          >
+             <div className="absolute inset-0 pointer-events-none perspective-[1000px]">
+                {[...Array(50)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ z: -500, opacity: 0, scale: 0.1 }}
+                    animate={{ z: [ -500, 1000 ], opacity: [ 0, 1, 0 ], scale: [ 0.1, 4 ] }}
+                    transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.05, ease: "circIn" }}
+                    className="absolute top-1/2 left-1/2 w-1 h-20 bg-indigo-500/40 blur-[1px] rounded-full"
+                    style={{ transform: `rotate(${i * 7.2}deg) translateY(-200px)` }}
+                  />
+                ))}
+             </div>
+             <motion.div animate={{ opacity: [0, 0.8, 0], scale: [1, 1.1, 1], filter: ["hue-rotate(0deg)", "hue-rotate(90deg)", "hue-rotate(0deg)"] }} transition={{ duration: 0.2, repeat: Infinity }} className="absolute inset-0 pointer-events-none bg-indigo-500/5 mix-blend-screen" />
+             <div className="text-center relative z-10">
+                <motion.div initial={{ scale: 0, rotate: -180 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", damping: 12 }} className="mb-12 relative">
+                   <div className="absolute inset-0 blur-3xl bg-indigo-500/50 animate-pulse" />
+                   <Layers className="w-32 h-32 text-white mx-auto relative z-10" />
+                </motion.div>
+                <div className="space-y-4">
+                  <h2 className="text-5xl font-black tracking-[0.8em] text-white uppercase italic animate-pulse">Synchronizing</h2>
+                  <div className="flex items-center justify-center gap-4">
+                     <div className="h-[2px] w-24 bg-gradient-to-r from-transparent to-indigo-500" />
+                     <span className="text-indigo-400 font-mono text-sm tracking-[0.3em]">DNA_SCAN_ACTIVE</span>
+                     <div className="h-[2px] w-24 bg-gradient-to-l from-transparent to-indigo-500" />
+                  </div>
+                </div>
+             </div>
+             <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0] }} transition={{ delay: 2.2, duration: 0.3 }} className="absolute inset-0 bg-white z-[110]" />
           </motion.div>
         )}
       </AnimatePresence>
