@@ -549,13 +549,24 @@ async def roadmap_from_file(file: UploadFile = File(...)):
     """
     Generate a dynamic career roadmap directly from an uploaded resume file (PDF/Doc).
     """
+    temp_path = None
     try:
-        # 1. Parse the file using our existing robust parser
+        # 1. Save uploaded file temporarily
+        suffix = os.path.splitext(file.filename)[1].lower()
+        import tempfile
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            content = await file.read()
+            tmp.write(content)
+            temp_path = tmp.name
+
+        # 2. Parse the file using our existing robust parser
         from app.services.resume_parser import ResumeParser
         parser = ResumeParser()
-        resume_text = await parser.parse(file)
+        # Note: parse is synchronous and returns a dict
+        parse_result = parser.parse(temp_path, suffix)
+        resume_text = parse_result.get("raw_text", "")
         
-        # 2. Generate roadmap from extracted text
+        # 3. Generate roadmap from extracted text
         roadmap_data = roadmap_generator.generate(
             resume_text=resume_text
         )
@@ -564,6 +575,12 @@ async def roadmap_from_file(file: UploadFile = File(...)):
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if temp_path and os.path.exists(temp_path):
+            try:
+                os.remove(temp_path)
+            except:
+                pass
 
 
 @app.post("/api/pulse", response_model=PulseResponse)
