@@ -79,7 +79,7 @@ export default function RoadmapModal({ isOpen, onClose }: RoadmapModalProps) {
     setRoadmap(null);
 
     try {
-      const response = await fetch(`${apiUrl}/api/generate-roadmap`, {
+      const response = await fetch(apiUrl('/api/generate-roadmap'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
