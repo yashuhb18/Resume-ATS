@@ -62,7 +62,7 @@ export default function Hero() {
             insights in seconds. No signup required.
             <br />
             <span className="font-semibold block mt-3" style={{ color: 'var(--accent-ice)' }}>
-              Specially designed for the professionals in the EC and EEE domains in a more professional and unique way.
+              Premium Career Intelligence tailored for Electronics, Communication, and Electrical Engineers.
             </span>
           </motion.p>
 

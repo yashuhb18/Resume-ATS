@@ -6,7 +6,7 @@ import {
   ArrowLeft, Download, User, Mail, Phone, MapPin,
   Linkedin, Github, Target, Compass, Briefcase,
   AlertTriangle, Lightbulb, Loader2,
-  Gauge,
+  Gauge, LayoutDashboard, Rocket
 } from 'lucide-react';
 import { AnalysisResult, ComparisonResult } from '@/types';
 import ScoreCircle        from './results/ScoreCircle';
@@ -57,6 +57,7 @@ function StatNum({ value, suffix = '%', color }: { value: number; suffix?: strin
 
 export default function ResultsDashboard({ results, comparisonResults, onReset }: ResultsDashboardProps) {
   const [isDownloading, setIsDownloading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'analysis' | 'career'>('analysis');
   const isComparison = !!comparisonResults && !results;
   const data = results || comparisonResults;
 
@@ -140,7 +141,35 @@ export default function ResultsDashboard({ results, comparisonResults, onReset }
           </button>
         </motion.div>
 
-        {/* ── Hero score row ── */}
+        {/* ── Tabs ── */}
+        <div className="flex mb-8 bg-black/20 p-1 rounded-2xl w-fit border border-white/5 shadow-inner">
+          <button
+            onClick={() => setActiveTab('analysis')}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-medium transition-all ${
+              activeTab === 'analysis'
+                ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/25'
+                : 'text-white/60 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <LayoutDashboard className="w-4 h-4" />
+            Analysis Report
+          </button>
+          <button
+            onClick={() => setActiveTab('career')}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-medium transition-all ${
+              activeTab === 'career'
+                ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25'
+                : 'text-white/60 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Rocket className="w-4 h-4" />
+            Career Hub
+          </button>
+        </div>
+
+        {activeTab === 'analysis' ? (
+          <>
+            {/* ── Hero score row ── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -480,29 +509,6 @@ export default function ResultsDashboard({ results, comparisonResults, onReset }
           </div>
         )}
 
-        {/* ── ECE Features: Project Recommendations & Mock Assessment ── */}
-        {data.project_recommendations && data.project_recommendations.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="mb-8"
-          >
-            <ProjectRecommendationsCard recommendations={data.project_recommendations} />
-          </motion.div>
-        )}
-
-        {data.assessment && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.62 }}
-            className="mb-8"
-          >
-            <AssessmentDashboard assessment={data.assessment} />
-          </motion.div>
-        )}
-
         {/* ── Comparison suggestions ── */}
         {isComparison && comparisonResults && (
           <motion.div
@@ -550,6 +556,33 @@ export default function ResultsDashboard({ results, comparisonResults, onReset }
               ))}
             </div>
           </motion.div>
+        )}
+          </>
+        ) : (
+          <>
+            {/* ── ECE Features: Project Recommendations & Mock Assessment ── */}
+            {data.project_recommendations && data.project_recommendations.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="mb-8"
+              >
+                <ProjectRecommendationsCard recommendations={data.project_recommendations} />
+              </motion.div>
+            )}
+
+            {data.assessment && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="mb-8"
+              >
+                <AssessmentDashboard assessment={data.assessment} />
+              </motion.div>
+            )}
+          </>
         )}
 
         {/* ── Bottom CTA ── */}
