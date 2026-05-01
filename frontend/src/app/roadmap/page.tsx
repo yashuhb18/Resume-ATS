@@ -219,9 +219,9 @@ export default function RoadmapPage() {
           /* ACTIVE INTELLIGENCE MATRIX VIEW */
           <motion.div 
             key="dashboard"
-            initial={{ opacity: 0, scale: 2, rotateX: 45, filter: "brightness(0) blur(20px)" }}
-            animate={portalComplete ? { opacity: 1, scale: 1, rotateX: 0, filter: "brightness(1) blur(0px)" } : {}}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="relative z-10 pb-24"
           >
             <header className="border-b border-white/10 bg-black/50 backdrop-blur-xl sticky top-0 z-50">

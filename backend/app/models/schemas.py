@@ -289,6 +289,7 @@ class RoadmapStep(BaseModel):
 class RoadmapResponse(BaseModel):
     """Response schema containing the career roadmap."""
     domain: str
+    role_suitability: str = "Candidate DNA matches industry requirements."
     news_headline: str
     beginner_steps: List[RoadmapStep]
     intermediate_steps: List[RoadmapStep]

@@ -3,6 +3,7 @@
 DOMAIN_ROADMAPS = {
     "VLSI & ASIC Design": {
         "domain": "VLSI & ASIC Design",
+        "role_suitability": "Your analytical mindset and focus on digital logic make you a perfect candidate for Physical Design and RTL engineering.",
         "news_headline": "AI hardware accelerators are driving a 400% surge in VLSI and Custom Silicon demand.",
         "beginner_steps": [
             {
@@ -178,6 +179,7 @@ DOMAIN_ROADMAPS = {
     },
     "Embedded Systems & Firmware": {
         "domain": "Embedded Systems & Firmware",
+        "role_suitability": "Your proficiency in C and hardware interfacing positions you at the heart of the IoT and Automotive revolution.",
         "news_headline": "The explosive growth of IoT and Automotive EVs is making Embedded Firmware the most critical layer of tech.",
         "beginner_steps": [
             {
@@ -347,6 +349,61 @@ DOMAIN_ROADMAPS = {
                 "projects": [
                     {"title": "Dual-core Lock-step Monitor", "github_repo": "https://github.com/topics/functional-safety"},
                     {"title": "MISRA C Compliant Driver", "github_repo": "https://github.com/topics/misra-c"}
+                ]
+            }
+        ]
+    },
+    "Robotics & Automation": {
+        "domain": "Robotics & Automation",
+        "role_suitability": "Your focus on control systems and automation makes you an ideal architect for the next generation of collaborative robotics.",
+        "news_headline": "Collaborative robots and AI-driven automation are redefining the global manufacturing landscape.",
+        "beginner_steps": [
+            {
+                "title": "Robotics Foundations", 
+                "description": "Learn kinematics, dynamics, and basic control theory.", 
+                "key_skills": ["Kinematics", "Dynamics", "PID"], 
+                "course_link": "https://www.coursera.org/specializations/robotics", 
+                "youtube_link": "https://www.youtube.com/playlist?list=PLBlnK6fEyqRhX6r2uhhlubuK5QxtdRNzP",
+                "projects": [
+                    {"title": "2-DOF Robotic Arm Simulation", "github_repo": "https://github.com/topics/robot-kinematics"},
+                    {"title": "PID Controller for DC Motor", "github_repo": "https://github.com/topics/pid-controller"}
+                ]
+            },
+            {
+                "title": "C++/Python for Robotics", 
+                "description": "Master the languages used in modern robotics software stacks.", 
+                "key_skills": ["C++", "Python", "Linux"], 
+                "course_link": "https://www.coursera.org/learn/robotics-perception", 
+                "youtube_link": "https://www.youtube.com/playlist?list=PLvG6Y3kU-uNDP0z6vF8H7K2_f9U-O6U1j",
+                "projects": [
+                    {"title": "Robotics Pathfinding in Python", "github_repo": "https://github.com/topics/robotics-algorithms"},
+                    {"title": "C++ Matrix Library for Robotics", "github_repo": "https://github.com/topics/robotics-cpp"}
+                ]
+            }
+        ],
+        "intermediate_steps": [
+            {
+                "title": "Advanced ROS2", 
+                "description": "Transition to ROS2 for production-grade robotics applications.", 
+                "key_skills": ["ROS2", "DDS", "Lifecycle Nodes"], 
+                "course_link": "https://www.coursera.org/learn/robotics-flight", 
+                "youtube_link": "https://www.youtube.com/playlist?list=PLvG6Y3kU-uNDP0z6vF8H7K2_f9U-O6U1j",
+                "projects": [
+                    {"title": "ROS2 Navigation Stack Config", "github_repo": "https://github.com/topics/ros2-navigation"},
+                    {"title": "Custom ROS2 Message Interface", "github_repo": "https://github.com/topics/ros2-projects"}
+                ]
+            }
+        ],
+        "advanced_steps": [
+            {
+                "title": "Autonomous Navigation Stacks", 
+                "description": "Implement end-to-end navigation for mobile robots.", 
+                "key_skills": ["Nav2", "Costmaps", "Planners"], 
+                "course_link": "https://www.coursera.org/learn/robotics-flight", 
+                "youtube_link": "https://www.youtube.com/playlist?list=PLBlnK6fEyqRhX6r2uhhlubuK5QxtdRNzP",
+                "projects": [
+                    {"title": "Autonomous Indoor Courier Robot", "github_repo": "https://github.com/topics/autonomous-robot"},
+                    {"title": "SLAM-based Mapping Node", "github_repo": "https://github.com/topics/slam-robotics"}
                 ]
             }
         ]

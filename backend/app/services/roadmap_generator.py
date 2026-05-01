@@ -33,7 +33,8 @@ class RoadmapGenerator:
         Your output MUST be a valid JSON object matching this exact schema:
         {{
             "domain": "String (e.g., {domain})",
-            "news_headline": "String (A realistic, exciting current industry trend or news headline related to this domain)",
+            "role_suitability": "String (A high-level professional assessment of why this domain suits an EC student)",
+            "news_headline": "String (A realistic, exciting current industry trend)",
             "beginner_steps": [
                 {{
                     "title": "String",
@@ -42,8 +43,8 @@ class RoadmapGenerator:
                     "course_link": "String",
                     "youtube_link": "String",
                     "projects": [
-                        {"title": "Project 1", "github_repo": "GitHub URL"},
-                        {"title": "Project 2", "github_repo": "GitHub URL"}
+                        {{"title": "Project 1", "github_repo": "GitHub URL"}},
+                        {{"title": "Project 2", "github_repo": "GitHub URL"}}
                     ]
                 }}
             ],
