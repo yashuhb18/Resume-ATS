@@ -602,6 +602,18 @@ async def get_pulse(request: RoadmapRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/api/roadmap-chat")
+async def roadmap_chat(request: Request):
+    """Conversational intelligence for the roadmap."""
+    from app.services.roadmap_chat import roadmap_chat_service
+    data = await request.json()
+    query = data.get("query")
+    context = data.get("context", {})
+    history = data.get("history", [])
+    
+    response_text = await roadmap_chat_service.chat(query, context, history)
+    return {"response": response_text}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
