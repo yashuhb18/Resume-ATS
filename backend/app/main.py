@@ -544,6 +544,28 @@ async def generate_roadmap(request: RoadmapRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/api/roadmap-from-file", response_model=RoadmapResponse)
+async def roadmap_from_file(file: UploadFile = File(...)):
+    """
+    Generate a dynamic career roadmap directly from an uploaded resume file (PDF/Doc).
+    """
+    try:
+        # 1. Parse the file using our existing robust parser
+        from app.services.resume_parser import ResumeParser
+        parser = ResumeParser()
+        resume_text = await parser.parse(file)
+        
+        # 2. Generate roadmap from extracted text
+        roadmap_data = roadmap_generator.generate(
+            resume_text=resume_text
+        )
+        return RoadmapResponse(**roadmap_data)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/api/pulse", response_model=PulseResponse)
 async def get_pulse(request: RoadmapRequest):
     """

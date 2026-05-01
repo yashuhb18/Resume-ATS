@@ -112,18 +112,17 @@ export default function RoadmapPage() {
   const [portalComplete, setPortalComplete] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleGenerateFromResume = async (resumeText: string) => {
+  const handleGenerateFromResume = async (file: File) => {
     setIsGenerating(true);
     setError(null);
 
     try {
-      const response = await fetch(apiUrl('/api/generate-roadmap'), {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch(apiUrl('/api/roadmap-from-file'), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          resume_text: resumeText,
-          domain: "Universal Analysis" 
-        }),
+        body: formData,
       });
 
       if (!response.ok) throw new Error('Global Engine Failure.');
@@ -143,13 +142,7 @@ export default function RoadmapPage() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const text = event.target?.result as string;
-      await handleGenerateFromResume(text);
-    };
-    reader.readAsText(file); // For simple text analysis, can be improved with PDF parser later
+    handleGenerateFromResume(file);
   };
 
   return (
@@ -224,7 +217,7 @@ export default function RoadmapPage() {
                    ref={fileInputRef}
                    onChange={handleFileUpload}
                    className="hidden" 
-                   accept=".txt,.md"
+                   accept=".pdf,.txt,.doc,.docx"
                  />
                </div>
 
