@@ -7,6 +7,10 @@ from fastapi.responses import JSONResponse, Response
 import os
 import tempfile
 from typing import Optional
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 from app.services.resume_parser import ResumeParser
 from app.services.ats_scorer import ATSScorer
