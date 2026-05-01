@@ -25,7 +25,7 @@ from app.services.project_recommender import project_recommender
 from app.services.mock_assessment import mock_assessment_generator
 from app.services.roadmap_generator import roadmap_generator
 from app.services.pulse_engine import pulse_engine
-from app.models.schemas import AnalysisResponse, ComparisonResponse, InterviewChatResponse, ProjectRecommendation, AssessmentResponse, RoadmapRequest, RoadmapResponse, PulseResponse
+from app.models.schemas import AnalysisResponse, ComparisonResponse, InterviewChatResponse, ProjectRecommendation, AssessmentResponse, RoadmapRequest, RoadmapResponse, PulseResponse, ComputerVisionAnalysis
 
 app = FastAPI(
     title="ResQ",
