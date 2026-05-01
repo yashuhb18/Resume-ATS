@@ -5,29 +5,33 @@ import { motion } from 'framer-motion';
 import { 
   Cpu, Zap, Code2, CircuitBoard, 
   TrendingUp, Compass, Target, 
-  Briefcase, CheckCircle2, ChevronRight 
+  Briefcase, CheckCircle2, ChevronRight, ExternalLink
 } from 'lucide-react';
 import RoadmapModal from './RoadmapModal';
 import TrendingJobModal from './TrendingJobModal';
+import Link from 'next/link';
 
 const domains = [
   {
     title: 'VLSI & ASIC Design',
     desc: 'Master the atomic level of computing with Digital Logic, Verilog, and physical design methodologies.',
     icon: Cpu,
-    color: 'var(--brand-glow-core)'
+    color: 'var(--brand-glow-core)',
+    slug: 'vlsi'
   },
   {
     title: 'Embedded Systems & IoT',
     desc: 'Bridge hardware and software with RTOS, microcontrollers, and edge communication protocols.',
     icon: CircuitBoard,
-    color: 'var(--emerald-neon)'
+    color: 'var(--emerald-neon)',
+    slug: 'embedded-iot'
   },
   {
     title: 'Signal Processing',
     desc: 'Analyze, filter, and transmit real-world signals using MATLAB, DSP, and advanced algorithms.',
     icon: Zap,
-    color: 'var(--violet-electric)'
+    color: 'var(--violet-electric)',
+    slug: 'signal-processing'
   }
 ];
 
@@ -141,25 +145,28 @@ export default function EceSpecialization() {
             </motion.div>
 
             {domains.map((domain, i) => (
-              <motion.div 
-                key={i} 
-                variants={itemVariants}
-                className="group p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1"
-                style={{ background: 'var(--surface-overlay)', borderColor: 'var(--surface-border)' }}
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${domain.color}15` }}>
-                    <domain.icon className="w-6 h-6" style={{ color: domain.color }} />
+              <motion.div key={i} variants={itemVariants}>
+                <Link href={`/domains/${domain.slug}`} className="block">
+                  <div 
+                    className="group p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-500/10 cursor-pointer"
+                    style={{ background: 'var(--surface-overlay)', borderColor: 'var(--surface-border)' }}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${domain.color}15` }}>
+                        <domain.icon className="w-6 h-6" style={{ color: domain.color }} />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-bold mb-2 group-hover:text-purple-400 transition-colors" style={{ color: 'var(--text-primary)' }}>
+                          {domain.title}
+                          <ExternalLink className="w-4 h-4 inline-block ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </h4>
+                        <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                          {domain.desc}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-lg font-bold mb-2 group-hover:text-white transition-colors" style={{ color: 'var(--text-primary)' }}>
-                      {domain.title}
-                    </h4>
-                    <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                      {domain.desc}
-                    </p>
-                  </div>
-                </div>
+                </Link>
               </motion.div>
             ))}
           </div>
