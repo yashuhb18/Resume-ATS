@@ -1,139 +1,112 @@
 /* ============================================================
-   NIMMA-MITRA — GOD-LEVEL GLOBAL DESIGN SYSTEM
+   NIMMA-MITRA — PROFESSIONAL EXCELLENCE DESIGN SYSTEM
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   Premium Typography: Space Grotesk & Plus Jakarta Sans
-   Visual Language: Refractive Glassmorphism 3.0
+   Typography: Inter (The standard for professional interfaces)
+   Design Language: Structured Minimalism with 3D Depth
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* ── Ultra-Premium Surface System ───────────────────────── */
-  --surface-base: #02040a;
-  --surface-raised: #050914;
-  --surface-overlay: #0a1124;
-  --surface-subtle: #0f1a30;
-  --surface-muted: #162540;
+  /* ── Professional Slate Palette ──────────────────────────── */
+  --surface-base: #0a0c14;
+  --surface-raised: #111420;
+  --surface-overlay: #181c2c;
   --surface-border: rgba(255, 255, 255, 0.08);
-  --surface-border2: rgba(255, 255, 255, 0.12);
-
-  /* ── Typography Scale ────────────────────────────────────── */
-  --text-primary: #f8fafc;
+  
+  /* ── Authority Typography ────────────────────────────────── */
+  --text-primary: #ffffff;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
-  --text-faint: #334155;
 
-  /* ── Chromatic Brand Palette ────────────────────────────── */
-  --brand-glow-core: #6366f1;
-  --brand-mid: #4f46e5;
-  --brand-deep: #3730a3;
-  --accent-lavender: #a5b4fc;
-  --accent-ice: #818cf8;
-  --violet-electric: #c084fc;
-  --emerald-neon: #10b981;
-  --ember-coral: #f43f5e;
-
-  /* ── Cinematic Shadows ───────────────────────────────────── */
-  --shadow-premium: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
-  --glow-brand: 0 0 40px rgba(99, 102, 241, 0.3);
+  /* ── Indigo Excellence ───────────────────────────────────── */
+  --brand-primary: #6366f1;
+  --brand-secondary: #4338ca;
+  --accent-blue: #38bdf8;
+  
+  /* ── 3D & Elevation ──────────────────────────────────────── */
+  --perspective: 1200px;
+  --shadow-pro: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
-  }
-
   body {
-    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
     background-color: var(--surface-base);
     color: var(--text-primary);
-    line-height: 1.6;
-    overflow-x: hidden;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
     background-image: 
-      radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-      radial-gradient(circle at 100% 100%, rgba(192, 132, 252, 0.12) 0%, transparent 50%),
-      radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 1) 0%, var(--surface-base) 100%);
+      radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(56, 189, 248, 0.05) 0, transparent 50%);
     background-attachment: fixed;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
-    letter-spacing: -0.05em;
-    font-weight: 700;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
   }
-
-  h1 { font-size: clamp(3rem, 8vw, 5.5rem); line-height: 0.95; }
-  h2 { font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; }
 }
 
 @layer components {
-  /* ── God-Level Text Gradient ────────────────────────────── */
+  /* ── Professional Text Gradient ─────────────────────────── */
   .text-gradient {
-    background: linear-gradient(to bottom right, #fff 20%, #818cf8 50%, #c084fc 80%);
+    background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.3));
-    animation: textRefract 8s ease-in-out infinite;
   }
 
-  /* ── Refractive Glass Card ───────────────────────────────── */
-  .card-glass {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: var(--shadow-premium);
-    position: relative;
-    overflow: hidden;
+  /* ── 3D Card Base ────────────────────────────────────────── */
+  .card-3d {
+    background: var(--surface-raised);
+    border: 1px solid var(--surface-border);
+    border-radius: 1.5rem;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+    transform-style: preserve-3d;
+    perspective: var(--perspective);
   }
 
-  .card-glass::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
-    pointer-events: none;
+  .card-3d:hover {
+    transform: translateY(-8px) rotateX(4deg) rotateY(-2deg);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    border-color: rgba(99, 102, 241, 0.3);
   }
 
-  /* ── Premium Buttons ─────────────────────────────────────── */
+  /* ── Buttons ────────────────────────────────────────────── */
   .btn-primary {
-    @apply relative px-8 py-4 rounded-2xl font-bold text-lg overflow-hidden transition-all duration-300;
-    background: #6366f1;
-    box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+    @apply px-8 py-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2;
+    background: var(--brand-primary);
+    box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.39);
   }
 
   .btn-primary:hover {
     @apply -translate-y-1;
-    box-shadow: 0 0 50px rgba(99, 102, 241, 0.6);
     background: #4f46e5;
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.23);
   }
 
   .btn-secondary {
-    @apply relative px-8 py-4 rounded-2xl font-bold text-lg border border-white/10 backdrop-blur-xl transition-all duration-300;
-    background: rgba(255, 255, 255, 0.05);
+    @apply px-8 py-4 rounded-xl font-bold border border-white/10 transition-all duration-300;
+    background: rgba(255, 255, 255, 0.03);
   }
 
   .btn-secondary:hover {
-    @apply bg-white/10 -translate-y-1 border-white/20;
-  }
-
-  /* ── Status Badges ───────────────────────────────────────── */
-  .badge-intelligence {
-    @apply px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-[10px] font-black uppercase tracking-[0.3em] text-indigo-300;
+    @apply bg-white/10 -translate-y-1;
   }
 }
 
-@keyframes textRefract {
-  0%, 100% { filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.3)); }
-  50% { filter: drop-shadow(0 0 50px rgba(192, 132, 252, 0.5)); }
+/* ── Custom Animations ────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotateX(0); }
+  50% { transform: translateY(-20px) rotateX(5deg); }
 }
 
-@keyframes shimmerProgress {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }

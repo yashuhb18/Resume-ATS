@@ -1,159 +1,170 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, Shield, Zap, ChevronDown, Rocket, Compass, Cpu, Share2 } from 'lucide-react';
+import { ArrowRight, Shield, Zap, ChevronDown, Cpu, Activity, Globe } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+    <section className="relative min-h-screen flex items-center pt-24 overflow-hidden bg-[#05070a]">
       
-      {/* Dynamic Cinematic Background */}
+      {/* Structural Background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-600/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/4 animate-pulse" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-600/10 blur-[100px] rounded-full translate-y-1/4 -translate-x-1/4" />
-        
-        {/* Grid Pattern Overlay */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.03)_0,transparent_70%)]" />
+        <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '100px 100px' }} />
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           
-          {/* Content Column */}
-          <div className="lg:col-span-7 text-left">
-            
+          {/* Content: Authority & Precision */}
+          <div className="text-left">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="badge-intelligence mb-8 inline-block"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-2 mb-8"
             >
-              Hardware Intelligence Engine // v2.4
+              <div className="h-px w-8 bg-indigo-500" />
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400">
+                Industry Intelligence Platform
+              </span>
             </motion.div>
 
             <motion.h1
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="text-gradient mb-8 leading-[0.9] tracking-[-0.06em]"
+              transition={{ delay: 0.1 }}
+              className="text-6xl md:text-8xl font-black mb-8 leading-[1.05] tracking-tight"
             >
-              Design Your <br />
-              <span className="text-white italic">Hardware</span> <br />
-              Legacy.
+              The Next Era of <br />
+              <span className="text-indigo-500">Career Sync.</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-xl md:text-2xl text-slate-400 max-w-2xl mb-12 font-medium leading-relaxed"
+              transition={{ delay: 0.2 }}
+              className="text-lg md:text-xl text-slate-400 max-w-xl mb-12 leading-relaxed"
             >
-              Nimma-MITra is the world&apos;s first autonomous career architect for ECE & EEE pioneers. We don&apos;t just analyze—we synchronize your skills with the global silicon pulse.
+              Nimma-MITra provides professional-grade intelligence roadmaps and real-time domain briefings for the global semiconductor and electronics workforce.
             </motion.p>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+              transition={{ delay: 0.3 }}
               className="flex flex-wrap gap-6"
             >
-              <a href="#upload" className="btn-primary group">
-                <span className="flex items-center gap-3">
-                  Scan Technical DNA
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </span>
+              <a href="#upload" className="btn-primary">
+                Analyze My Resume
+                <ArrowRight className="w-5 h-5" />
               </a>
-              <Link href="/roadmap" className="btn-secondary group">
-                <span className="flex items-center gap-3">
-                  Generate Roadmap
-                  <Share2 className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                </span>
+              <Link href="/roadmap" className="btn-secondary">
+                View Career Roadmaps
               </Link>
             </motion.div>
 
-            {/* Quick Stats */}
+            {/* Trust Badges */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.5 }}
-              className="mt-16 grid grid-cols-3 gap-8 border-t border-white/5 pt-8"
+              transition={{ delay: 0.5 }}
+              className="mt-16 flex items-center gap-10 opacity-40 grayscale hover:grayscale-0 transition-all duration-700"
             >
-              {[
-                { label: 'Domains', val: '5+', icon: Cpu },
-                { label: 'Resources', val: '500+', icon: Zap },
-                { label: 'Security', val: '100%', icon: Shield },
-              ].map((s, i) => (
-                <div key={i} className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2 text-indigo-400 mb-1">
-                    <s.icon className="w-4 h-4" />
-                    <span className="text-xl font-bold text-white">{s.val}</span>
-                  </div>
-                  <span className="text-[10px] uppercase tracking-widest text-slate-500 font-black">{s.label}</span>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* Visual Column */}
-          <div className="lg:col-span-5 relative hidden lg:block">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ duration: 1, ease: "circOut" }}
-              className="relative"
-            >
-              {/* Intelligence Core Visual */}
-              <div className="w-[480px] h-[480px] relative">
-                <div className="absolute inset-0 bg-indigo-500/20 rounded-[4rem] blur-[100px] animate-pulse" />
-                
-                {/* Floating Glass Panels */}
-                <motion.div 
-                  animate={{ y: [0, -20, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute top-0 right-0 w-64 h-80 card-glass rounded-[3rem] p-8 flex flex-col justify-between"
-                >
-                  <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center">
-                    <Cpu className="w-6 h-6 text-indigo-400" />
-                  </div>
-                  <div>
-                    <h4 className="text-white text-xl font-bold mb-2">VLSI Arch</h4>
-                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                      <div className="h-full w-4/5 bg-indigo-500" />
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div 
-                  animate={{ y: [0, 20, 0] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                  className="absolute bottom-10 left-0 w-56 h-64 card-glass rounded-[2.5rem] p-8 border-indigo-500/20"
-                >
-                   <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center mb-6">
-                    <Zap className="w-5 h-5 text-purple-400" />
-                  </div>
-                  <p className="text-sm font-bold text-slate-400 leading-tight uppercase tracking-widest">Real-time Pulse Detected</p>
-                  <h3 className="text-white text-2xl font-black mt-2">ACTIVE</h3>
-                </motion.div>
-
-                {/* Central Orbit */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full bg-indigo-600/30 blur-2xl animate-ping" />
+              <div className="flex items-center gap-2">
+                <Shield className="w-5 h-5" />
+                <span className="text-xs font-bold uppercase tracking-widest">Secure</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Globe className="w-5 h-5" />
+                <span className="text-xs font-bold uppercase tracking-widest">Global</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Activity className="w-5 h-5" />
+                <span className="text-xs font-bold uppercase tracking-widest">Real-time</span>
               </div>
             </motion.div>
           </div>
 
+          {/* 3D Visual Column */}
+          <div className="relative perspective-[2000px] hidden lg:block">
+            <motion.div
+              initial={{ opacity: 0, rotateY: 20, rotateX: 10, scale: 0.9 }}
+              animate={{ opacity: 1, rotateY: 0, rotateX: 0, scale: 1 }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              className="relative w-full aspect-square flex items-center justify-center"
+            >
+              {/* The "Intelligence Core" - 3D Floating Structure */}
+              <div className="relative w-96 h-96 animate-float">
+                
+                {/* Main Card */}
+                <div className="absolute inset-0 card-3d flex flex-col p-10 justify-between bg-gradient-to-br from-[#111420] to-[#0a0c14] border-white/5">
+                  <div className="flex justify-between items-start">
+                    <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
+                      <Cpu className="w-8 h-8 text-indigo-400" />
+                    </div>
+                    <div className="text-right">
+                      <span className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Status</span>
+                      <span className="text-emerald-400 font-bold flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        SYNCED
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-4xl font-black mb-4 tracking-tighter">98%</h3>
+                    <p className="text-slate-500 text-xs font-bold uppercase tracking-[0.2em] mb-6">Market Alignment Quotient</p>
+                    <div className="space-y-3">
+                      <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: "98%" }}
+                          transition={{ duration: 2, delay: 1 }}
+                          className="h-full bg-indigo-500" 
+                        />
+                      </div>
+                      <div className="flex justify-between text-[10px] font-black text-slate-600">
+                        <span>BASELINE</span>
+                        <span>TARGET ATTAINED</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Orbiting Satellite Card 1 */}
+                <motion.div
+                  animate={{ translateZ: [20, 50, 20], rotateY: [0, 5, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute -top-10 -right-10 w-48 h-32 card-3d bg-indigo-500 p-6 flex flex-col justify-between shadow-2xl shadow-indigo-500/20"
+                >
+                  <Zap className="w-6 h-6 text-white" />
+                  <span className="text-xs font-black uppercase tracking-widest text-white/80 leading-tight">Instant Pulse <br /> Detection</span>
+                </motion.div>
+
+                {/* Orbiting Satellite Card 2 */}
+                <motion.div
+                  animate={{ translateZ: [50, 20, 50], rotateX: [0, -5, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                  className="absolute -bottom-6 -left-10 w-56 h-40 card-3d p-8 border-white/10 bg-[#111420]/80 backdrop-blur-xl"
+                >
+                  <div className="flex items-center gap-2 mb-4">
+                    <Activity className="w-4 h-4 text-emerald-400" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Live Domain Feed</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-2 w-full bg-white/5 rounded-full" />
+                    <div className="h-2 w-2/3 bg-white/5 rounded-full" />
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
 
-      {/* Floating Scroll Indicator */}
-      <motion.div 
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30"
-      >
-        <span className="text-[10px] font-black uppercase tracking-[0.3em]">Initialize Dive</span>
-        <ChevronDown className="w-4 h-4" />
-      </motion.div>
+      {/* Background Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none" />
 
     </section>
   );

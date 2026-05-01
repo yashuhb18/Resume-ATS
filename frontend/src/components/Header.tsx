@@ -24,111 +24,103 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'py-4'
-          : 'py-6'
+          ? 'bg-[#0a0c14]/90 backdrop-blur-xl border-b border-white/5 py-4'
+          : 'bg-transparent py-6'
       }`}
     >
-      <nav className="max-w-7xl mx-auto px-6">
-        <div 
-          className={`flex items-center justify-between transition-all duration-500 rounded-[2rem] px-8 h-16 ${
-            scrolled 
-              ? 'bg-black/60 backdrop-blur-2xl border border-white/10 shadow-2xl' 
-              : 'bg-transparent border border-transparent'
-          }`}
-        >
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-2xl bg-white p-1 shadow-2xl transition-transform group-hover:scale-110 group-hover:rotate-3 overflow-hidden">
-              <img src="/images/logo.png" alt="Nimma-MITra Logo" className="w-full h-full object-contain" />
-            </div>
-            <span className="text-xl font-black tracking-tighter" style={{ color: 'var(--text-primary)' }}>
-              Nimma-<span className="text-indigo-400">MITra</span>
-            </span>
-          </Link>
-
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-10">
-            {[
-              { href: '/roadmap',      label: 'Matrix' },
-              { href: '#ece-hub',      label: 'Pulse'     },
-              { href: '#how-it-works', label: 'Cycle'        },
-            ].map(({ href, label }) => (
-              href.startsWith('/') ? (
-                <Link
-                  key={href}
-                  href={href}
-                  className="text-[11px] font-black uppercase tracking-[0.2em] transition-all hover:text-indigo-400 opacity-70 hover:opacity-100"
-                  style={{ color: 'var(--text-primary)' }}
-                >
-                  {label}
-                </Link>
-              ) : (
-                <a
-                  key={href}
-                  href={href}
-                  className="text-[11px] font-black uppercase tracking-[0.2em] transition-all hover:text-indigo-400 opacity-70 hover:opacity-100"
-                  style={{ color: 'var(--text-primary)' }}
-                >
-                  {label}
-                </a>
-              )
-            ))}
-            
-            <div className="w-px h-4 bg-white/10 mx-2" />
-            
-            <button
-              onClick={handleChatClick}
-              className="p-2 text-slate-400 hover:text-indigo-400 transition-colors"
-              aria-label="Open virtual interviewer chat"
-            >
-              <MessageCircle className="w-5 h-5" />
-            </button>
-            
-            <a href="#upload" className="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 rounded-xl text-xs font-black uppercase tracking-widest text-white transition-all shadow-lg shadow-indigo-500/20 active:scale-95">
-              Sync DNA
-            </a>
+      <nav className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        
+        {/* Brand: Authority & Identity */}
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shadow-lg transition-transform group-hover:scale-105">
+            <img src="/images/logo.png" alt="Nimma-MITra" className="w-7 h-7 object-contain" />
           </div>
+          <span className="text-xl font-black tracking-tight" style={{ color: 'var(--text-primary)' }}>
+            NIMMA-<span className="text-indigo-500">MITRA</span>
+          </span>
+        </Link>
 
-          {/* Mobile toggle */}
+        {/* Professional Navigation */}
+        <div className="hidden md:flex items-center gap-10">
+          {[
+            { href: '/roadmap',      label: 'Intelligence Matrix' },
+            { href: '#ece-hub',      label: 'Community Pulse'     },
+            { href: '#how-it-works', label: 'Process'        },
+          ].map(({ href, label }) => (
+            href.startsWith('/') ? (
+              <Link
+                key={href}
+                href={href}
+                className="text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-colors"
+              >
+                {label}
+              </Link>
+            ) : (
+              <a
+                key={href}
+                href={href}
+                className="text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-colors"
+              >
+                {label}
+              </a>
+            )
+          ))}
+          
+          <div className="w-px h-4 bg-white/10 mx-2" />
+          
           <button
-            className="md:hidden p-2 text-slate-400"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={handleChatClick}
+            className="text-slate-400 hover:text-indigo-400 transition-colors"
+            title="Interview Coach"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <MessageCircle className="w-5 h-5" />
           </button>
+          
+          <a href="#upload" className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-[11px] font-black uppercase tracking-[0.2em] text-white transition-all shadow-md shadow-indigo-500/10">
+            Analyze Resume
+          </a>
         </div>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden mt-4 p-4 card-glass rounded-3xl animate-in fade-in slide-in-from-top-4 duration-300">
-            <div className="flex flex-col gap-2">
-              {[
-                { href: '/roadmap',      label: 'Intelligence Matrix' },
-                { href: '#ece-hub',      label: 'Community Pulse'     },
-                { href: '#how-it-works', label: 'How It Works'        },
-              ].map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className="px-6 py-4 rounded-2xl bg-white/5 font-bold text-slate-300"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {label}
-                </Link>
-              ))}
-              <a
-                href="#upload"
-                className="mt-4 w-full py-5 btn-primary text-center"
+        {/* Mobile Toggle */}
+        <button
+          className="md:hidden text-slate-400"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+
+      </nav>
+
+      {/* Mobile Nav Overlay */}
+      {mobileMenuOpen && (
+        <div className="md:hidden absolute top-full left-0 right-0 bg-[#111420] border-b border-white/5 p-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+          <div className="flex flex-col gap-4">
+            {[
+              { href: '/roadmap',      label: 'Intelligence Matrix' },
+              { href: '#ece-hub',      label: 'Community Pulse'     },
+              { href: '#how-it-works', label: 'Our Process'        },
+            ].map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className="text-lg font-bold text-slate-300 py-2 border-b border-white/5"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Start Intelligence Scan
-              </a>
-            </div>
+                {label}
+              </Link>
+            ))}
+            <a
+              href="#upload"
+              className="mt-4 w-full py-4 bg-indigo-600 rounded-xl text-center font-bold"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Start Resume Analysis
+            </a>
           </div>
-        )}
-      </nav>
+        </div>
+      )}
     </header>
   );
 }
