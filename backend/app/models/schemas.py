@@ -269,6 +269,8 @@ class ComparisonResponse(BaseModel):
 class RoadmapRequest(BaseModel):
     """Request schema for generating a career roadmap."""
     domain: str
+    year_of_study: str
+    current_skill_level: str
 
 
 class RoadmapStep(BaseModel):

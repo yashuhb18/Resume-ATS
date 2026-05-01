@@ -22,6 +22,21 @@ const ECE_DOMAINS = [
   "FPGA & Hardware Acceleration"
 ];
 
+const YEARS_OF_STUDY = [
+  "1st Year",
+  "2nd Year",
+  "3rd Year",
+  "Final Year",
+  "Graduate / Working Professional"
+];
+
+const SKILL_LEVELS = [
+  "Absolute Beginner",
+  "Basic Knowledge",
+  "Intermediate",
+  "Advanced"
+];
+
 interface RoadmapStep {
   title: string;
   description: string;
@@ -40,6 +55,8 @@ interface RoadmapModalProps {
 
 export default function RoadmapModal({ isOpen, onClose }: RoadmapModalProps) {
   const [selectedDomain, setSelectedDomain] = useState(ECE_DOMAINS[0]);
+  const [selectedYear, setSelectedYear] = useState(YEARS_OF_STUDY[1]);
+  const [selectedSkill, setSelectedSkill] = useState(SKILL_LEVELS[1]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [roadmap, setRoadmap] = useState<RoadmapResponse | null>(null);
   const [error, setError] = useState('');
@@ -67,7 +84,11 @@ export default function RoadmapModal({ isOpen, onClose }: RoadmapModalProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ domain: selectedDomain })
+        body: JSON.stringify({ 
+          domain: selectedDomain,
+          year_of_study: selectedYear,
+          current_skill_level: selectedSkill
+        })
       });
 
       if (!response.ok) {
@@ -127,32 +148,69 @@ export default function RoadmapModal({ isOpen, onClose }: RoadmapModalProps) {
               {/* Body */}
               <div className="p-6 md:p-8 flex-1">
                 <div className="mb-8 p-6 rounded-2xl border border-white/5 bg-white/[0.02]">
-                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
-                    Select your target domain:
-                  </label>
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="relative flex-1">
-                      <select
-                        value={selectedDomain}
-                        onChange={(e) => setSelectedDomain(e.target.value)}
-                        className="w-full appearance-none pl-4 pr-10 py-3 rounded-xl border border-white/10 bg-black/20 text-white focus:outline-none focus:border-purple-500 transition-colors cursor-pointer font-medium"
-                      >
-                        {ECE_DOMAINS.map(domain => (
-                          <option key={domain} value={domain} className="bg-gray-900">{domain}</option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50 pointer-events-none" />
+                  <h4 className="text-lg font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Your Profile</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    {/* Domain */}
+                    <div>
+                      <label className="block text-xs font-medium mb-1.5 text-purple-300">Target Domain</label>
+                      <div className="relative">
+                        <select
+                          value={selectedDomain}
+                          onChange={(e) => setSelectedDomain(e.target.value)}
+                          className="w-full appearance-none pl-3 pr-8 py-2.5 rounded-xl border border-white/10 bg-black/20 text-sm text-white focus:outline-none focus:border-purple-500 transition-colors cursor-pointer"
+                        >
+                          {ECE_DOMAINS.map(domain => (
+                            <option key={domain} value={domain} className="bg-gray-900">{domain}</option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50 pointer-events-none" />
+                      </div>
                     </div>
+                    {/* Year of Study */}
+                    <div>
+                      <label className="block text-xs font-medium mb-1.5 text-purple-300">Current Status</label>
+                      <div className="relative">
+                        <select
+                          value={selectedYear}
+                          onChange={(e) => setSelectedYear(e.target.value)}
+                          className="w-full appearance-none pl-3 pr-8 py-2.5 rounded-xl border border-white/10 bg-black/20 text-sm text-white focus:outline-none focus:border-purple-500 transition-colors cursor-pointer"
+                        >
+                          {YEARS_OF_STUDY.map(year => (
+                            <option key={year} value={year} className="bg-gray-900">{year}</option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50 pointer-events-none" />
+                      </div>
+                    </div>
+                    {/* Skill Level */}
+                    <div>
+                      <label className="block text-xs font-medium mb-1.5 text-purple-300">Skill Level</label>
+                      <div className="relative">
+                        <select
+                          value={selectedSkill}
+                          onChange={(e) => setSelectedSkill(e.target.value)}
+                          className="w-full appearance-none pl-3 pr-8 py-2.5 rounded-xl border border-white/10 bg-black/20 text-sm text-white focus:outline-none focus:border-purple-500 transition-colors cursor-pointer"
+                        >
+                          {SKILL_LEVELS.map(skill => (
+                            <option key={skill} value={skill} className="bg-gray-900">{skill}</option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50 pointer-events-none" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end">
                     <button
                       onClick={handleGenerate}
                       disabled={isGenerating}
-                      className="px-8 py-3 rounded-xl bg-purple-500 hover:bg-purple-600 transition-all font-semibold text-white flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/25 shrink-0"
+                      className="w-full sm:w-auto px-8 py-3 rounded-xl bg-purple-500 hover:bg-purple-600 transition-all font-semibold text-white flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/25 shrink-0"
                     >
                       {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Compass className="w-5 h-5" />}
-                      {isGenerating ? 'Generating...' : 'Generate AI Roadmap'}
+                      {isGenerating ? 'Generating Blueprint...' : 'Generate AI Roadmap'}
                     </button>
                   </div>
-                  {error && <p className="text-red-400 text-sm mt-3">{error}</p>}
+                  {error && <p className="text-red-400 text-sm mt-3 text-center">{error}</p>}
                 </div>
 
                 {/* Loading State */}

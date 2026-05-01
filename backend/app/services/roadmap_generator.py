@@ -48,23 +48,26 @@ class RoadmapGenerator:
             ]
         }
 
-    def generate(self, domain: str) -> Dict[str, Any]:
-        """Generate a roadmap for the specified domain."""
+    def generate(self, domain: str, year_of_study: str, current_skill_level: str) -> Dict[str, Any]:
+        """Generate a personalized roadmap for the specified domain."""
         
         prompt = (
-            f"You are a career strategist for the Engineering domain: {domain}. "
-            "Generate a highly detailed, 5-step career roadmap for a fresher to land a top-tier role in this specific domain. "
-            "Ensure the steps follow a logical progression from fundamentals to advanced specialization. "
+            f"You are an elite, God-level Engineering Career Strategist for the domain: {domain}. "
+            f"The candidate is currently in: {year_of_study} and has a skill level of: {current_skill_level}. "
+            "Your task is to generate a highly detailed, extremely accurate 5-step career roadmap for them. "
+            "You MUST dictate the EXACT technical skills they need to learn, progressing logically from their current state up to 'Mastery'. "
+            "Provide 100% relevant, industry-standard tools, languages, and hardware frameworks for this specific domain. "
+            "Do not give generic advice. Be highly specific about WHAT to build and exactly WHAT technologies to use. "
             "Return ONLY a valid JSON object with the following structure, with no markdown formatting or extra text:\n"
             "{\n"
             f'  "domain": "{domain}",\n'
             '  "steps": [\n'
             '    {\n'
-            '      "title": "Step 1 Title (e.g., Core Fundamentals)",\n'
-            '      "description": "Detailed description of what to learn and build in this step.",\n'
-            '      "key_skills": ["Skill 1", "Skill 2", "Skill 3"]\n'
+            '      "title": "Step 1 Title (e.g., Immediate Focus: Core Fundamentals)",\n'
+            '      "description": "Highly detailed description of the exact technologies to learn and the specific projects to build at this stage.",\n'
+            '      "key_skills": ["Exact Tool/Skill 1", "Exact Tool/Skill 2", "Exact Tool/Skill 3"]\n'
             '    }\n'
-            '    // Exactly 5 steps\n'
+            '    // Exactly 5 steps leading to mastery\n'
             "  ]\n"
             "}"
         )
@@ -74,8 +77,12 @@ class RoadmapGenerator:
             roadmap_data = self._generate_with_ollama(prompt)
             
         if not roadmap_data or "steps" not in roadmap_data:
-            return self.default_roadmap
+            roadmap_data = self.default_roadmap
 
+        # Fail-safe: Ensure domain key exists to prevent Pydantic validation errors
+        if "domain" not in roadmap_data:
+            roadmap_data["domain"] = domain
+            
         return roadmap_data
 
     def _generate_with_openai(self, prompt: str) -> Any:
