@@ -279,6 +279,7 @@ class RoadmapStep(BaseModel):
     key_skills: List[str]
     course_link: Optional[str] = None
     youtube_link: Optional[str] = None
+    github_repo: Optional[str] = None
     critical_project: Optional[str] = None
 
 

@@ -1,8 +1,8 @@
 /* ============================================================
-   NIMMA-MITRA — PROFESSIONAL EXCELLENCE DESIGN SYSTEM
+   NIMMA-MITRA — PROFESSIONAL DEEP INDIGO DESIGN SYSTEM
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   Typography: Inter (The standard for professional interfaces)
-   Design Language: Structured Minimalism with 3D Depth
+   Color: Deep Slate & Indigo (Nimma Blue)
+   Aesthetic: Clean Corporate / Industry Standard
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -12,25 +12,19 @@
 @tailwind utilities;
 
 :root {
-  /* ── Professional Slate Palette ──────────────────────────── */
-  --surface-base: #0a0c14;
-  --surface-raised: #111420;
-  --surface-overlay: #181c2c;
-  --surface-border: rgba(255, 255, 255, 0.08);
+  /* ── Professional Deep Theme ───────────────────────────── */
+  --surface-base: #05070a;
+  --surface-raised: #0f111a;
+  --surface-border: rgba(255, 255, 255, 0.05);
   
-  /* ── Authority Typography ────────────────────────────────── */
+  /* ── Typography ────────────────────────────────────────── */
   --text-primary: #ffffff;
   --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-muted: #475569;
 
-  /* ── Indigo Excellence ───────────────────────────────────── */
+  /* ── Nimma Indigo (Professional Authority) ───────────────── */
   --brand-primary: #6366f1;
-  --brand-secondary: #4338ca;
-  --accent-blue: #38bdf8;
-  
-  /* ── 3D & Elevation ──────────────────────────────────────── */
-  --perspective: 1200px;
-  --shadow-pro: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  --brand-glow: rgba(99, 102, 241, 0.3);
 }
 
 @layer base {
@@ -40,73 +34,78 @@
     color: var(--text-primary);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(56, 189, 248, 0.05) 0, transparent 50%);
+    background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0, transparent 50%);
     background-attachment: fixed;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-weight: 800;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     line-height: 1.1;
   }
 }
 
 @layer components {
-  /* ── Professional Text Gradient ─────────────────────────── */
-  .text-gradient {
-    background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  /* ── 3D Card Base ────────────────────────────────────────── */
-  .card-3d {
+  /* ── Professional Card ───────────────────────────────────── */
+  .card-pro {
     background: var(--surface-raised);
     border: 1px solid var(--surface-border);
-    border-radius: 1.5rem;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
-    transform-style: preserve-3d;
-    perspective: var(--perspective);
+    border-radius: 2rem;
+    transition: all 0.3s ease;
   }
 
-  .card-3d:hover {
-    transform: translateY(-8px) rotateX(4deg) rotateY(-2deg);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-    border-color: rgba(99, 102, 241, 0.3);
+  .card-pro:hover {
+    border-color: rgba(99, 102, 241, 0.2);
+    box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.8);
   }
 
-  /* ── Buttons ────────────────────────────────────────────── */
+  /* ── Authority Button ────────────────────────────────────── */
   .btn-primary {
     @apply px-8 py-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2;
     background: var(--brand-primary);
-    box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.39);
+    color: white;
   }
 
   .btn-primary:hover {
-    @apply -translate-y-1;
+    @apply -translate-y-0.5;
     background: #4f46e5;
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.23);
+    box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
   }
 
   .btn-secondary {
-    @apply px-8 py-4 rounded-xl font-bold border border-white/10 transition-all duration-300;
-    background: rgba(255, 255, 255, 0.03);
+    @apply px-8 py-4 rounded-xl font-bold border border-white/10 transition-all duration-300 text-slate-300;
+    background: rgba(255, 255, 255, 0.02);
   }
 
   .btn-secondary:hover {
-    @apply bg-white/10 -translate-y-1;
+    @apply bg-white/5 border-white/20 text-white;
+  }
+
+  /* ── Project Master Highlight ────────────────────────────── */
+  .project-highlight {
+    @apply relative p-8 rounded-3xl border border-indigo-500/20 bg-indigo-500/5 overflow-hidden;
+  }
+
+  .project-highlight::before {
+    content: 'CORE PROJECT';
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.3em;
+    color: var(--brand-primary);
+    opacity: 0.5;
   }
 }
 
-/* ── Custom Animations ────────────────────────────────────── */
-@keyframes float {
-  0%, 100% { transform: translateY(0) rotateX(0); }
-  50% { transform: translateY(-20px) rotateX(5deg); }
+/* ── Technical Animations ─────────────────────────────────── */
+@keyframes signalPulse {
+  0% { transform: scale(0.95); opacity: 0.5; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(0.95); opacity: 0.5; }
 }
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
+.animate-signal {
+  animation: signalPulse 4s ease-in-out infinite;
 }

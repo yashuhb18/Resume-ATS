@@ -58,7 +58,8 @@ class RoadmapGenerator:
                     "key_skills": ["String", "String"],
                     "course_link": "String (Relevant Coursera Plus URL)",
                     "youtube_link": "String (Technical deep-dive URL)",
-                    "critical_project": "String (A high-impact hardware project they MUST build)"
+                    "github_repo": "String (A link to a relevant high-quality GitHub repository for this topic)",
+                    "critical_project": "String (A high-impact hardware project they MUST build to master this step)"
                 }}
             ],
             "intermediate_steps": [ ... ],
@@ -66,11 +67,11 @@ class RoadmapGenerator:
         }}
 
         CRITICAL REQUIREMENTS:
-        1. TERMINOLOGY: Use high-level ECE terms (RTL, STA, DRC/LVS, RTOS, PCB Stackup, DSP Benchmarking).
-        2. DATASET ACCURACY: Only recommend real, industry-standard toolchains. NO generic software advice.
-        3. 3-TIER FORKING: beginner_steps (Fundamentals), intermediate_steps (Accelerator), advanced_steps (Mastery).
-        4. ZERO HALLUCINATION: Ensure all links and descriptions are technically valid.
-        5. PROJECT FOCUS: Every step MUST have a unique 'critical_project' that is industry-ready.
+        1. PROJECT MASTERY: Highlight the 'critical_project' as the core objective of each step.
+        2. GITHUB REFERENCES: Provide a real, relevant GitHub repo for each step.
+        3. COLOR CONSISTENCY: The roadmap should be professional, clean, and avoid multiple neon colors. Use a singular accent color (Indigo/Blue).
+        4. TERMINOLOGY: Use high-level ECE terms (RTL, STA, DRC/LVS, RTOS, PCB Stackup, DSP Benchmarking).
+        5. DATASET ACCURACY: Only recommend real, industry-standard toolchains.
         
         Do NOT wrap the JSON in markdown blocks. Output raw JSON only.
         """
