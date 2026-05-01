@@ -78,9 +78,10 @@ export const topDomainsData: Record<string, DomainContent> = {
       }
     ],
     certifications: [
+      { title: 'VLSI Design: From Components to Systems', provider: 'Coursera (University of Tokyo)', url: 'https://www.coursera.org/learn/vlsi-design', type: 'Course' },
       { title: 'SystemVerilog for Verification', provider: 'Verification Academy', url: 'https://verificationacademy.com/', type: 'Course' },
-      { title: 'Hardware Modeling using Verilog', provider: 'NPTEL', url: 'https://nptel.ac.in/', type: 'Course' },
-      { title: 'Physical Design Flow', provider: 'Fedevel Academy', url: 'https://fedevel.com/', type: 'Certification' }
+      { title: 'Physical Design Flow', provider: 'Fedevel Academy', url: 'https://fedevel.com/', type: 'Certification' },
+      { title: 'VLSI Academy - YouTube', provider: 'YouTube', url: 'https://www.youtube.com/@vlsiacademy', type: 'YouTube' }
     ]
   },
   'embedded-iot': {
@@ -126,9 +127,10 @@ export const topDomainsData: Record<string, DomainContent> = {
       }
     ],
     certifications: [
-      { title: 'Mastering Microcontroller with Embedded Driver Development', provider: 'FastBit Embedded Academy', url: 'https://www.udemy.com/user/kiran-nayak-2/', type: 'Course' },
+      { title: 'Introduction to Embedded Systems Software and Development Environments', provider: 'Coursera (University of Colorado Boulder)', url: 'https://www.coursera.org/learn/introduction-embedded-systems', type: 'Course' },
+      { title: 'Mastering Microcontroller with Embedded Driver Development', provider: 'FastBit Embedded Academy', url: 'https://fastbitlab.com/', type: 'Course' },
       { title: 'AWS Certified IoT - Specialty', provider: 'AWS', url: 'https://aws.amazon.com/certification/certified-iot-specialty/', type: 'Certification' },
-      { title: 'Embedded Systems Programming', provider: 'Phil\'s Lab (YouTube)', url: 'https://www.youtube.com/@PhilsLab', type: 'YouTube' }
+      { title: 'Phil’s Lab - Embedded Systems', provider: 'YouTube', url: 'https://www.youtube.com/@PhilsLab', type: 'YouTube' }
     ]
   },
   'signal-processing': {
@@ -175,8 +177,9 @@ export const topDomainsData: Record<string, DomainContent> = {
     ],
     certifications: [
       { title: 'Digital Signal Processing', provider: 'Coursera (EPFL)', url: 'https://www.coursera.org/learn/dsp', type: 'Course' },
+      { title: 'Applied Digital Signal Processing', provider: 'edX (Rice University)', url: 'https://www.edx.org/course/applied-digital-signal-processing', type: 'Course' },
       { title: 'Applied DSP using MATLAB', provider: 'MathWorks', url: 'https://matlabacademy.mathworks.com/', type: 'Certification' },
-      { title: 'DSP Architecture & Algorithms', provider: 'NPTEL', url: 'https://nptel.ac.in/', type: 'Course' }
+      { title: 'DSP Online - YouTube', provider: 'YouTube', url: 'https://www.youtube.com/@dsponline', type: 'YouTube' }
     ]
   }
 };

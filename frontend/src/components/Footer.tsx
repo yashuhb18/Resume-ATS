@@ -27,17 +27,16 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             {/* Logo */}
             <div className="flex items-center gap-2.5 mb-5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] flex items-center justify-center shadow-brand-sm">
-                <FileText className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-xl font-bold font-display" style={{ color: 'var(--text-primary)' }}>
-                Res<span className="text-gradient-brand">Q</span>
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#3b82f6] to-[#06b6d4] flex items-center justify-center shadow-brand-sm">
+                <span className="text-white text-xl font-bold font-display">NM</span>
+              </div>
+              <span className="text-xl font-bold font-display" style={{ color: 'var(--text-primary)' }}>
+                Nimma-<span className="text-gradient-brand">MITra</span>
               </span>
             </div>
 
             <p className="max-w-sm mb-5 leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-              Free AI-powered resume analyzer that helps job seekers understand how ATS systems read
-              their resumes. Fast, private, and focused on practical resume feedback.
+              Nimma-MITra is your personalized career companion for ECE/EEE domains—offering daily updates, genuine learning resources, and smart resume analysis to help you grow and succeed.
             </p>
 
             {/* Privacy glass box */}

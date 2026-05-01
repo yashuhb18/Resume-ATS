@@ -36,11 +36,11 @@ export default function Header() {
 
           {/* Logo */}
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] flex items-center justify-center shadow-brand-sm">
-              <FileText className="w-4 h-4 text-white" />
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#3b82f6] to-[#06b6d4] flex items-center justify-center shadow-brand-sm">
+              <span className="text-white text-xl font-bold font-display">NM</span>
             </div>
             <span className="text-lg font-bold font-display" style={{ color: 'var(--text-primary)' }}>
-              Res<span className="text-gradient-brand">Q</span>
+              Nimma-<span className="text-gradient-brand">MITra</span>
             </span>
           </div>
 

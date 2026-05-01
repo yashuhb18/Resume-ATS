@@ -58,12 +58,12 @@ export default function WakeUpScreen({ onVerified }: WakeUpScreenProps) {
           <div className="mb-6">
             <div
               className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-4 shadow-brand"
-              style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }}
+              style={{ background: 'linear-gradient(135deg, #3b82f6, #06b6d4)' }}
             >
-              <ShieldCheck className="w-8 h-8 text-white" />
+              <span className="text-white text-3xl font-bold font-display">NM</span>
             </div>
             <h1 className="text-2xl font-bold font-display" style={{ color: 'var(--text-primary)' }}>
-              Res<span className="text-gradient-brand">Q</span>
+              Nimma-<span className="text-gradient-brand">MITra</span>
             </h1>
           </div>
 
@@ -71,11 +71,10 @@ export default function WakeUpScreen({ onVerified }: WakeUpScreenProps) {
           {status === 'idle' && (
             <>
               <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>
-                Quick verification required
+                Welcome to Nimma-MITra!
               </p>
               <p className="text-xs mb-8 leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                Our backend runs on a free tier and may be sleeping.
-                Click below to wake it up and verify you&apos;re a real person.
+                Your personalized ECE/EEE career companion. Get daily domain updates, curated learning resources, and smart resume analysis—all in one place. Click below to wake up your assistant!
               </p>
 
               <button

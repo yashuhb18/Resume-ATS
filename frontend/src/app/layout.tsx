@@ -2,11 +2,11 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'ResQ - Free AI-Powered Resume Score & ATS Compatibility Check',
-  description: 'Upload your resume and get instant ATS compatibility score, skills analysis, and recruiter-level insights. Free AI-powered resume analyzer with zero data storage and no signup required.',
-  keywords: 'ATS resume checker, resume analyzer, ATS score, resume optimization, job search, career tools, free resume scanner, applicant tracking system, resume parser, CV analyzer, job application, resume tips, ATS friendly resume, resume keywords, resume score, free ATS checker, resume grader, job application tips, career advice, resume builder, AI resume analyzer, resume screening, job seeker tools, career optimization, resume feedback, interview preparation, job hunting, recruitment tools, HR technology, resume formatting, professional resume',
-  publisher: 'ResQ',
-  metadataBase: new URL('https://ats.lovexog.me'),
+  title: 'Nimma-MITra - ECE/EEE Career Companion & Smart Resume Analyzer',
+  description: 'Nimma-MITra: Your personalized ECE/EEE career companion. Get daily domain updates, curated learning resources, and smart resume analysis—all in one place. Free, private, and practical.',
+  keywords: 'ECE career, EEE career, resume analyzer, domain updates, learning resources, ATS score, resume optimization, job search, career tools, free resume scanner, applicant tracking system, resume parser, CV analyzer, job application, resume tips, resume keywords, resume score, free ATS checker, resume grader, job application tips, career advice, resume builder, AI resume analyzer, resume screening, job seeker tools, career optimization, resume feedback, interview preparation, job hunting, recruitment tools, HR technology, resume formatting, professional resume',
+  publisher: 'Nimma-MITra',
+  metadataBase: new URL('https://nimma-mitra.com'),
   alternates: {
     canonical: '/',
   },
@@ -22,25 +22,25 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'ResQ - See Your Resume Through an ATS Lens',
-    description: 'Get your free ATS score and actionable insights. Zero data storage, privacy-first resume analysis.',
+    title: 'Nimma-MITra - ECE/EEE Career Companion',
+    description: 'Personalized ECE/EEE career updates, learning resources, and resume analysis. Free, private, and practical.',
     type: 'website',
     locale: 'en_US',
-    url: 'https://ats.lovexog.me',
-    siteName: 'ResQ',
+    url: 'https://nimma-mitra.com',
+    siteName: 'Nimma-MITra',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'ResQ - Free AI-Powered Resume Score',
+        alt: 'Nimma-MITra - ECE/EEE Career Companion',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ResQ - Free AI Resume Score & ATS Check',
-    description: 'Upload your resume and get instant ATS compatibility score. Zero data stored, fast, and privacy-first.',
+    title: 'Nimma-MITra - ECE/EEE Career Companion',
+    description: 'Personalized ECE/EEE career updates, learning resources, and resume analysis. Free, private, and practical.',
     images: ['/og-image.svg'],
   },
   icons: {
@@ -69,13 +69,13 @@ export default function RootLayout({
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'WebApplication',
-              name: 'ResQ',
-              description: 'Free AI-powered resume analyzer that helps job seekers understand how ATS systems read their resumes. Zero data storage, 100% privacy-first, open source.',
+              name: 'Nimma-MITra',
+              description: 'Nimma-MITra: Personalized ECE/EEE career companion. Daily updates, curated learning, and smart resume analysis. Zero data storage, privacy-first.',
               applicationCategory: 'BusinessApplication',
               operatingSystem: 'Any',
-              url: 'https://ats.lovexog.me',
+              url: 'https://nimma-mitra.com',
               sameAs: [
-                'https://resume-ats-mu.vercel.app'
+                'https://nimma-mitra.com'
               ],
               offers: {
                 '@type': 'Offer',
