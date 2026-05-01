@@ -174,13 +174,14 @@ class ProjectRecommendation(BaseModel):
 class AssessmentQuestion(BaseModel):
     question: str
     options: List[str]
-    correct_answer: int
+    correct_answer: Union[int, str]
     explanation: str
 
 class AssessmentResponse(BaseModel):
-    domain: str
-    difficulty: str
-    questions: List[AssessmentQuestion]
+    title: str
+    description: str = "Personalized assessment based on your profile."
+    questions: List[AssessmentQuestion] = []
+    total_questions: int = 0
 
 class ComparisonResponse(BaseModel):
     jd_match_score: int
