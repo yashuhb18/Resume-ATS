@@ -7,7 +7,6 @@ import {
   TrendingUp, Compass, Target, 
   Briefcase, CheckCircle2, ChevronRight, ExternalLink
 } from 'lucide-react';
-import RoadmapModal from './RoadmapModal';
 import TrendingJobModal from './TrendingJobModal';
 import Link from 'next/link';
 
@@ -89,7 +88,6 @@ const itemVariants = {
 };
 
 export default function EceSpecialization() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<string | null>(null);
 
@@ -257,20 +255,19 @@ export default function EceSpecialization() {
                 ))}
               </div>
 
-              <button 
-                onClick={() => setIsModalOpen(true)}
+              <Link 
+                href="/roadmap"
                 className="w-full mt-6 flex items-center justify-center gap-2 py-3 rounded-xl bg-purple-500 hover:bg-purple-600 transition-colors text-white font-semibold group shadow-lg shadow-purple-500/25"
               >
-                Generate Your Custom Roadmap
+                Launch Intelligence Matrix
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
+              </Link>
             </motion.div>
           </div>
 
         </motion.div>
       </div>
 
-      <RoadmapModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <TrendingJobModal isOpen={isJobModalOpen} onClose={() => setIsJobModalOpen(false)} jobName={selectedJob} />
     </section>
   );

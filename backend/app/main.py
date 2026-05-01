@@ -534,9 +534,7 @@ async def generate_roadmap(request: RoadmapRequest):
     """
     try:
         roadmap_data = roadmap_generator.generate(
-            domain=request.domain,
-            year_of_study=request.year_of_study,
-            current_skill_level=request.current_skill_level
+            domain=request.domain
         )
         return RoadmapResponse(**roadmap_data)
     except Exception as e:
