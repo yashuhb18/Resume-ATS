@@ -6,6 +6,7 @@ import Hero from '@/components/Hero';
 import HowItWorks from '@/components/HowItWorks';
 import Features from '@/components/Features';
 import UploadSection from '@/components/UploadSection';
+import EceSpecialization from '@/components/EceSpecialization';
 import ResultsDashboard from '@/components/ResultsDashboard';
 import PrivacyBanner from '@/components/PrivacyBanner';
 import Footer from '@/components/Footer';
@@ -135,6 +136,7 @@ export default function Home() {
             onCompare={handleCompare}
             error={error} 
           />
+          <EceSpecialization />
           <HowItWorks />
           <Features />
           <PrivacyBanner />

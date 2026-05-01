@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, CheckCircle2, Shield, Zap } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Shield, Zap, ChevronDown } from 'lucide-react';
 
 const trustItems = [
   { icon: Zap,           label: 'Blazingly Fast ⚡',   color: 'var(--accent-ice)' },
@@ -60,11 +60,29 @@ export default function Hero() {
           >
             Upload your resume and get an ATS score, skills analysis, and recruiter-level
             insights in seconds. No signup required.
-            <br />
-            <span className="font-semibold block mt-3" style={{ color: 'var(--accent-ice)' }}>
-              Premium Career Intelligence tailored for Electronics, Communication, and Electrical Engineers.
-            </span>
           </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.25 }}
+            className="flex justify-center mb-10"
+          >
+            <a 
+              href="#ece-hub" 
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border bg-black/20 backdrop-blur-md hover:bg-black/40 transition-all group"
+              style={{ borderColor: 'rgba(139,92,246,0.3)' }}
+            >
+              <span className="w-2 h-2 rounded-full bg-[var(--brand-glow-core)] animate-pulse" />
+              <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                Specially engineered for EC & EEE professionals.
+              </span>
+              <span className="text-sm font-medium ml-1 flex items-center gap-1 group-hover:text-white" style={{ color: 'var(--violet-electric)' }}>
+                See why
+                <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
+              </span>
+            </a>
+          </motion.div>
 
           {/* CTA */}
           <motion.div
