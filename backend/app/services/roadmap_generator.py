@@ -28,27 +28,36 @@ class RoadmapGenerator:
         print(f"DEBUG: Starting generation. Domain: {domain}, Resume: {bool(resume_text)}")
         
         # If resume_text is provided but no domain, classify first
-        input_context = f"Domain: {domain}" if domain else f"Resume DNA: {resume_text[:2000] if resume_text else 'N/A'}"
+        input_context = f"Domain: {domain}" if domain else f"Resume DNA: {resume_text[:4000] if resume_text else 'N/A'}"
         
         prompt = f"""
-        You are the Global Universal Intelligence Engine for career architecture.
-        Task: Analyze the following professional input and generate a 'God-Level' career matrix.
+        You are the 'Supreme Career Architect' at the ResQ Galactic Intelligence Center.
+        Your task is to analyze the provided professional DNA and generate a 100% UNIQUE, high-fidelity career roadmap.
         
-        Input: {input_context}
+        CONTEXT:
+        {input_context}
+
+        CRITICAL INSTRUCTIONS:
+        1. IDENTIFICATION: Carefully identify the exact professional domain. Avoid generic terms like "Software Engineer". Be specific (e.g., "Senior Cloud Security Architect", "Full-Stack MERN Specialist", "VLSI RTL Verification Lead").
+        2. PERSONALIZATION: Every single step and project MUST be directly influenced by the candidate's current skills and experience. Do NOT use templates.
+        3. PROJECT GENERATION: Create projects that combine the candidate's existing tech stack with the skills they need to learn.
+        4. GITHUB LINKS: Provide highly specific GitHub search URLs (e.g., "https://github.com/search?q=react-native-webrtc-example" instead of a generic link).
+        5. COURSERA PLUS: All course links must be high-quality Coursera or technical specialization links.
+        6. MARKET DATA: Provide a realistic 7-point market demand trend (0-100) reflecting current global hiring for this EXACT role.
 
         Your output MUST be a valid JSON object matching this exact schema:
         {{
-            "domain": "String (Identify the exact professional domain)",
-            "role_suitability": "String (Professional assessment of candidate DNA alignment)",
-            "news_headline": "String (Exciting global industry trend)",
-            "market_demand_trend": [Int, Int, Int, Int, Int, Int, Int], // 7 points representing demand over the last 6 months (0-100)
+            "domain": "String (Be highly specific)",
+            "role_suitability": "String (Elite briefing on why this trajectory fits their DNA)",
+            "news_headline": "String (Real-world industry trend relevant to this role)",
+            "market_demand_trend": [Int, Int, Int, Int, Int, Int, Int],
             "job_openings": [
                 {{
-                    "title": "Role Title",
+                    "title": "Exact Role Title",
                     "company": "Top Global Company",
-                    "location": "Remote / Major City",
-                    "apply_link": "Direct LinkedIn/Indeed search URL for this role",
-                    "salary_range": "e.g., $120k - $180k"
+                    "location": "Remote / Global",
+                    "apply_link": "Indeed/LinkedIn Search URL for this exact role",
+                    "salary_range": "Realistic range for this expertise"
                 }}
             ],
             "beginner_steps": [
@@ -56,23 +65,19 @@ class RoadmapGenerator:
                     "title": "String",
                     "description": "String",
                     "key_skills": ["Skill1", "Skill2"],
-                    "course_link": "Coursera/Udemy URL",
-                    "youtube_link": "YouTube search URL",
+                    "course_link": "URL",
+                    "youtube_link": "YouTube Search URL",
                     "projects": [
-                        {{"title": "Project Alpha", "github_repo": "GitHub URL"}},
-                        {{"title": "Project Beta", "github_repo": "GitHub URL"}}
+                        {{"title": "Custom Project Title", "github_repo": "Specific GitHub Search URL"}},
+                        {{"title": "Custom Project Title", "github_repo": "Specific GitHub Search URL"}}
                     ]
                 }}
             ],
-            "intermediate_steps": [ ... ],
-            "advanced_steps": [ ... ]
+            "intermediate_steps": [ ... 5 steps total ... ],
+            "advanced_steps": [ ... 5 steps total ... ]
         }}
 
-        CRITICAL: 
-        1. If it's a resume, extract the most powerful domain found.
-        2. Exactly 5 steps per phase (Beginner, Intermediate, Advanced).
-        3. Market demand trend must reflect realistic industry data.
-        4. Output RAW JSON ONLY.
+        OUTPUT RAW JSON ONLY. NO MARKDOWN.
         """
 
         roadmap_data = self._generate_with_gemini(prompt)
