@@ -1,166 +1,160 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, CheckCircle2, Shield, Zap, ChevronDown, Rocket, Compass, Cpu } from 'lucide-react';
+import { ArrowRight, Shield, Zap, ChevronDown, Rocket, Compass, Cpu, Share2 } from 'lucide-react';
 import Link from 'next/link';
-
-const intelligenceItems = [
-  { icon: Cpu,           label: 'Domain Intelligence 🧠', color: 'var(--accent-ice)' },
-  { icon: Rocket,        label: 'Career Accelerator 🚀',  color: 'var(--emerald-neon)' },
-  { icon: Compass,       label: 'Real-time Guidance 🧭',   color: 'var(--violet-electric)' },
-];
 
 export default function Hero() {
   return (
-    <section className="relative pt-32 pb-24 overflow-hidden bg-gradient-hero min-h-[90vh] flex flex-col justify-center">
-
-      {/* Morphing blobs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="blob blob-brand absolute w-[600px] h-[600px] -top-32 -left-24 opacity-20" />
-        <div className="blob blob-violet absolute w-[500px] h-[500px] -bottom-16 -right-20 opacity-15" style={{ animationDelay: '2s' }} />
-        <div className="blob blob-accent absolute w-[300px] h-[300px] top-1/3 right-1/4 opacity-10" style={{ animationDelay: '4s' }} />
+    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+      
+      {/* Dynamic Cinematic Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-600/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/4 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-600/10 blur-[100px] rounded-full translate-y-1/4 -translate-x-1/4" />
+        
+        {/* Grid Pattern Overlay */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-
-          {/* Status badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2.5 px-4 py-2 bg-white/5 border border-white/10 backdrop-blur-md rounded-full mb-8 shadow-xl"
-          >
-            <span className="w-2 h-2 rounded-full bg-[var(--emerald-neon)] animate-pulse" />
-            <span className="text-xs font-bold uppercase tracking-widest text-indigo-300">
-              Intelligence Engine v2.0
-            </span>
-          </motion.div>
-
-          {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.1 }}
-            className="font-display mb-6 text-6xl md:text-8xl font-black tracking-tighter"
-            style={{ color: 'var(--text-primary)' }}
-          >
-            Engineering Your
-            <br />
-            <span className="text-gradient">Hardware Mastery</span>
-          </motion.h1>
-
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg sm:text-2xl max-w-3xl mx-auto mb-10 leading-relaxed font-medium"
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            Welcome to <span className="text-white font-bold">Nimma-MITra</span>. Beyond the ATS lens—we provide real-time ECE intelligence, live career roadmaps, and a direct pulse on the global hardware market.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.25 }}
-            className="flex justify-center mb-10"
-          >
-            <a 
-              href="#ece-hub" 
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full border bg-indigo-500/5 backdrop-blur-xl hover:bg-indigo-500/10 transition-all group border-indigo-500/30"
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+          
+          {/* Content Column */}
+          <div className="lg:col-span-7 text-left">
+            
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="badge-intelligence mb-8 inline-block"
             >
-              <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
-              <span className="text-sm font-bold text-indigo-200 uppercase tracking-widest">
-                Optimized for Semiconductor & Embedded Ecosystems
-              </span>
-              <ChevronDown className="w-4 h-4 text-indigo-400 group-hover:translate-y-0.5 transition-transform" />
-            </a>
-          </motion.div>
+              Hardware Intelligence Engine // v2.4
+            </motion.div>
 
-          {/* CTA Group */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-6"
-          >
-            <a href="#upload" className="btn-primary text-xl px-10 py-5 inline-flex items-center gap-3 group shadow-2xl shadow-indigo-500/20">
-              Start Intelligence Scan
-              <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-            </a>
-            <Link href="/roadmap" className="px-10 py-5 bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl font-bold text-xl hover:bg-white/10 transition-all">
-              Initialize Roadmap
-            </Link>
-          </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="text-gradient mb-8 leading-[0.9] tracking-[-0.06em]"
+            >
+              Design Your <br />
+              <span className="text-white italic">Hardware</span> <br />
+              Legacy.
+            </motion.h1>
 
-          {/* New Intelligence Indicators */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex flex-wrap items-center justify-center gap-10 mt-16"
-          >
-            {intelligenceItems.map(({ icon: Icon, label, color }) => (
-              <div key={label} className="flex items-center gap-3 group cursor-default" style={{ color: 'var(--text-secondary)' }}>
-                <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform border border-white/5">
-                  <Icon className="w-5 h-5 flex-shrink-0" style={{ color }} />
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-xl md:text-2xl text-slate-400 max-w-2xl mb-12 font-medium leading-relaxed"
+            >
+              Nimma-MITra is the world&apos;s first autonomous career architect for ECE & EEE pioneers. We don&apos;t just analyze—we synchronize your skills with the global silicon pulse.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="flex flex-wrap gap-6"
+            >
+              <a href="#upload" className="btn-primary group">
+                <span className="flex items-center gap-3">
+                  Scan Technical DNA
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </a>
+              <Link href="/roadmap" className="btn-secondary group">
+                <span className="flex items-center gap-3">
+                  Generate Roadmap
+                  <Share2 className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                </span>
+              </Link>
+            </motion.div>
+
+            {/* Quick Stats */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.5 }}
+              className="mt-16 grid grid-cols-3 gap-8 border-t border-white/5 pt-8"
+            >
+              {[
+                { label: 'Domains', val: '5+', icon: Cpu },
+                { label: 'Resources', val: '500+', icon: Zap },
+                { label: 'Security', val: '100%', icon: Shield },
+              ].map((s, i) => (
+                <div key={i} className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2 text-indigo-400 mb-1">
+                    <s.icon className="w-4 h-4" />
+                    <span className="text-xl font-bold text-white">{s.val}</span>
+                  </div>
+                  <span className="text-[10px] uppercase tracking-widest text-slate-500 font-black">{s.label}</span>
                 </div>
-                <span className="text-sm font-bold uppercase tracking-widest text-gray-400 group-hover:text-white transition-colors">{label}</span>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Privacy & Trust */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="mt-12 inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-500/5 border border-emerald-500/10 rounded-full"
-          >
-            <Shield className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs font-bold uppercase tracking-widest text-emerald-200/60">
-              Ephemeral Security: Your data is never persisted.
-            </span>
-          </motion.div>
-        </div>
-
-        {/* Dashboard Mockup - Refined */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-20 relative max-w-5xl mx-auto"
-        >
-          <div className="absolute inset-0 bg-indigo-500/10 rounded-[2.5rem] blur-[80px]" />
-          <div className="relative bg-black/40 border border-white/10 rounded-[2.5rem] p-1 shadow-2xl overflow-hidden backdrop-blur-md">
-             <div className="bg-[#050505] rounded-[2.25rem] p-8 md:p-12">
-                <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-12">
-                   <div className="flex items-center gap-4">
-                      <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-2xl">
-                         <span className="text-3xl font-black text-white tracking-tighter">88</span>
-                      </div>
-                      <div>
-                         <h4 className="text-2xl font-bold text-white tracking-tight">Intelligence Quotient</h4>
-                         <p className="text-indigo-400 font-mono text-xs uppercase tracking-widest">VLSI Engineer // Level 4</p>
-                      </div>
-                   </div>
-                   <div className="flex gap-3">
-                      <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 text-[10px] font-black uppercase tracking-widest">Matched</div>
-                      <div className="px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-indigo-400 text-[10px] font-black uppercase tracking-widest">Ready</div>
-                   </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                   {[1,2,3,4].map(i => (
-                      <div key={i} className="h-24 bg-white/5 border border-white/5 rounded-2xl animate-pulse" />
-                   ))}
-                </div>
-             </div>
+              ))}
+            </motion.div>
           </div>
-        </motion.div>
+
+          {/* Visual Column */}
+          <div className="lg:col-span-5 relative hidden lg:block">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ duration: 1, ease: "circOut" }}
+              className="relative"
+            >
+              {/* Intelligence Core Visual */}
+              <div className="w-[480px] h-[480px] relative">
+                <div className="absolute inset-0 bg-indigo-500/20 rounded-[4rem] blur-[100px] animate-pulse" />
+                
+                {/* Floating Glass Panels */}
+                <motion.div 
+                  animate={{ y: [0, -20, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute top-0 right-0 w-64 h-80 card-glass rounded-[3rem] p-8 flex flex-col justify-between"
+                >
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center">
+                    <Cpu className="w-6 h-6 text-indigo-400" />
+                  </div>
+                  <div>
+                    <h4 className="text-white text-xl font-bold mb-2">VLSI Arch</h4>
+                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                      <div className="h-full w-4/5 bg-indigo-500" />
+                    </div>
+                  </div>
+                </motion.div>
+
+                <motion.div 
+                  animate={{ y: [0, 20, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                  className="absolute bottom-10 left-0 w-56 h-64 card-glass rounded-[2.5rem] p-8 border-indigo-500/20"
+                >
+                   <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center mb-6">
+                    <Zap className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <p className="text-sm font-bold text-slate-400 leading-tight uppercase tracking-widest">Real-time Pulse Detected</p>
+                  <h3 className="text-white text-2xl font-black mt-2">ACTIVE</h3>
+                </motion.div>
+
+                {/* Central Orbit */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full bg-indigo-600/30 blur-2xl animate-ping" />
+              </div>
+            </motion.div>
+          </div>
+
+        </div>
       </div>
+
+      {/* Floating Scroll Indicator */}
+      <motion.div 
+        animate={{ y: [0, 10, 0] }}
+        transition={{ duration: 2, repeat: Infinity }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30"
+      >
+        <span className="text-[10px] font-black uppercase tracking-[0.3em]">Initialize Dive</span>
+        <ChevronDown className="w-4 h-4" />
+      </motion.div>
+
     </section>
   );
 }
