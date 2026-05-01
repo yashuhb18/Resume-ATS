@@ -5,11 +5,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://resume-ats-backend-xlo8.onrender.com/api/:path*"
+      "destination": "https://resume-ats-backend-production.up.railway.app/api/:path*"
     },
     {
       "source": "/health",
-      "destination": "https://resume-ats-backend-xlo8.onrender.com/health"
+      "destination": "https://resume-ats-backend-production.up.railway.app/health"
     }
   ],
   "headers": [

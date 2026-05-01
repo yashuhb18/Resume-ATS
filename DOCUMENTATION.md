@@ -583,8 +583,8 @@ def needs_ocr(text: str, email: str, phone: str) -> bool:
 }
 ```
 
-**Render Deployment:**
-The `render.yaml` installs required system packages:
+**Production Deployment:**
+The Railway backend should include system support for OCR if scanned-PDF analysis is required:
 - `tesseract-ocr` - The OCR engine
 - `poppler-utils` - For PDF to image conversion
 - `libgl1`, `libglib2.0-0` - Required dependencies
