@@ -14,6 +14,7 @@ load_dotenv()
 
 from app.services.resume_parser import ResumeParser
 from app.services.ats_scorer import ATSScorer
+from app.services.llm_ats_scorer import llm_ats_scorer
 from app.services.skill_extractor import SkillExtractor
 from app.services.domain_classifier import DomainClassifier
 from app.services.report_generator import ReportGenerator
@@ -132,8 +133,8 @@ async def analyze_resume(file: UploadFile = File(...)):
         # Analyze resume content quality with PyTorch when available
         ml_analysis = ml_quality_analyzer.analyze(parsed_data, skills_data)
         
-        # Calculate ATS score (OCR-aware)
-        ats_analysis = ats_scorer.calculate_score(
+        # Calculate ATS score (OCR-aware) using intelligent LLM Engine
+        ats_analysis = await llm_ats_scorer.analyze_resume(
             parsed_data, 
             skills_data, 
             domain_data,
@@ -290,7 +291,7 @@ async def compare_resume_with_jd(
         # Calculate ATS score
         domain_data = domain_classifier.classify(resume_parsed["raw_text"], skills_data)
         ml_analysis = ml_quality_analyzer.analyze(resume_parsed, skills_data)
-        ats_analysis = ats_scorer.calculate_score(
+        ats_analysis = await llm_ats_scorer.analyze_resume(
             resume_parsed,
             skills_data,
             domain_data,
@@ -465,7 +466,7 @@ async def interview_chat(
             skills_data = skill_extractor.extract(resume_parsed["raw_text"])
             domain_data = domain_classifier.classify(resume_parsed["raw_text"], skills_data)
             ml_analysis = ml_quality_analyzer.analyze(resume_parsed, skills_data)
-            ats_analysis = ats_scorer.calculate_score(
+            ats_analysis = await llm_ats_scorer.analyze_resume(
                 resume_parsed,
                 skills_data,
                 domain_data,
