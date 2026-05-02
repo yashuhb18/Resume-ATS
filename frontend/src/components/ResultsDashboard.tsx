@@ -558,7 +558,7 @@ export default function ResultsDashboard({ results, comparisonResults, onReset }
             </div>
           </motion.div>
         )}
-          </>
+        </>
         ) : (
           <>
             {/* ── ECE Features: Project Recommendations & Mock Assessment ── */}

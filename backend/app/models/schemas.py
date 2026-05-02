@@ -61,6 +61,7 @@ class ComputerVisionAnalysis(BaseModel):
 class SkillCategory(BaseModel):
     name: str
     skills: List[str]
+    strength: str = "Moderate"  # Strong, Moderate, Weak
 
 class SkillsData(BaseModel):
     programming_languages: List[str] = []
@@ -69,7 +70,9 @@ class SkillsData(BaseModel):
     databases: List[str] = []
     soft_skills: List[str] = []
     other: List[str] = []
+    core_engineering: List[str] = []
     total_count: int = 0
+    skill_categories: List[SkillCategory] = []
 
 class DomainInfo(BaseModel):
     primary: str = "General"
@@ -110,6 +113,7 @@ class Suggestion(BaseModel):
 class KeywordsAnalysis(BaseModel):
     found: List[str] = []
     missing: List[str] = []
+    recommended: List[str] = []
     density_score: int = 0
 
 class ATSScore(BaseModel):
@@ -168,6 +172,7 @@ class ProjectRecommendation(BaseModel):
     difficulty: str = "Intermediate" # Beginner, Intermediate, Advanced
     impact: str = "High"
     tech_stack: List[str] = []
+    skills_gained: List[str] = []  # Frontend-facing alias for tech_stack
     github_search_query: str = ""
     domain: Optional[str] = None
 
