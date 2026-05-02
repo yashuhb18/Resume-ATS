@@ -64,7 +64,7 @@ class RoadmapGenerator:
 
         CRITICAL ARCHITECTURE RULES:
         1. GROUNDING: You MUST incorporate real job titles and companies from the LIVE MARKET DATA.
-        2. BRAIN: Design exactly 6 steps total (2 Beginner, 2 Intermediate, 2 Advanced) that are 100% specific to the candidate.
+        2. BRAIN: Design exactly 3 steps total (1 Beginner, 1 Intermediate, 1 Advanced) to keep the JSON concise.
         3. INNOVATION: Create projects that combine their existing stack with trending technologies.
         4. GITHUB: Provide specific, valid GitHub search URLs for niche implementations.
 
@@ -200,7 +200,7 @@ class RoadmapGenerator:
         ollama_host = os.getenv("OLLAMA_HOST", "http://localhost:11434")
         ollama_model = os.getenv("OLLAMA_MODEL", "llama3.1:8b")
         try:
-            async with httpx.AsyncClient(timeout=180.0) as client:
+            async with httpx.AsyncClient(timeout=600.0) as client:
                 response = await client.post(
                     f"{ollama_host}/api/generate",
                     json={
@@ -210,8 +210,8 @@ class RoadmapGenerator:
                         "format": "json",
                         "options": {
                             "temperature": 0.4,
-                            "num_predict": 2500,
-                            "num_ctx": 4096
+                            "num_predict": 1000,
+                            "num_ctx": 2048
                         }
                     }
                 )
