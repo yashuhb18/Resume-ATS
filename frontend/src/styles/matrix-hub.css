@@ -1,0 +1,95 @@
+/* ============================================================
+   GLOBAL CAREER MATRIX — IMMERSIVE DESIGN SYSTEM
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   This stylesheet is namespaced to the /matrix route only.
+   ============================================================ */
+
+.matrix-hub-root {
+  --hub-bg: #020308;
+  --hub-accent: #3b82f6;
+  --hub-accent-glow: rgba(59, 130, 246, 0.4);
+  --hub-border: rgba(255, 255, 255, 0.08);
+  --hub-text-primary: #f8fafc;
+  --hub-text-secondary: #94a3b8;
+  
+  background-color: var(--hub-bg);
+  color: var(--hub-text-primary);
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+.hologram-card {
+  position: relative;
+  background: rgba(10, 12, 20, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--hub-border);
+  border-radius: 2rem;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.02);
+}
+
+.hologram-card:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(10, 12, 20, 0.8);
+  box-shadow: 0 0 60px rgba(59, 130, 246, 0.1), inset 0 0 20px rgba(255, 255, 255, 0.03);
+}
+
+.text-tactical {
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--hub-accent);
+}
+
+.matrix-btn {
+  position: relative;
+  padding: 1rem 2rem;
+  background: #2563eb;
+  border-radius: 1rem;
+  font-weight: 900;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: white;
+  transition: all 0.3s;
+  overflow: hidden;
+  box-shadow: 0 10px 20px -10px rgba(59, 130, 246, 0.5);
+}
+
+.matrix-btn:hover {
+  transform: translateY(-2px);
+  background: #3b82f6;
+  box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.6);
+}
+
+.matrix-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s;
+}
+
+.matrix-btn:hover::after {
+  transform: translateX(100%);
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.scanline-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.1) 50%), linear-gradient(90deg, rgba(255,0,0,0.03), rgba(0,255,0,0.01), rgba(0,0,255,0.03));
+  background-size: 100% 4px, 3px 100%;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.15;
+}

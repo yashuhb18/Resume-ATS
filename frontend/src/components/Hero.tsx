@@ -59,8 +59,15 @@ export default function Hero() {
                 Analyze My Resume
                 <ArrowRight className="w-5 h-5" />
               </a>
-              <Link href="/roadmap" className="btn-secondary">
-                View Career Roadmaps
+              <Link href="/matrix" className="btn-secondary group relative overflow-hidden">
+                <span className="relative z-10 flex items-center gap-2">
+                  Enter Global Matrix
+                  <Zap className="w-4 h-4 text-indigo-400 group-hover:scale-125 transition-transform" />
+                </span>
+                <div className="absolute inset-0 bg-indigo-500/5 group-hover:bg-indigo-500/10 transition-colors" />
+              </Link>
+              <Link href="/roadmap" className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 hover:text-white transition-all flex items-center gap-2 mt-4 sm:mt-0">
+                View Roadmaps
               </Link>
             </motion.div>
 

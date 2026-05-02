@@ -1,0 +1,54 @@
+'use client';
+
+import MatrixHubNav from '@/components/matrix-hub/MatrixHubNav';
+import MatrixHero from '@/components/matrix-hub/MatrixHero';
+import MatrixGlobalGrid from '@/components/matrix-hub/MatrixGlobalGrid';
+import MatrixDomainGrid from '@/components/matrix-hub/MatrixDomainGrid';
+import MatrixEngine from '@/components/matrix-hub/MatrixEngine';
+import MatrixJobFeed from '@/components/matrix-hub/MatrixJobFeed';
+import MatrixSkillGraph from '@/components/matrix-hub/MatrixSkillGraph';
+import MatrixOracle from '@/components/matrix-hub/MatrixOracle';
+import MatrixFooter from '@/components/matrix-hub/MatrixFooter';
+import '@/styles/matrix-hub.css';
+
+export default function MatrixHubPage() {
+  return (
+    <div className="matrix-hub-root">
+      
+      {/* ── System Atmosphere ── */}
+      <div className="scanline-overlay" />
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_0%,rgba(2,3,8,0.4)_100%)] pointer-events-none z-50" />
+
+      {/* ── Navigation ── */}
+      <MatrixHubNav />
+
+      {/* ── Immersive Ecosystem ── */}
+      <main>
+        {/* Section 1: Cinematic Hero */}
+        <MatrixHero />
+
+        {/* Section 2: Global EC Intelligence */}
+        <MatrixGlobalGrid />
+
+        {/* Section 3: Trending Domains */}
+        <MatrixDomainGrid />
+
+        {/* Section 4: AI Matrix Engine Showcase */}
+        <MatrixEngine />
+
+        {/* Section 5: Live Job Intelligence */}
+        <MatrixJobFeed />
+
+        {/* Section 6: Personalized AI Career Graph */}
+        <MatrixSkillGraph />
+
+        {/* Section 7: AI Mentor Showcase */}
+        <MatrixOracle />
+      </main>
+
+      {/* ── Footer ── */}
+      <MatrixFooter />
+
+    </div>
+  );
+}
