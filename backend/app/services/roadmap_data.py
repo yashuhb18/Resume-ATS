@@ -410,4 +410,44 @@ DOMAIN_ROADMAPS = {
     }
 }
 
-GENERIC_ROADMAP = DOMAIN_ROADMAPS["VLSI & ASIC Design"] # Simplified for generic
+GENERIC_ROADMAP = {
+    "domain": "General Professional",
+    "role_suitability": "Your core skills form a strong foundation for multiple career paths.",
+    "news_headline": "Professionals who continuously upskill see a 40% higher career growth rate.",
+    "beginner_steps": [
+        {
+            "title": "Core Skills Solidification",
+            "description": "Strengthen the fundamental skills related to your domain.",
+            "key_skills": ["Communication", "Problem Solving", "Domain Basics"],
+            "course_link": "https://www.coursera.org",
+            "youtube_link": "https://www.youtube.com",
+            "projects": [
+                {"title": "Foundational Project", "github_repo": "https://github.com"}
+            ]
+        }
+    ],
+    "intermediate_steps": [
+        {
+            "title": "Advanced Application",
+            "description": "Apply your skills to complex, real-world problems.",
+            "key_skills": ["Project Management", "Technical Execution"],
+            "course_link": "https://www.coursera.org",
+            "youtube_link": "https://www.youtube.com",
+            "projects": [
+                {"title": "Intermediate Case Study", "github_repo": "https://github.com"}
+            ]
+        }
+    ],
+    "advanced_steps": [
+        {
+            "title": "Leadership and Specialization",
+            "description": "Take ownership of major initiatives and mentor others.",
+            "key_skills": ["Leadership", "Strategic Planning"],
+            "course_link": "https://www.coursera.org",
+            "youtube_link": "https://www.youtube.com",
+            "projects": [
+                {"title": "Domain Capstone Project", "github_repo": "https://github.com"}
+            ]
+        }
+    ]
+}
