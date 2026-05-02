@@ -100,6 +100,42 @@ const domainData: Record<string, DomainDetails> = {
       { title: 'Open Hardware Repository', link: 'https://github.com/ohwr', type: 'github' },
       { title: 'PCB Design Jobs: Bangalore Core', link: 'https://www.linkedin.com/jobs/search/?keywords=PCB%20Design&location=Bengaluru&f_E=1', type: 'linkedin' },
     ]
+  },
+  iot: {
+    id: 'iot',
+    title: 'IoT & Smart Systems',
+    resources: [
+      { title: 'Coursera: IoT Specialization (UC Irvine)', link: 'https://www.coursera.org/specializations/iot', type: 'coursera' },
+      { title: 'NPTEL: Introduction to IoT (Free Cert)', link: 'https://onlinecourses.nptel.ac.in/noc24_cs47/preview', type: 'coursera' },
+      { title: 'IoT for Beginners: Microsoft Curriculum', link: 'https://github.com/microsoft/IoT-For-Beginners', type: 'github' },
+      { title: 'ThingsBoard: Open Source IoT Platform', link: 'https://github.com/thingsboard/thingsboard', type: 'github' },
+      { title: 'ESP32: Official IoT Framework', link: 'https://github.com/espressif/esp-idf', type: 'github' },
+      { title: 'IoT Jobs: Bangalore/Mysore Freshers', link: 'https://www.linkedin.com/jobs/search/?keywords=IoT%20Engineer&location=Bengaluru&f_E=1', type: 'linkedin' },
+    ]
+  },
+  analog: {
+    id: 'analog',
+    title: 'Analog & Mixed-Signal',
+    resources: [
+      { title: 'Razavi Electronics: Analog Briefings', link: 'https://www.youtube.com/@razavielectronics', type: 'youtube' },
+      { title: 'NPTEL: Analog IC Design (Free)', link: 'https://onlinecourses.nptel.ac.in/noc24_ee62/preview', type: 'coursera' },
+      { title: 'Coursera: Linear Circuits Specialization', link: 'https://www.coursera.org/learn/linear-circuits-ac-analysis', type: 'coursera' },
+      { title: 'Ngspice: Open Source Circuit Simulator', link: 'https://github.com/ngspice/ngspice', type: 'github' },
+      { title: 'Analog Design Jobs: Bangalore Silicon Core', link: 'https://www.linkedin.com/jobs/search/?keywords=Analog%20Design&location=Bengaluru&f_E=1', type: 'linkedin' },
+      { title: 'TI/Intel Analog Pipelines (Bangalore)', link: 'https://www.linkedin.com/jobs/search/?keywords=Analog&location=Bengaluru&f_E=1', type: 'linkedin' },
+    ]
+  },
+  automotive: {
+    id: 'automotive',
+    title: 'Automotive & EV Tech',
+    resources: [
+      { title: 'Coursera: Electric Vehicles Specialization', link: 'https://www.coursera.org/specializations/electric-vehicles', type: 'coursera' },
+      { title: 'WeberAuto: EV Power Systems Tech', link: 'https://www.youtube.com/@WeberAuto', type: 'youtube' },
+      { title: 'OVMS: Open Vehicle Monitoring System', link: 'https://github.com/openvehicles/Open-Vehicle-Monitoring-System-3', type: 'github' },
+      { title: 'Udacity: Intro to Self-Driving Cars (Free)', link: 'https://www.udacity.com/course/intro-to-self-driving-cars--ud191', type: 'open-source' },
+      { title: 'Automotive Jobs: Bangalore/Mysore Hubs', link: 'https://www.linkedin.com/jobs/search/?keywords=Automotive%20Electronics&location=Bengaluru&f_E=1', type: 'linkedin' },
+      { title: 'Bosch/Continental/L&T Mysore Openings', link: 'https://www.linkedin.com/jobs/search/?keywords=Automotive&location=Mysuru&f_E=1', type: 'linkedin' },
+    ]
   }
 };
 

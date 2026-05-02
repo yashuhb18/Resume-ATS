@@ -6,7 +6,7 @@ import {
   Layers, Database, Brain,
   TrendingUp, ArrowUpRight, Loader2,
   CheckCircle2,
-  Radio, Navigation
+  Radio, Navigation, Wifi, Car, Activity
 } from 'lucide-react';
 import { useState } from 'react';
 import MatrixDomainDetails from './MatrixDomainDetails';
@@ -59,6 +59,30 @@ const domains = [
     image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800',
     stat: 'Active: HIGH',
     icon: Layers
+  },
+  {
+    id: 'iot',
+    title: 'IoT & Smart Systems',
+    desc: 'Connected ecosystem architecture, MQTT protocols, and cloud sync.',
+    image: 'https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?auto=format&fit=crop&q=80&w=800',
+    stat: 'Hiring: MASSIVE',
+    icon: Wifi
+  },
+  {
+    id: 'analog',
+    title: 'Analog & Mixed-Signal',
+    desc: 'Precision silicon design, RF frontend, and power management.',
+    image: 'https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?auto=format&fit=crop&q=80&w=800',
+    stat: 'Demand: ELITE',
+    icon: Activity
+  },
+  {
+    id: 'automotive',
+    title: 'Automotive & EV Tech',
+    desc: 'Electric drivetrain, autonomous sensors, and vehicle-to-X comms.',
+    image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&q=80&w=800',
+    stat: 'Growth: 8.5x',
+    icon: Car
   }
 ];
 
