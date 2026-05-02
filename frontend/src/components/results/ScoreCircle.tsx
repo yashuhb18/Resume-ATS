@@ -8,6 +8,7 @@ interface ScoreCircleProps {
 }
 
 export default function ScoreCircle({ score, size = 120 }: ScoreCircleProps) {
+  const numericScore = typeof score === 'number' ? score : (score as any)?.total_score || (score as any)?.score || 0;
   const [animated, setAnimated] = useState(0);
   const strokeWidth = size * 0.08;
   const radius      = (size - strokeWidth) / 2;
@@ -15,16 +16,16 @@ export default function ScoreCircle({ score, size = 120 }: ScoreCircleProps) {
   const offset      = circ - (animated / 100) * circ;
 
   useEffect(() => {
-    const t = setTimeout(() => setAnimated(score), 120);
+    const t = setTimeout(() => setAnimated(numericScore), 120);
     return () => clearTimeout(t);
-  }, [score]);
+  }, [numericScore]);
 
   const getColor = (s: number) =>
     s >= 80 ? { stroke: 'var(--emerald-neon)', track: 'rgba(52,211,153,0.12)', label: 'var(--emerald-neon)' } :
     s >= 60 ? { stroke: '#fbbf24',             track: 'rgba(251,191,36,0.12)',  label: '#fbbf24'             } :
               { stroke: '#fb7185',             track: 'rgba(251,113,133,0.12)', label: '#fb7185'             };
 
-  const col = getColor(score);
+  const col = getColor(numericScore);
 
   const gradId = `scoreGrad-${size}`;
 

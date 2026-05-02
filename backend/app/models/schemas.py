@@ -183,13 +183,51 @@ class AssessmentResponse(BaseModel):
     questions: List[AssessmentQuestion] = []
     total_questions: int = 0
 
+class JDAnalysis(BaseModel):
+    requirements: Dict[str, Any] = {}
+    skills: Dict[str, List[str]] = {}
+    keywords: List[str] = []
+
+class MatchBreakdown(BaseModel):
+    skill_match: int = 0
+    keyword_match: int = 0
+    experience_match: int = 0
+    overall_match: int = 0
+
+class RecruiterReport(BaseModel):
+    fit_rating: str = ""
+    overall_summary: str = ""
+    match_breakdown: MatchBreakdown = MatchBreakdown()
+    strengths: List[str] = []
+    gaps: List[str] = []
+    recommendation: str = ""
+    next_steps: List[str] = []
+
+class ComparisonSuggestion(BaseModel):
+    category: str = "General"
+    title: str = ""
+    description: str = ""
+    priority: str = "Medium"
+
 class ComparisonResponse(BaseModel):
-    jd_match_score: int
-    missing_keywords: List[str]
-    matching_keywords: List[str]
-    strengths: List[str]
-    weaknesses: List[str]
-    suitability_verdict: str
+    success: bool = True
+    candidate: CandidateInfo = CandidateInfo()
+    ats_score: Union[ATSScore, int] = 0
+    match_percentage: int = 0
+    match_breakdown: MatchBreakdown = MatchBreakdown()
+    jd_analysis: JDAnalysis = JDAnalysis()
+    missing_skills: Dict[str, List[str]] = {}
+    missing_keywords: List[str] = []
+    suggestions: List[ComparisonSuggestion] = []
+    recruiter_report: RecruiterReport = RecruiterReport()
+    industry_report: Optional[IndustryReport] = None
+    optimized_resume: ResumeRewrite = ResumeRewrite()
+    score_methodology: Dict[str, Any] = {}
+    computer_vision: ComputerVisionAnalysis = ComputerVisionAnalysis()
+    project_recommendations: List[ProjectRecommendation] = []
+    assessment: Optional[AssessmentResponse] = None
+    parsing_method: str = "standard"
+    ocr_confidence: Optional[str] = None
 
 class InterviewMessage(BaseModel):
     role: str # user, assistant

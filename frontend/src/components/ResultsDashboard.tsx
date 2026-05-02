@@ -32,10 +32,11 @@ interface ResultsDashboardProps {
 }
 
 /* ─── Score colour helpers ─── */
-function scoreBg(s: number) {
-  if (s >= 80) return { bg: 'rgba(52,211,153,0.07)',  border: 'rgba(52,211,153,0.20)'  };
-  if (s >= 60) return { bg: 'rgba(251,191,36,0.07)',  border: 'rgba(251,191,36,0.20)'  };
-  return             { bg: 'rgba(251,113,133,0.07)', border: 'rgba(251,113,133,0.20)' };
+function scoreBg(s: any) {
+  const score = typeof s === 'number' ? s : (s?.total_score || s?.score || 0);
+  if (score >= 80) return { bg: 'rgba(52,211,153,0.07)',  border: 'rgba(52,211,153,0.20)'  };
+  if (score >= 60) return { bg: 'rgba(251,191,36,0.07)',  border: 'rgba(251,191,36,0.20)'  };
+  return                  { bg: 'rgba(251,113,133,0.07)', border: 'rgba(251,113,133,0.20)' };
 }
 function categoryBadge(cat: string) {
   const map: Record<string, { bg: string; color: string }> = {

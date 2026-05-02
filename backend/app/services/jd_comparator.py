@@ -174,8 +174,8 @@ class JDComparator:
         # Common technology keywords
         programming_langs = ['python', 'java', 'javascript', 'typescript', 'c#', 'c++', 'cpp', 'rust', 'go', 'golang', 'ruby', 'php', 'swift', 'kotlin', 'scala', 'r', 'matlab']
         frameworks = ['react', 'react.js', 'reactjs', 'angular', 'vue', 'django', 'flask', 'spring', 'fastapi', 'express', 'node.js', 'nodejs', 'nextjs', 'next.js', 'asp.net', '.net']
-        tools = ['git', 'github actions', 'docker', 'kubernetes', 'jenkins', 'aws', 'azure', 'gcp', 'ci/cd', 'postgres', 'mongodb', 'redis', 'kafka', 'elasticsearch', 'tableau', 'power bi', 'excel']
-        databases = ['postgresql', 'postgres', 'mysql', 'mongodb', 'firebase', 'cassandra', 'dynamodb', 'oracle', 'sql server']
+        tools = ['git', 'github actions', 'docker', 'kubernetes', 'jenkins', 'aws', 'azure', 'gcp', 'ci/cd', 'kafka', 'tableau', 'power bi', 'excel']
+        databases = ['postgresql', 'postgres', 'mysql', 'mongodb', 'firebase', 'cassandra', 'dynamodb', 'oracle', 'sql server', 'redis', 'elasticsearch']
         
         text_lower = jd_text.lower()
         
@@ -282,18 +282,13 @@ class JDComparator:
         
         matched_skills = 0
         
-        # Normalize resume skills to lowercase
-        resume_skills_lower = {
-            k: [self._normalize_skill(s) for s in v] 
-            for k, v in resume_skills.items() if v
-        }
+        resume_skill_set = self._flatten_skills(resume_skills)
         
         # Check matches
-        for category, skills in jd_skills.items():
-            resume_category = resume_skills_lower.get(category, [])
+        for skills in jd_skills.values():
             for skill in skills:
                 skill_lower = self._normalize_skill(skill)
-                if skill_lower in resume_category or any(self._soft_skill_match(skill_lower, rs) for rs in resume_category):
+                if skill_lower in resume_skill_set or any(self._soft_skill_match(skill_lower, rs) for rs in resume_skill_set):
                     matched_skills += 1
         
         match_percentage = int((matched_skills / total_jd_skills) * 100) if total_jd_skills > 0 else 100
@@ -343,18 +338,13 @@ class JDComparator:
         """Get skills mentioned in JD but not in resume"""
         missing = {}
         
-        resume_skills_lower = {
-            k: [self._normalize_skill(s) for s in v] 
-            for k, v in resume_skills.items() if v
-        }
+        resume_skill_set = self._flatten_skills(resume_skills)
         
         for category, skills in jd_skills.items():
             missing_in_category = []
-            resume_category = resume_skills_lower.get(category, [])
-            
             for skill in skills:
                 skill_lower = self._normalize_skill(skill)
-                if skill_lower not in resume_category and not any(self._soft_skill_match(skill_lower, rs) for rs in resume_category):
+                if skill_lower not in resume_skill_set and not any(self._soft_skill_match(skill_lower, rs) for rs in resume_skill_set):
                     missing_in_category.append(skill)
             
             if missing_in_category:
@@ -377,6 +367,14 @@ class JDComparator:
         """Match skill terms that may include punctuation like c#, .net, or next.js."""
         escaped = re.escape(term.lower())
         return bool(re.search(rf'(?<![a-z0-9]){escaped}(?![a-z0-9])', text))
+
+    def _flatten_skills(self, skills_by_category: Dict[str, List[str]]) -> set:
+        """Normalize all extracted skills into one set for category-agnostic matching."""
+        return {
+            self._normalize_skill(skill)
+            for skills in skills_by_category.values()
+            for skill in skills
+        }
 
     def _normalize_skill(self, skill: str) -> str:
         cleaned = re.sub(r'\s+', ' ', skill.lower().strip())
