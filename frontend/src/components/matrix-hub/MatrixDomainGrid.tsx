@@ -227,6 +227,3 @@ export default function MatrixDomainGrid() {
     </section>
   );
 }
-    </section>
-  );
-}
