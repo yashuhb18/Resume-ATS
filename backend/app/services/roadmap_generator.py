@@ -63,9 +63,9 @@ class RoadmapGenerator:
         {json.dumps(market_briefing, indent=2)}
 
         CRITICAL ARCHITECTURE RULES:
-        1. GROUNDING: You MUST incorporate the real job titles and companies from the LIVE MARKET DATA.
-        2. BRAIN: Design exactly 15 steps total (5 Beginner, 5 Intermediate, 5 Advanced) that are 100% specific to the candidate's DNA and the current market reality.
-        3. INNOVATION: Create projects that combine their existing stack with trending technologies mentioned in the market briefing.
+        1. GROUNDING: You MUST incorporate real job titles and companies from the LIVE MARKET DATA.
+        2. BRAIN: Design exactly 6 steps total (2 Beginner, 2 Intermediate, 2 Advanced) that are 100% specific to the candidate.
+        3. INNOVATION: Create projects that combine their existing stack with trending technologies.
         4. GITHUB: Provide specific, valid GitHub search URLs for niche implementations.
 
         Return a RAW JSON object. NO MARKDOWN. NO BACKTICKS. NO CODE BLOCKS.
@@ -224,10 +224,25 @@ class RoadmapGenerator:
     def _parse_json(self, content: str) -> Dict[str, Any]:
         """Safely extract and parse JSON from text, handling markdown artifacts."""
         content = content.strip()
-        if "```json" in content:
-            content = content.split("```json")[1].split("```")[0].strip()
-        elif "```" in content:
-            content = content.split("```")[1].split("```")[0].strip()
-        return json.loads(content)
+        try:
+            # Try to parse directly first
+            return json.loads(content)
+        except json.JSONDecodeError:
+            pass
+            
+        import re
+        # Try to find JSON object within text
+        match = re.search(r'\{[\s\S]*\}', content)
+        if match:
+            try:
+                cleaned = match.group(0)
+                # Fix common trailing commas before closing brackets
+                cleaned = re.sub(r',\s*\}', '}', cleaned)
+                cleaned = re.sub(r',\s*\]', ']', cleaned)
+                return json.loads(cleaned)
+            except Exception as e:
+                print(f"DEBUG: Regex JSON parse failed: {e}")
+                
+        raise ValueError("Could not extract valid JSON from LLM response.")
 
 roadmap_generator = RoadmapGenerator()
