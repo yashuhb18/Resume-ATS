@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import MatrixDomainDetails from './MatrixDomainDetails';
+import MatrixRoadmapView from './MatrixRoadmapView';
 
 const domains = [
   {
@@ -90,17 +91,19 @@ export default function MatrixDomainGrid() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showDetails, setShowDetails] = useState<string | null>(null);
+  const [showRoadmap, setShowRoadmap] = useState<string | null>(null);
 
   const handleInit = (id: string) => {
     if (activeId === id && !isGenerating) {
-      setShowDetails(id);
+      setShowRoadmap(id);
       return;
     }
     setActiveId(id);
     setIsGenerating(true);
     setTimeout(() => {
       setIsGenerating(false);
-    }, 2000);
+      setShowRoadmap(id);
+    }, 2500);
   };
 
   return (
@@ -120,11 +123,11 @@ export default function MatrixDomainGrid() {
             </h2>
           </div>
           <p className="text-slate-500 font-medium max-w-sm text-right">
-            Select a cluster to initialize your autonomous career trajectory and access deep intelligence resources.
+            Initialize your autonomous career trajectory and access deep intelligence resource matrices.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {domains.map((domain, i) => (
             <motion.div
               key={i}
@@ -147,15 +150,15 @@ export default function MatrixDomainGrid() {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60"
                   />
                   {activeId === domain.id && isGenerating && (
-                    <div className="absolute inset-0 z-30 bg-blue-600/40 backdrop-blur-sm flex flex-col items-center justify-center gap-4">
+                    <div className="absolute inset-0 z-30 bg-blue-600/40 backdrop-blur-sm flex flex-col items-center justify-center gap-4 text-center px-4">
                        <Loader2 className="w-10 h-10 text-white animate-spin" />
-                       <span className="text-[10px] font-black uppercase tracking-widest text-white">Architecting Path...</span>
+                       <span className="text-[10px] font-black uppercase tracking-widest text-white">Architecting Neural Path...</span>
                     </div>
                   )}
                   {activeId === domain.id && !isGenerating && (
                     <div className="absolute inset-0 z-30 bg-emerald-600/40 backdrop-blur-sm flex flex-col items-center justify-center gap-4">
                        <CheckCircle2 className="w-10 h-10 text-white" />
-                       <span className="text-[10px] font-black uppercase tracking-widest text-white">Intelligence Sync Complete</span>
+                       <span className="text-[10px] font-black uppercase tracking-widest text-white">Trajectory Synced</span>
                     </div>
                   )}
                   <div className="absolute top-6 left-6 z-20">
@@ -167,19 +170,29 @@ export default function MatrixDomainGrid() {
 
                 {/* Content Matrix */}
                 <div className="flex-1 p-8 flex flex-col justify-between relative z-20">
-                  <div>
-                    <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:border-blue-500/30 transition-colors">
-                      <domain.icon className="w-6 h-6 text-blue-400" />
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:border-blue-500/30 transition-colors">
+                        <domain.icon className="w-6 h-6 text-blue-400" />
+                      </div>
+                      <h3 className="text-2xl font-black text-white mb-3 uppercase tracking-tight">{domain.title}</h3>
+                      <p className="text-sm text-slate-500 leading-relaxed font-medium">
+                        {domain.desc}
+                      </p>
                     </div>
-                    <h3 className="text-2xl font-black text-white mb-3 uppercase tracking-tight">{domain.title}</h3>
-                    <p className="text-sm text-slate-500 leading-relaxed font-medium">
-                      {domain.desc}
-                    </p>
+                    {activeId === domain.id && !isGenerating && (
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); setShowDetails(domain.id); }}
+                        className="p-3 rounded-xl bg-white/5 border border-white/10 text-blue-400 hover:bg-blue-500 hover:text-white transition-all shadow-lg shadow-blue-500/20"
+                      >
+                         <Zap className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
 
                   <div className="flex items-center justify-between pt-6 border-t border-white/5">
                     <span className="text-tactical group-hover:text-white transition-colors">
-                      {activeId === domain.id ? (isGenerating ? 'Processing...' : 'Access Intelligence') : 'Initialize Sector'}
+                      {activeId === domain.id ? (isGenerating ? 'Processing...' : 'Launch Roadmap') : 'Initialize Sector'}
                     </span>
                     <div className={`w-10 h-10 rounded-full border border-white/10 flex items-center justify-center transition-all ${activeId === domain.id ? 'bg-blue-500 border-blue-500' : 'group-hover:bg-blue-500 group-hover:border-blue-500'}`}>
                       <ArrowUpRight className="w-4 h-4 text-white" />
@@ -201,6 +214,19 @@ export default function MatrixDomainGrid() {
           />
         )}
       </AnimatePresence>
+
+      {/* Neural Roadmap View */}
+      <AnimatePresence>
+        {showRoadmap && (
+          <MatrixRoadmapView 
+            domainId={showRoadmap} 
+            onClose={() => setShowRoadmap(null)} 
+          />
+        )}
+      </AnimatePresence>
+    </section>
+  );
+}
     </section>
   );
 }
