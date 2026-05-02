@@ -227,7 +227,7 @@ export default function EceSpecialization() {
                 </div>
 
                 <Link 
-                  href="/roadmap"
+                  href="/matrix"
                   className="w-full py-5 bg-white rounded-2xl text-indigo-600 font-black text-xl flex items-center justify-center gap-3 group transition-transform active:scale-95 shadow-2xl shadow-black/20"
                 >
                   INITIALIZE MATRIX

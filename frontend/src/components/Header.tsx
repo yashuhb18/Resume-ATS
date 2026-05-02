@@ -45,7 +45,7 @@ export default function Header() {
         {/* Professional Navigation */}
         <div className="hidden md:flex items-center gap-10">
           {[
-            { href: '/roadmap',      label: 'Intelligence Matrix' },
+            { href: '/matrix',       label: 'Intelligence Matrix' },
             { href: '#ece-hub',      label: 'Community Pulse'     },
             { href: '#how-it-works', label: 'Process'        },
           ].map(({ href, label }) => (
@@ -98,7 +98,7 @@ export default function Header() {
         <div className="md:hidden absolute top-full left-0 right-0 bg-[#111420] border-b border-white/5 p-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
           <div className="flex flex-col gap-4">
             {[
-              { href: '/roadmap',      label: 'Intelligence Matrix' },
+              { href: '/matrix',       label: 'Intelligence Matrix' },
               { href: '#ece-hub',      label: 'Community Pulse'     },
               { href: '#how-it-works', label: 'Our Process'        },
             ].map(({ href, label }) => (

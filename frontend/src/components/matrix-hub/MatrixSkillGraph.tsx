@@ -6,7 +6,7 @@ import {
   TrendingUp, BarChart3, Activity,
   Zap, Layers, Loader2
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Radar, RadarChart, PolarGrid, 
   PolarAngleAxis, PolarRadiusAxis, 
@@ -25,6 +25,11 @@ const initialRadarData = [
 export default function MatrixSkillGraph() {
   const [data, setData] = useState(initialRadarData);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSync = () => {
     setIsSyncing(true);
@@ -125,23 +130,25 @@ export default function MatrixSkillGraph() {
                </div>
                
                <div className="relative z-10 w-full h-full">
-                 <ResponsiveContainer width="100%" height="100%">
-                   <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
-                     <PolarGrid stroke="#ffffff05" strokeWidth={2} />
-                     <PolarAngleAxis 
-                        dataKey="subject" 
-                        tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 900 }} 
-                     />
-                     <Radar
-                       name="Career DNA"
-                       dataKey="A"
-                       stroke="#3b82f6"
-                       strokeWidth={4}
-                       fill="#3b82f6"
-                       fillOpacity={0.2}
-                     />
-                   </RadarChart>
-                 </ResponsiveContainer>
+                 {mounted && (
+                   <ResponsiveContainer width="100%" height="100%">
+                     <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+                       <PolarGrid stroke="#ffffff05" strokeWidth={2} />
+                       <PolarAngleAxis 
+                          dataKey="subject" 
+                          tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 900 }} 
+                       />
+                       <Radar
+                         name="Career DNA"
+                         dataKey="A"
+                         stroke="#3b82f6"
+                         strokeWidth={4}
+                         fill="#3b82f6"
+                         fillOpacity={0.2}
+                       />
+                     </RadarChart>
+                   </ResponsiveContainer>
+                 )}
                </div>
             </div>
 
