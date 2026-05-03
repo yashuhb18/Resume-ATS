@@ -48,6 +48,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    import traceback
+    error_details = traceback.format_exc()
+    print(f"GLOBAL ERROR: {exc}")
+    print(error_details)
+    return JSONResponse(
+        status_code=500,
+        content={
+            "success": False,
+            "detail": f"Internal Server Error: {str(exc)}",
+            "trace": error_details if os.getenv("DEBUG") == "true" else None
+        }
+    )
+
 # Initialize services
 resume_parser = ResumeParser()
 ats_scorer = ATSScorer()
