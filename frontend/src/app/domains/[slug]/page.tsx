@@ -46,7 +46,7 @@ export default function DomainPage({ params }: { params: { slug: string } }) {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <Link href="/#ece-hub" className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors mb-8 group bg-black/40 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            Back to ECE Hub
+            Back to Nimma-MITra
           </Link>
           
           <motion.div

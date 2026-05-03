@@ -83,7 +83,7 @@ export default function HodLoginPage() {
             </p>
             <div className="flex items-center justify-center gap-2 mt-3">
               <GraduationCap className="w-3.5 h-3.5 text-violet-400" />
-              <span className="text-[11px]" style={{ color: 'var(--text-faint)' }}>ECE Dept · MSRIT · 2023 Batch</span>
+              <span className="text-[11px]" style={{ color: 'var(--text-faint)' }}>ECE Dept · MITM · 2023 Batch</span>
             </div>
           </div>
 

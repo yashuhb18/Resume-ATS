@@ -206,7 +206,7 @@ export default function EceSpecialization() {
                 <div className="flex items-center gap-4 mb-10">
                   <Layers className="w-8 h-8 text-white" />
                   <div>
-                    <h3 className="text-2xl font-black tracking-tight">ECE Intelligence Hub</h3>
+                    <h3 className="text-2xl font-black tracking-tight">Nimma-MITra Hub</h3>
                     <p className="text-xs font-bold text-white/60 uppercase tracking-widest">Institutional Career Architecture</p>
                   </div>
                 </div>
@@ -230,7 +230,7 @@ export default function EceSpecialization() {
                   href="/matrix"
                   className="w-full py-5 bg-white rounded-2xl text-indigo-600 font-black text-xl flex items-center justify-center gap-3 group transition-transform active:scale-95 shadow-2xl shadow-black/20"
                 >
-                  ENTER ECE HUB
+                  ENTER NIMMA-MITRA
                   <Share2 className="w-6 h-6 group-hover:rotate-12 transition-transform" />
                 </Link>
               </div>

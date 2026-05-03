@@ -53,10 +53,10 @@ export default function Header() {
           </div>
           <div className="flex flex-col">
             <span className="text-base font-black tracking-tight leading-none" style={{ color: 'var(--text-primary)' }}>
-              ECE <span className="text-indigo-500">Hub</span>
+              Nimma-<span className="text-indigo-500">MITra</span>
             </span>
             <span className="text-[9px] font-semibold uppercase tracking-widest" style={{ color: 'var(--text-faint)' }}>
-              Nimma-MITra · MSRIT
+              ENGINEERING INTELLIGENCE · MITM
             </span>
           </div>
         </Link>

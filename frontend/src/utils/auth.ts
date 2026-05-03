@@ -1,5 +1,5 @@
 /**
- * ECE Hub authentication utilities.
+ * Nimma-MITra authentication utilities.
  * Stores JWT token in localStorage and provides helpers for auth state.
  */
 

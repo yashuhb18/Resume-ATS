@@ -92,7 +92,7 @@ export default function LoginPage() {
       if (!res.ok) { setError(data.detail || 'Registration failed.'); return; }
 
       saveAuth(data.token, { usn: data.usn, name: data.name, role: 'student' });
-      setSuccess('Registered successfully! Welcome to ECE Hub 🎉');
+      setSuccess('Registered successfully! Welcome to Nimma-MITra 🎉');
       setTimeout(() => router.replace('/'), 1000);
     } catch (err) {
       console.error('Registration network error:', err);
@@ -139,14 +139,14 @@ export default function LoginPage() {
               </div>
               <h1 className="text-2xl font-black tracking-tight mb-1"
                   style={{ color: 'var(--text-primary)' }}>
-                ECE <span className="text-indigo-400">Hub</span>
+                Nimma-<span className="text-indigo-400">MITra</span>
               </h1>
               <p className="text-xs font-semibold uppercase tracking-widest"
                  style={{ color: 'var(--text-muted)' }}>
                 Dept. of Electronics &amp; Communication
               </p>
               <p className="text-[11px] mt-1" style={{ color: 'var(--text-faint)' }}>
-                MSRIT · Batch 2023–27
+                MITM · Batch 2023–27
               </p>
             </div>
           </div>
@@ -244,7 +244,7 @@ export default function LoginPage() {
                   type="submit" disabled={loading}
                   className="w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-2"
                   style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', color: '#fff' }}>
-                  {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Logging in...</> : 'Enter ECE Hub →'}
+                  {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Logging in...</> : 'Enter Nimma-MITra →'}
                 </button>
               </form>
             )}
@@ -304,7 +304,7 @@ export default function LoginPage() {
                     type="email"
                     value={regEmail}
                     onChange={e => setRegEmail(e.target.value)}
-                    placeholder="4mh23ec001@msrit.edu"
+                    placeholder="4mh23ec001@mitm.edu"
                     className="w-full rounded-xl px-4 py-3.5 text-sm border outline-none transition-all"
                     style={{
                       background: 'rgba(255,255,255,0.04)',

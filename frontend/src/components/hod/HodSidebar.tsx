@@ -35,7 +35,7 @@ export default function HodSidebar({ onLogout }: SidebarProps) {
             HOD <span className="text-violet-500">Admin</span>
           </span>
           <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">
-            MSRIT Portal
+            MITM Portal
           </span>
         </div>
       </div>
