@@ -206,23 +206,23 @@ export default function EceSpecialization() {
                 <div className="flex items-center gap-4 mb-10">
                   <Layers className="w-8 h-8 text-white" />
                   <div>
-                    <h3 className="text-2xl font-black tracking-tight">The Matrix Engine</h3>
-                    <p className="text-xs font-bold text-white/60 uppercase tracking-widest">Self-Adapting Roadmap Logic</p>
+                    <h3 className="text-2xl font-black tracking-tight">ECE Intelligence Hub</h3>
+                    <p className="text-xs font-bold text-white/60 uppercase tracking-widest">Institutional Career Architecture</p>
                   </div>
                 </div>
 
                 <div className="space-y-8 mb-12">
                   <div className="flex gap-4">
                     <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-black flex-shrink-0">1</div>
-                    <p className="text-sm font-medium leading-relaxed"><span className="font-black">Dynamic DNA Scan:</span> The matrix analyzes your resume for deep-tier hardware keywords and tool-chain proficiency.</p>
+                    <p className="text-sm font-medium leading-relaxed"><span className="font-black">Precision DNA Scan:</span> Advanced analysis of semiconductor competencies and tool-chain proficiency.</p>
                   </div>
                   <div className="flex gap-4">
                     <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-black flex-shrink-0">2</div>
-                    <p className="text-sm font-medium leading-relaxed"><span className="font-black">Tri-Path Forking:</span> Based on your 'Initial IQ', the matrix splits into <strong>Beginner</strong>, <strong>Intermediate</strong>, or <strong>Lead</strong> paths.</p>
+                    <p className="text-sm font-medium leading-relaxed"><span className="font-black">Institutional Tiering:</span> Based on 'Technical IQ', the hub architect designates <strong>Beginner</strong>, <strong>Intermediate</strong>, or <strong>Lead</strong> paths.</p>
                   </div>
                   <div className="flex gap-4">
                     <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-black flex-shrink-0">3</div>
-                    <p className="text-sm font-medium leading-relaxed"><span className="font-black">Resource Symbiosis:</span> Every step provides a Coursera Plus masterclass and a YouTube technical deep-dive, automatically synchronized.</p>
+                    <p className="text-sm font-medium leading-relaxed"><span className="font-black">Synergetic Learning:</span> Every milestone integrates verified Coursera certifications and technical deep-dives.</p>
                   </div>
                 </div>
 
@@ -230,7 +230,7 @@ export default function EceSpecialization() {
                   href="/matrix"
                   className="w-full py-5 bg-white rounded-2xl text-indigo-600 font-black text-xl flex items-center justify-center gap-3 group transition-transform active:scale-95 shadow-2xl shadow-black/20"
                 >
-                  INITIALIZE MATRIX
+                  ENTER ECE HUB
                   <Share2 className="w-6 h-6 group-hover:rotate-12 transition-transform" />
                 </Link>
               </div>
@@ -239,7 +239,7 @@ export default function EceSpecialization() {
 
         </div>
 
-        {/* Matrix Technical Overview */}
+        {/* ECE Hub Technical Overview */}
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -249,17 +249,17 @@ export default function EceSpecialization() {
              <div className="space-y-4">
                 <ShieldCheck className="w-12 h-12 text-emerald-400 mx-auto" />
                 <h4 className="text-xl font-black">Zero Hallucination</h4>
-                <p className="text-sm text-slate-500 font-medium">Unlike generic AI, our matrix uses pre-verified industry toolchains (Vivado, Quartus, Keil) ensuring practical validity.</p>
+                <p className="text-sm text-slate-500 font-medium">Unlike generic AI, our hub uses pre-verified industry toolchains (Vivado, Quartus, Keil) ensuring practical validity.</p>
              </div>
              <div className="space-y-4">
                 <Compass className="w-12 h-12 text-indigo-400 mx-auto" />
                 <h4 className="text-xl font-black">Live Pulse Sync</h4>
-                <p className="text-sm text-slate-500 font-medium">The matrix updates daily with job market trends, adjusting the priority of skills based on live semiconductor vacancies.</p>
+                <p className="text-sm text-slate-500 font-medium">The hub updates daily with job market trends, adjusting the priority of skills based on live semiconductor vacancies.</p>
              </div>
              <div className="space-y-4">
                 <Target className="w-12 h-12 text-purple-400 mx-auto" />
                 <h4 className="text-xl font-black">Role-Targeted</h4>
-                <p className="text-sm text-slate-500 font-medium">Whether it's RTL design or Firmware architecture, the matrix targets specific ECE roles, not just generic skills.</p>
+                <p className="text-sm text-slate-500 font-medium">Whether it's RTL design or Firmware architecture, the hub targets specific ECE roles, not just generic skills.</p>
              </div>
           </div>
         </motion.div>
