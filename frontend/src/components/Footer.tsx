@@ -37,22 +37,6 @@ export default function Footer() {
               Nimma-MITra is your personalized career companion for ECE/EEE domains—offering daily updates, genuine learning resources, and smart resume analysis to help you grow and succeed.
             </p>
 
-            {/* Privacy glass box */}
-            <div
-              className="rounded-xl p-3.5 mb-5 border"
-              style={{
-                background: 'rgba(52,211,153,0.04)',
-                borderColor: 'rgba(52,211,153,0.14)',
-              }}
-            >
-              <p className="text-sm font-semibold mb-1" style={{ color: 'var(--emerald-neon)' }}>
-                🔒 Zero Data Storage Policy
-              </p>
-              <p className="text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                We don&apos;t store your resume data. Seriously, we couldn&apos;t even if we wanted to —
-                have you seen cloud storage prices? 💸
-              </p>
-            </div>
           </div>
 
           {/* Product links */}
