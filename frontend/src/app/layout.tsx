@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import LogoOverlay from '@/components/LogoOverlay';
 
 export const metadata: Metadata = {
   title: 'Nimma-MITra - ECE/EEE Career Companion & Smart Resume Analyzer',
@@ -100,6 +101,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen" suppressHydrationWarning>
+        <LogoOverlay />
         {children}
       </body>
     </html>
