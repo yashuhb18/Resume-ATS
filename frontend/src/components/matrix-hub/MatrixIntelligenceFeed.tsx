@@ -136,7 +136,7 @@ export default function MatrixIntelligenceFeed() {
                     </span>
                     <div className="flex items-center gap-2 px-2 py-1 bg-black/40 backdrop-blur-md border border-white/10 rounded text-[9px] font-bold text-emerald-400 uppercase">
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        Live Intel Active
+                        Live
                     </div>
                 </div>
             </div>
