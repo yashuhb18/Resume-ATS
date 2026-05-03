@@ -3,21 +3,16 @@
 import { motion } from 'framer-motion';
 import { 
   GraduationCap, 
-  Terminal, 
-  Cpu, 
-  Zap, 
-  Shield, 
-  Rocket,
   ChevronRight,
-  BookOpen
+  Users
 } from 'lucide-react';
 
 const semesters = [
-  { id: 3, title: '3rd Semester', icon: Terminal, color: 'emerald', bg: 'bg-emerald-50', text: 'text-emerald-600', desc: 'Foundational Engineering' },
-  { id: 4, title: '4th Semester', icon: Cpu, color: 'emerald', bg: 'bg-emerald-50', text: 'text-emerald-600', desc: 'Digital Logic & Architecture' },
-  { id: 5, title: '5th Semester', icon: Zap, color: 'emerald', bg: 'bg-emerald-50', text: 'text-emerald-600', desc: 'Power & Signals' },
-  { id: 6, title: '6th Semester', icon: Shield, color: 'emerald', bg: 'bg-emerald-50', text: 'text-emerald-600', desc: 'Embedded Systems' },
-  { id: 7, title: '7th Semester', icon: Rocket, color: 'emerald', bg: 'bg-emerald-50', text: 'text-emerald-600', desc: 'Advanced Research & Projects' },
+  { id: 3, title: '3rd Semester' },
+  { id: 4, title: '4th Semester' },
+  { id: 5, title: '5th Semester' },
+  { id: 6, title: '6th Semester' },
+  { id: 7, title: '7th Semester' },
 ];
 
 export default function MatrixAcademicFacilities() {
@@ -34,12 +29,12 @@ export default function MatrixAcademicFacilities() {
       <div className="container mx-auto px-6 relative z-10">
         
         {/* Header */}
-        <div className="mb-20">
+        <div className="mb-20 text-center">
           <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: -10 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-center gap-4 mb-6"
+            className="flex items-center justify-center gap-4 mb-6"
           >
             <div className="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center border border-emerald-200 shadow-sm">
               <GraduationCap className="w-6 h-6 text-emerald-600" />
@@ -57,9 +52,6 @@ export default function MatrixAcademicFacilities() {
             Academic <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-emerald-400">Facilities.</span>
           </motion.h2>
-          <p className="text-slate-500 mt-6 font-medium max-w-xl">
-            Access semester-wise structured intelligence, laboratory blueprints, and theoretical foundations.
-          </p>
         </div>
 
         {/* Semester Grid */}
@@ -73,26 +65,16 @@ export default function MatrixAcademicFacilities() {
               transition={{ delay: idx * 0.1 }}
               className="group relative"
             >
-              <div className="h-full bg-white border border-slate-200 rounded-[2.5rem] p-8 hover:border-emerald-500/30 transition-all duration-500 group-hover:-translate-y-2 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-20px_rgba(16,185,129,0.15)]">
+              <div className="bg-white border border-slate-200 rounded-[2rem] p-10 hover:border-emerald-500/30 transition-all duration-500 group-hover:-translate-y-2 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-20px_rgba(16,185,129,0.15)] flex flex-col items-center text-center">
                 
-                {/* Icon Container */}
-                <div className={`w-14 h-14 rounded-2xl ${sem.bg} flex items-center justify-center mb-8 border border-emerald-100 group-hover:scale-110 transition-transform duration-500`}>
-                  <sem.icon className={`w-7 h-7 ${sem.text}`} />
-                </div>
+                <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-8">
+                  {sem.title}
+                </h3>
 
-                <div className="space-y-4">
-                  <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">
-                    {sem.title}
-                  </h3>
-                  <p className="text-sm text-slate-500 font-medium leading-relaxed">
-                    {sem.desc}
-                  </p>
-                </div>
-
-                {/* Coming Soon / Link Placeholder */}
-                <div className="mt-8 pt-8 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                    Drive Sync Pending
+                {/* Link Placeholder */}
+                <div className="w-full pt-8 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                    Access Drive
                   </span>
                   <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-emerald-600 transition-colors">
                     <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-white" />
@@ -103,25 +85,27 @@ export default function MatrixAcademicFacilities() {
           ))}
         </div>
 
-        {/* Global Resource Note */}
+        {/* Community Note */}
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="mt-16 p-8 rounded-[2rem] bg-white border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6"
+          className="mt-20 p-8 rounded-[2.5rem] bg-white border border-slate-200 shadow-sm flex flex-col items-center text-center gap-6"
         >
-          <div className="flex items-center gap-6">
-            <div className="w-12 h-12 rounded-xl bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-600/20">
-              <BookOpen className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h4 className="text-slate-900 font-black uppercase tracking-tight">Centralized Knowledge Base</h4>
-              <p className="text-slate-500 text-sm">All academic materials are being indexed for global access.</p>
-            </div>
+          <div className="w-16 h-16 rounded-[1.5rem] bg-emerald-600 flex items-center justify-center shadow-xl shadow-emerald-600/20">
+            <Users className="w-8 h-8 text-white" />
           </div>
-          <div className="flex items-center gap-2 text-emerald-600 font-black text-xs uppercase tracking-[0.2em]">
+          <div>
+            <h4 className="text-slate-900 text-xl font-black uppercase tracking-tight mb-2">
+              By the Students, For the Students
+            </h4>
+            <p className="text-slate-500 font-medium max-w-2xl leading-relaxed">
+              This platform is an app for the students by the students. The academic notes and materials will be actively updated and curated by the student community.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 text-emerald-600 font-black text-[10px] uppercase tracking-[0.3em]">
             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-            Live Synchronization active
+            Community-Driven Intelligence
           </div>
         </motion.div>
 
