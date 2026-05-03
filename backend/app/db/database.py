@@ -36,4 +36,10 @@ def get_db():
 def create_tables():
     """Import all models so SQLAlchemy registers them, then create tables."""
     from app.models import user_models  # noqa: F401 — registers ORM models
-    Base.metadata.create_all(bind=engine)
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("✅ Database tables created successfully.")
+    except Exception as e:
+        print(f"❌ DATABASE CONNECTION ERROR ON STARTUP:")
+        print(e)
+        print("The app will continue running, but DB operations will fail.")
