@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { 
-  Fingerprint, Cpu, Activity,
+  Cpu, Activity,
   Globe, Shield
 } from 'lucide-react';
 import { useRef } from 'react';
@@ -83,14 +83,14 @@ export default function MatrixHero() {
             <motion.div 
               animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 4, repeat: Infinity }}
-              className="w-24 h-24 rounded-[2rem] bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-[0_0_50px_rgba(59,130,241,0.3)] relative"
+              className="w-24 h-24 rounded-[2rem] bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center shadow-[0_0_50px_rgba(255,255,255,0.05)] overflow-hidden"
             >
-              <Fingerprint className="w-12 h-12 text-white" />
+              <img src="/images/logo.png" alt="Nimma-MITra" className="w-16 h-16 object-contain" />
             </motion.div>
             
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none uppercase">
+            <h1 className="text-6xl md:text-8xl font-black tracking-tight leading-[1.1] uppercase">
               Student Intelligence <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">Hub.</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 mt-4 block">Hub.</span>
             </h1>
 
             <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto font-medium tracking-tight leading-relaxed">
