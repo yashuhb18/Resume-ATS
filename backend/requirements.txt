@@ -17,5 +17,11 @@ pdf2image==1.17.0
 Pillow>=10.0.0
 opencv-python-headless==4.10.0.84
 
+# Auth dependencies
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+SQLAlchemy==2.0.30
+psycopg2-binary==2.9.9
+
 # Optional PyTorch dependencies live in requirements-ml.txt.
 # The app runs without them and switches to PyTorch automatically when installed.

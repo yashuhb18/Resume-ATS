@@ -6,8 +6,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Use SQLite by default for local development if POSTGRES_URL is not set
+# Use PostgreSQL (cloud) via DATABASE_URL env var, SQLite as local fallback
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./resq_intelligence.db")
+
+# Fix Render/Heroku postgres:// -> postgresql://
+if SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
+    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 # For SQLite, we need connect_args={"check_same_thread": False}
 if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):
@@ -27,3 +31,9 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def create_tables():
+    """Import all models so SQLAlchemy registers them, then create tables."""
+    from app.models import user_models  # noqa: F401 — registers ORM models
+    Base.metadata.create_all(bind=engine)

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import HowItWorks from '@/components/HowItWorks';
@@ -11,34 +12,42 @@ import ResultsDashboard from '@/components/ResultsDashboard';
 import PrivacyBanner from '@/components/PrivacyBanner';
 import Footer from '@/components/Footer';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import WakeUpScreen from '@/components/WakeUpScreen';
 import BackendStatusBanner from '@/components/BackendStatusBanner';
 import VirtualInterviewerChat from '@/components/VirtualInterviewerChat';
 import { AnalysisResult, ComparisonResult } from '@/types';
 import { apiUrl } from '@/utils/api';
+import { isLoggedIn, getUser, logActivity } from '@/utils/auth';
 
 export default function Home() {
-  const [isVerified, setIsVerified] = useState(false);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [results, setResults] = useState<AnalysisResult | null>(null);
+  const router = useRouter();
+  const [authChecked,       setAuthChecked]       = useState(false);
+  const [isAnalyzing,       setIsAnalyzing]       = useState(false);
+  const [results,           setResults]           = useState<AnalysisResult | null>(null);
   const [comparisonResults, setComparisonResults] = useState<ComparisonResult | null>(null);
-  const [activeResumeFile, setActiveResumeFile] = useState<File | null>(null);
-  const [activeJdFile, setActiveJdFile] = useState<File | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [activeResumeFile,  setActiveResumeFile]  = useState<File | null>(null);
+  const [activeJdFile,      setActiveJdFile]      = useState<File | null>(null);
+  const [error,             setError]             = useState<string | null>(null);
 
-  // Check if user already verified in this session.
+  /* ── Auth Gate ─────────────────────────────────────────────────────── */
   useEffect(() => {
-    const verified = sessionStorage.getItem('backend_verified');
-    if (verified === 'true') {
-      setIsVerified(true);
+    if (!isLoggedIn()) {
+      router.replace('/login');
+    } else {
+      setAuthChecked(true);
     }
-  }, []);
+  }, [router]);
 
-  const handleVerified = () => {
-    setIsVerified(true);
-    sessionStorage.setItem('backend_verified', 'true');
-  };
+  if (!authChecked) {
+    // Show nothing while checking auth (avoids flash)
+    return (
+      <div className="min-h-screen flex items-center justify-center"
+           style={{ background: 'var(--surface-base)' }}>
+        <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
+  /* ── Handlers ──────────────────────────────────────────────────────── */
   const handleAnalyze = async (file: File) => {
     setIsAnalyzing(true);
     setError(null);
@@ -63,6 +72,13 @@ export default function Home() {
 
       const data = await response.json();
       setResults(data);
+
+      // Log activity
+      await logActivity('resume_analyze', {
+        filename: file.name,
+        ats_score: data.ats_score,
+        domain: data.domain?.primary,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -95,6 +111,11 @@ export default function Home() {
 
       const data = await response.json();
       setComparisonResults(data);
+
+      await logActivity('compare', {
+        resume: resumeFile.name,
+        match_percentage: data.match_percentage,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -112,29 +133,26 @@ export default function Home() {
 
   return (
     <main className="min-h-screen">
-      {/* Verification gate — wakes up the backend */}
-      {!isVerified && <WakeUpScreen onVerified={handleVerified} />}
-
       <Header />
       <BackendStatusBanner />
-      
+
       {isAnalyzing && <LoadingOverlay />}
-      
+
       {results || comparisonResults ? (
-        <ResultsDashboard 
-          results={results || undefined} 
+        <ResultsDashboard
+          results={results || undefined}
           comparisonResults={comparisonResults || undefined}
           resumeFile={activeResumeFile}
           jdFile={activeJdFile}
-          onReset={handleReset} 
+          onReset={handleReset}
         />
       ) : (
         <>
           <Hero />
-          <UploadSection 
-            onAnalyze={handleAnalyze} 
+          <UploadSection
+            onAnalyze={handleAnalyze}
             onCompare={handleCompare}
-            error={error} 
+            error={error}
           />
           <EceSpecialization />
           <HowItWorks />
@@ -142,7 +160,7 @@ export default function Home() {
           <PrivacyBanner />
         </>
       )}
-      
+
       <Footer />
       <VirtualInterviewerChat resumeFile={activeResumeFile} jdFile={activeJdFile} />
     </main>

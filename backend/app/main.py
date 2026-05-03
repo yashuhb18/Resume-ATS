@@ -1,7 +1,7 @@
 """
-ResQ - FastAPI Backend
+ECE Hub (Nimma-MITra) — FastAPI Backend
 """
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 import os
@@ -28,12 +28,15 @@ from app.services.mock_assessment import mock_assessment_generator
 from app.services.roadmap_generator import roadmap_generator
 from app.services.pulse_engine import pulse_engine
 from app.services.industry_news_service import industry_news_service
+from app.services import auth_service
 from app.models.schemas import AnalysisResponse, ComparisonResponse, InterviewChatResponse, ProjectRecommendation, AssessmentResponse, RoadmapRequest, RoadmapResponse, PulseResponse, ComputerVisionAnalysis, NewsFeedResponse
+from app.db.database import get_db, create_tables
+from sqlalchemy.orm import Session
 
 app = FastAPI(
-    title="ResQ",
-    description="AI-powered resume analysis and ATS scoring",
-    version="1.0.0"
+    title="ECE Hub — Nimma-MITra",
+    description="AI-powered ECE career platform for department students",
+    version="2.0.0"
 )
 
 # CORS configuration. The app does not use cookies, so wildcard origins are safe.
@@ -52,6 +55,11 @@ skill_extractor = SkillExtractor()
 domain_classifier = DomainClassifier()
 report_generator = ReportGenerator()
 jd_comparator = JDComparator()
+
+@app.on_event("startup")
+async def on_startup():
+    """Create database tables on startup."""
+    create_tables()
 
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
 ALLOWED_EXTENSIONS = {".pdf", ".docx"}
@@ -77,7 +85,7 @@ def extract_jd_text(file_path: str, file_ext: str) -> str:
 
 @app.get("/")
 async def root():
-    return {"message": "ResQ API", "status": "running"}
+    return {"message": "ECE Hub — Nimma-MITra API", "status": "running"}
 
 
 @app.get("/health")
@@ -88,6 +96,98 @@ async def health_check():
 @app.get("/api/health")
 async def api_health_check():
     return await health_check()
+
+
+# ── Auth Routes ───────────────────────────────────────────────────────────────
+
+@app.post("/api/auth/register")
+async def register(
+    usn: str = Form(...),
+    name: str = Form(...),
+    email: Optional[str] = Form(None),
+    db: Session = Depends(get_db),
+):
+    """Register a new ECE department student."""
+    return auth_service.register_student(usn, name, email, db)
+
+
+@app.post("/api/auth/login")
+async def login(
+    usn: str = Form(...),
+    password: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    """Student login — returns a JWT token."""
+    return auth_service.login_student(usn, password, db)
+
+
+@app.get("/api/auth/me")
+async def get_me(
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """Return the current logged-in student's profile."""
+    token = request.headers.get("Authorization", "").removeprefix("Bearer ").strip()
+    if not token:
+        raise HTTPException(status_code=401, detail="No token provided")
+    student = auth_service.get_student_from_token(token, db)
+    return {"usn": student.usn, "name": student.name, "email": student.email}
+
+
+# ── HOD Routes ────────────────────────────────────────────────────────────────
+
+@app.post("/api/hod/login")
+async def hod_login(password: str = Form(...)):
+    """HOD login — returns a HOD JWT token."""
+    return auth_service.login_hod(password)
+
+
+@app.get("/api/hod/students")
+async def hod_get_students(
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """Return all registered students (HOD-only)."""
+    token = request.headers.get("Authorization", "").removeprefix("Bearer ").strip()
+    if not token:
+        raise HTTPException(status_code=401, detail="No token provided")
+    auth_service.require_hod(token)
+    return {"students": auth_service.get_all_students(db)}
+
+
+@app.get("/api/hod/students/{usn}/activity")
+async def hod_get_student_activity(
+    usn: str,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """Return full activity for one student (HOD-only)."""
+    token = request.headers.get("Authorization", "").removeprefix("Bearer ").strip()
+    if not token:
+        raise HTTPException(status_code=401, detail="No token provided")
+    auth_service.require_hod(token)
+    return auth_service.get_student_activity(usn, db)
+
+
+@app.post("/api/activity/log")
+async def log_student_activity(
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """Internal endpoint — log student activity after an action."""
+    token = request.headers.get("Authorization", "").removeprefix("Bearer ").strip()
+    if token:
+        try:
+            payload = auth_service.decode_token(token)
+            usn = payload.get("sub", "")
+            data = await request.json()
+            action_type = data.get("action_type", "unknown")
+            action_data = data.get("data", {})
+            auth_service.log_activity(usn, action_type, action_data, db)
+            return {"logged": True}
+        except Exception:
+            pass
+    return {"logged": False}
 
 
 @app.post("/api/analyze", response_model=AnalysisResponse)

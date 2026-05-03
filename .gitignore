@@ -75,3 +75,18 @@ tmp/
 
 # Build
 *.build
+
+# SQLite local database (never commit — use cloud DB in production)
+*.db
+*.sqlite
+*.sqlite3
+
+# Backend cache & scratch files
+backend/news_cache.json
+backend/scratch/
+backend/*.json
+
+# Test files
+test_*.pdf
+test_*.docx
+test_*.txt
