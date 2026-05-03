@@ -35,7 +35,7 @@ USN_PREFIX = "4MH23EC"
 USN_MIN = 1
 USN_MAX = 125
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 # ── USN Validation ─────────────────────────────────────────────────────────────
 
