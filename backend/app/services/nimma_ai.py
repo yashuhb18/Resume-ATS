@@ -16,11 +16,13 @@ class NimmaAI:
             self._initialized = True
 
     async def chat(self, query: str, history: List[Dict[str, str]] = None) -> str:
+        # Re-check API key if not initialized (in case it was set after startup)
         if not self._initialized:
+            self.api_key = os.getenv("GEMINI_API_KEY")
             self._initialize()
 
         if not self._initialized:
-            return "Intelligence Core Offline. Please check GEMINI_API_KEY."
+            return "Intelligence Core Offline. [System Note: Please add GEMINI_API_KEY to your Railway Environment Variables to activate Nimma-AI]."
 
         # Platform Knowledge & Personality
         system_instruction = (
