@@ -24,7 +24,7 @@ export default function MatrixGlobalGrid() {
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-                <span className="text-tactical text-blue-400">Live Global Feed</span>
+                <span className="text-tactical text-blue-400 uppercase tracking-widest">Global Field</span>
               </div>
               <h2 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-[0.9] mb-8">
                 The World's <br />
