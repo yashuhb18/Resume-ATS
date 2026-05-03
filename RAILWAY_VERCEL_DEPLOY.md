@@ -36,10 +36,16 @@ Go to **Railway → Your Backend Project → Variables** and add:
 2. Click **"New Project"** → Name it `ece-hub` → Set a DB password → Create
 3. Wait ~2 minutes for it to spin up
 4. Go to **Settings → Database → Connection String → URI**
-5. Copy the URI — it looks like:
+5. **CRITICAL FOR RAILWAY:** Railway does not support IPv6, so the direct Supabase URL will fail. You MUST use the **Connection Pooler (IPv4)** URL.
+   - In Supabase, under "Connection string", ensure **"Use connection pooler"** is checked.
+   - Ensure **"Mode: Transaction"** is selected.
+   - Copy the URI — it looks like:
    ```
-   postgresql://postgres:[YOUR-PASSWORD]@db.xxxxxxxx.supabase.co:5432/postgres
+   postgresql://postgres.[project-ref]:[YOUR-PASSWORD]@aws-0-[region].pooler.supabase.com:6543/postgres
    ```
+   > ⚠️ **IMPORTANT**: If your password contains special characters like `#`, `$`, `@`, or `?`, you **must** URL-encode them. 
+   > For example, if your password is `myPa$$word#123`, change it to `myPa%24%24word%23123`.
+   > Common encodings: `#` → `%23`, `$` → `%24`, `@` → `%40`, `!` → `%21`.
 6. Paste that as `DATABASE_URL` in Railway Variables (Step 1)
 
 > Tables (`students`, `activity_logs`) are **auto-created** on first backend startup. No SQL needed!
@@ -101,6 +107,8 @@ Your `vercel.json` already proxies `/api/*` to Railway. No changes needed.
 ---
 
 ## 🐛 Troubleshooting
+
+**"App crashes on startup / Database connection fails / Healthcheck times out"** → You are using the Supabase Direct Connection URL (IPv6) which Railway cannot reach. Change your `DATABASE_URL` to the Supabase **Connection Pooler URL** (port 6543, `.pooler.supabase.com`). See Step 2.
 
 **"Tables not created"** → Check that `DATABASE_URL` is set in Railway. SQLite fallback is local only.
 

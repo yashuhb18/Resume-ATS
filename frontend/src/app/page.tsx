@@ -20,7 +20,6 @@ import { isLoggedIn, getUser, logActivity } from '@/utils/auth';
 
 export default function Home() {
   const router = useRouter();
-  const [authChecked,       setAuthChecked]       = useState(false);
   const [isAnalyzing,       setIsAnalyzing]       = useState(false);
   const [results,           setResults]           = useState<AnalysisResult | null>(null);
   const [comparisonResults, setComparisonResults] = useState<ComparisonResult | null>(null);
@@ -28,24 +27,7 @@ export default function Home() {
   const [activeJdFile,      setActiveJdFile]      = useState<File | null>(null);
   const [error,             setError]             = useState<string | null>(null);
 
-  /* ── Auth Gate ─────────────────────────────────────────────────────── */
-  useEffect(() => {
-    if (!isLoggedIn()) {
-      router.replace('/login');
-    } else {
-      setAuthChecked(true);
-    }
-  }, [router]);
 
-  if (!authChecked) {
-    // Show nothing while checking auth (avoids flash)
-    return (
-      <div className="min-h-screen flex items-center justify-center"
-           style={{ background: 'var(--surface-base)' }}>
-        <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
 
   /* ── Handlers ──────────────────────────────────────────────────────── */
   const handleAnalyze = async (file: File) => {

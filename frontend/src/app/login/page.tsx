@@ -46,7 +46,13 @@ export default function LoginPage() {
       form.append('password', loginPass);
 
       const res = await fetch(apiUrl('/api/auth/login'), { method: 'POST', body: form });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        setError('Backend is offline or starting up. Please wait a moment.');
+        return;
+      }
       if (!res.ok) { setError(data.detail || 'Login failed.'); return; }
 
       saveAuth(data.token, { usn: data.usn, name: data.name, role: 'student' });
@@ -75,7 +81,13 @@ export default function LoginPage() {
       form.append('email', regEmail.trim());
 
       const res = await fetch(apiUrl('/api/auth/register'), { method: 'POST', body: form });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        setError('Backend is offline or starting up. Please wait a moment.');
+        return;
+      }
       if (!res.ok) { setError(data.detail || 'Registration failed.'); return; }
 
       saveAuth(data.token, { usn: data.usn, name: data.name, role: 'student' });

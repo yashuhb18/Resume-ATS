@@ -10,8 +10,30 @@ import MatrixSkillGraph from '@/components/matrix-hub/MatrixSkillGraph';
 import MatrixOracle from '@/components/matrix-hub/MatrixOracle';
 import MatrixFooter from '@/components/matrix-hub/MatrixFooter';
 import '@/styles/matrix-hub.css';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { isLoggedIn } from '@/utils/auth';
 
 export default function MatrixHubPage() {
+  const router = useRouter();
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      router.replace('/login');
+    } else {
+      setAuthChecked(true);
+    }
+  }, [router]);
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#020308]">
+        <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="matrix-hub-root">
       
