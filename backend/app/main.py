@@ -5,6 +5,7 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 import os
+import httpx
 import tempfile
 from typing import Optional
 from dotenv import load_dotenv
@@ -606,11 +607,30 @@ async def get_pulse(request: RoadmapRequest):
 
 @app.get("/api/industry-news", response_model=NewsFeedResponse)
 async def get_industry_news():
-    """
-    Get cached industry news from engineerlive.com.
-    """
+    """Serves the engineering news feed with 1-hour caching."""
     try:
         return industry_news_service.get_latest_news()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/proxy-image")
+async def proxy_image(url: str):
+    """Proxies images to bypass hotlinking protection."""
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(url, timeout=10.0, follow_redirects=True)
+            if resp.status_code != 200:
+                raise HTTPException(status_code=resp.status_code, detail="Failed to fetch image")
+            
+            # Return the image with the same content type
+            return Response(
+                content=resp.content,
+                media_type=resp.headers.get("Content-Type", "image/jpeg"),
+                headers={
+                    "Cache-Control": "public, max-age=86400",
+                    "Access-Control-Allow-Origin": "*"
+                }
+            )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

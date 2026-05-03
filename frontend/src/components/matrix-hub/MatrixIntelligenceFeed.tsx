@@ -123,7 +123,7 @@ export default function MatrixIntelligenceFeed() {
             {/* Image Section */}
             <div className="relative h-3/5 w-full overflow-hidden">
                 <img 
-                    src={currentItem.image} 
+                    src={`http://localhost:8001/api/proxy-image?url=${encodeURIComponent(currentItem.image)}`} 
                     alt={currentItem.title}
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
