@@ -125,6 +125,7 @@ export default function MatrixIntelligenceFeed() {
                 <img 
                     src={currentItem.image} 
                     alt={currentItem.title}
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a0c14] via-[#0a0c14]/20 to-transparent" />

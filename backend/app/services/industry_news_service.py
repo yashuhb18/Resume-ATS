@@ -8,7 +8,7 @@ import re
 import urllib.parse
 
 class IndustryNewsService:
-    """Scrapes engineering news using original source photos to ensure reliability."""
+    """Scrapes engineering news using original source photos with lazy-loading support."""
     
     def __init__(self):
         self.cache_file = os.path.join(os.path.dirname(__file__), "news_cache.json")
@@ -17,14 +17,15 @@ class IndustryNewsService:
         }
 
     def get_latest_news(self) -> Dict[str, Any]:
-        """Fetch latest news from cache or scrape sources if cache is expired (>24h)."""
+        """Fetch latest news from cache or scrape sources if cache is expired (>1h)."""
         if os.path.exists(self.cache_file):
             try:
                 with open(self.cache_file, "r") as f:
                     cache_data = json.load(f)
                 
                 last_updated = datetime.datetime.fromisoformat(cache_data["last_updated"])
-                if datetime.datetime.now() - last_updated < datetime.timedelta(hours=24) and cache_data.get("news"):
+                # Refresh every 1 hour to keep it LIVE and CONSTANT
+                if datetime.datetime.now() - last_updated < datetime.timedelta(hours=1) and cache_data.get("news"):
                     return cache_data
             except Exception as e:
                 print(f"DEBUG: Cache error: {e}")
@@ -55,10 +56,10 @@ class IndustryNewsService:
         if not unique_news:
             unique_news = [
                 {
-                    "title": "Future of Engineering: Global Shifts in Technology",
+                    "title": "Global Engineering Intelligence: Monitoring Live Trends",
                     "link": "https://interestingengineering.com/news",
                     "image": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200",
-                    "category": "Engineering",
+                    "category": "Intelligence",
                     "date": "Field Intel"
                 }
             ]
@@ -77,7 +78,7 @@ class IndustryNewsService:
         return result
 
     def _scrape_interesting_engineering(self) -> List[Dict[str, str]]:
-        """Scrapes interestingengineering.com using original image sources."""
+        """Scrapes interestingengineering.com with robust image attribute discovery."""
         try:
             url = "https://interestingengineering.com/news"
             response = httpx.get(url, headers=self.headers, follow_redirects=True, timeout=15.0)
@@ -106,15 +107,25 @@ class IndustryNewsService:
                 
                 img_src = ""
                 if img_tag:
-                    # USE ORIGINAL SRC - No more clarity boosting which breaks URLs
-                    img_src = img_tag.get('src') or img_tag.get('data-src') or img_tag.get('srcset')
-                    if img_src and "," in img_src:
-                        img_src = img_src.split(',')[0].strip().split(' ')[0]
+                    # Prioritize real image attributes over small placeholders
+                    attrs = img_tag.attrs
+                    img_src = (
+                        attrs.get('data-src') or 
+                        attrs.get('data-lazy-src') or 
+                        attrs.get('srcset') or 
+                        attrs.get('src')
+                    )
                     
-                    if img_src and not img_src.startswith('http'):
-                        img_src = "https://interestingengineering.com" + img_src
+                    if img_src:
+                        if isinstance(img_src, list): img_src = img_src[0]
+                        if "," in img_src: # Handle srcset by picking first or last
+                            parts = [p.strip().split(' ')[0] for p in img_src.split(',')]
+                            img_src = parts[-1] if parts else ""
+                        
+                        if img_src and not img_src.startswith('http'):
+                            img_src = "https://interestingengineering.com" + img_src
 
-                if not img_src:
+                if not img_src or "data:image" in img_src:
                     img_src = "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=1200"
 
                 news_items.append({
@@ -130,7 +141,7 @@ class IndustryNewsService:
             return []
 
     def _scrape_engineer_live(self) -> List[Dict[str, str]]:
-        """Scrapes engineerlive.com using original image sources."""
+        """Scrapes engineerlive.com with robust image attribute discovery."""
         try:
             url = "https://www.engineerlive.com/"
             response = httpx.get(url, headers=self.headers, follow_redirects=True, timeout=15.0)
@@ -156,9 +167,16 @@ class IndustryNewsService:
                     img_tag = article.find('img')
                     img_src = ""
                     if img_tag:
-                        # USE ORIGINAL SRC - No more clarity boosting which breaks URLs
-                        img_src = img_tag.get('src') or img_tag.get('data-src') or img_tag.get('srcset')
+                        attrs = img_tag.attrs
+                        img_src = (
+                            attrs.get('data-src') or 
+                            attrs.get('data-lazy-src') or 
+                            attrs.get('src') or 
+                            attrs.get('srcset')
+                        )
+                        
                         if img_src:
+                            if isinstance(img_src, list): img_src = img_src[0]
                             if "," in img_src:
                                 img_src = img_src.split(',')[0].strip().split(' ')[0]
                             elif " " in img_src:
@@ -167,7 +185,7 @@ class IndustryNewsService:
                             if not img_src.startswith('http'):
                                 img_src = "https://www.engineerlive.com" + (img_src if img_src.startswith('/') else '/' + img_src)
                     
-                    if not img_src:
+                    if not img_src or "data:image" in img_src:
                         img_src = "https://images.unsplash.com/photo-1485083269755-a7b559a4fe5e?auto=format&fit=crop&q=80&w=1200"
 
                     news_items.append({
