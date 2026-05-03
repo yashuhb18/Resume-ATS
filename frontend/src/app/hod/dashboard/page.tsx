@@ -3,11 +3,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Users, Activity, BookOpen, BarChart3, Search, LogOut,
-  Shield, ChevronRight, Clock, RefreshCw, X, Eye,
-  GraduationCap, Cpu, TrendingUp, Calendar
+  Users, Activity, BarChart3, Search,
+  RefreshCw, X, Eye, ChevronRight,
+  GraduationCap, TrendingUp, Filter,
+  ArrowUpRight, Download, Mail
 } from 'lucide-react';
 import { apiUrl } from '@/utils/api';
+import HodSidebar from '@/components/hod/HodSidebar';
 
 /* ── Types ──────────────────────────────────────────────────────────────── */
 interface StudentRow {
@@ -43,7 +45,6 @@ const actionLabel: Record<string, string> = {
   roadmap_view:    '🗺️ Viewed Roadmap',
   compare:         '🔍 Compared Resume to JD',
   interview_chat:  '🤖 Used Interview Coach',
-  unknown:         '⚡ Activity',
 };
 
 function fmt(iso: string | null) {
@@ -61,7 +62,6 @@ function getHodToken() {
   return localStorage.getItem('hod_token') || '';
 }
 
-/* ── Main Component ─────────────────────────────────────────────────────── */
 export default function HodDashboard() {
   const router = useRouter();
   const [students,   setStudents]   = useState<StudentRow[]>([]);
@@ -73,7 +73,6 @@ export default function HodDashboard() {
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [mounted,    setMounted]    = useState(false);
 
-  /* Auth guard */
   useEffect(() => {
     setMounted(true);
     const token = getHodToken();
@@ -101,7 +100,6 @@ export default function HodDashboard() {
 
   useEffect(() => { fetchStudents(); }, [fetchStudents]);
 
-  /* Search filter */
   useEffect(() => {
     const q = search.toLowerCase();
     setFiltered(
@@ -127,8 +125,7 @@ export default function HodDashboard() {
     router.replace('/hod');
   };
 
-  /* Stat counts */
-  const totalActivities  = students.reduce((s, r) => s + r.activity_count, 0);
+  const totalActivities = students.reduce((s, r) => s + r.activity_count, 0);
   const activeToday = students.filter(s => {
     if (!s.last_active) return false;
     const d = new Date(s.last_active);
@@ -139,252 +136,238 @@ export default function HodDashboard() {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--surface-base)' }}>
+    <div className="min-h-screen bg-[#020308] text-white flex">
+      {/* ── Sidebar ── */}
+      <HodSidebar onLogout={logout} />
 
-      {/* ── Top Bar ─────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-40 border-b"
-              style={{ background: 'rgba(10,12,20,0.92)', backdropFilter: 'blur(20px)', borderColor: 'rgba(255,255,255,0.06)' }}>
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-                 style={{ background: 'linear-gradient(135deg,#7c3aed,#6366f1)' }}>
-              <Shield className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <p className="text-sm font-black" style={{ color: 'var(--text-primary)' }}>HOD Admin Portal</p>
-              <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'var(--text-faint)' }}>
-                ECE Dept · MSRIT · 2023 Batch
-              </p>
-            </div>
+      {/* ── Main Content ── */}
+      <main className="flex-1 ml-64 p-8 overflow-y-auto">
+        
+        {/* ── Header ── */}
+        <div className="flex items-center justify-between mb-10">
+          <div>
+            <h1 className="text-3xl font-black tracking-tight mb-2">Institutional <span className="text-violet-500">Overview</span></h1>
+            <p className="text-sm text-slate-500 font-bold uppercase tracking-[0.2em]">Electronics & Communication Department</p>
           </div>
-          <div className="flex items-center gap-3">
-            <button onClick={() => { setRefreshing(true); fetchStudents(); }}
-                    className="p-2 rounded-lg transition-colors hover:bg-white/5"
-                    title="Refresh">
-              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} style={{ color: 'var(--text-muted)' }} />
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => { setRefreshing(true); fetchStudents(); }}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+              Sync_Cloud
             </button>
-            <button onClick={logout}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all"
-                    style={{ background: 'rgba(239,68,68,0.10)', color: '#f87171', border: '1px solid rgba(239,68,68,0.20)' }}>
-              <LogOut className="w-3.5 h-3.5" />Logout
+            <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-violet-600 text-xs font-black uppercase tracking-widest hover:bg-violet-500 shadow-lg shadow-violet-600/20 transition-all">
+              <Download className="w-3.5 h-3.5" />
+              Export_Report
             </button>
           </div>
         </div>
-      </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-
-        {/* ── Stats Row ─────────────────────────────────────────────────── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {/* ── Stats ── */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
           {[
-            { icon: Users,       label: 'Total Students',  value: students.length,  color: '#6366f1' },
-            { icon: Activity,    label: 'Active Today',    value: activeToday,      color: '#34d399' },
-            { icon: BarChart3,   label: 'Total Actions',   value: totalActivities,  color: '#f59e0b' },
-            { icon: GraduationCap, label: 'ECE 2023 Batch', value: '4MH23EC', color: '#8b5cf6' },
-          ].map(({ icon: Icon, label, value, color }) => (
-            <div key={label} className="card-glass rounded-2xl p-5 border"
-                 style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>{label}</p>
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-                     style={{ background: `${color}20` }}>
-                  <Icon className="w-4 h-4" style={{ color }} />
+            { icon: Users, label: 'Enrolled Students', value: students.length, color: 'from-blue-600 to-indigo-600', trend: '+12%' },
+            { icon: Activity, label: 'Current Velocity', value: activeToday, color: 'from-emerald-600 to-teal-600', trend: 'Live' },
+            { icon: BarChart3, label: 'System Engagements', value: totalActivities, color: 'from-violet-600 to-purple-600', trend: '+240' },
+            { icon: GraduationCap, label: 'Current Batch', value: '2023-27', color: 'from-amber-600 to-orange-600', trend: 'ECE' },
+          ].map((stat) => (
+            <div key={stat.label} className="inst-card group">
+              <div className="flex items-start justify-between mb-4">
+                <div className={`p-3 rounded-2xl bg-gradient-to-br ${stat.color} shadow-lg`}>
+                  <stat.icon className="w-5 h-5 text-white" />
                 </div>
+                <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${stat.trend === 'Live' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-white/5 text-slate-400'}`}>
+                  {stat.trend}
+                </span>
               </div>
-              <p className="text-2xl font-black" style={{ color: 'var(--text-primary)' }}>{value}</p>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">{stat.label}</p>
+              <p className="text-3xl font-black text-white">{stat.value}</p>
             </div>
           ))}
         </div>
 
-        {/* ── Student Table ──────────────────────────────────────────────── */}
-        <div className="card-glass rounded-2xl border overflow-hidden"
-             style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-
-          {/* Table Header */}
-          <div className="px-6 py-5 border-b flex items-center justify-between gap-4"
-               style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-            <div className="flex items-center gap-3">
-              <Users className="w-5 h-5" style={{ color: '#6366f1' }} />
-              <h2 className="text-base font-black" style={{ color: 'var(--text-primary)' }}>
-                Registered Students
-              </h2>
-              <span className="px-2 py-0.5 rounded-full text-xs font-bold"
-                    style={{ background: 'rgba(99,102,241,0.15)', color: '#818cf8' }}>
-                {filtered.length}
-              </span>
+        {/* ── Main Table ── */}
+        <div className="inst-card !p-0 overflow-hidden">
+          <div className="px-8 py-6 border-b border-white/5 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-violet-500" />
+                <h2 className="text-lg font-black tracking-tight">Academic Records</h2>
+              </div>
+              <div className="h-4 w-px bg-white/10" />
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <input 
+                  type="text" 
+                  placeholder="Filter by USN or Name..."
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  className="bg-transparent border-none outline-none pl-10 text-sm text-slate-300 w-64 placeholder:text-slate-600"
+                />
+              </div>
             </div>
-            <div className="relative flex-1 max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-faint)' }} />
-              <input
-                type="text"
-                placeholder="Search USN or name..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border outline-none"
-                style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  borderColor: 'rgba(255,255,255,0.08)',
-                  color: 'var(--text-primary)',
-                }}
-              />
-            </div>
+            <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors">
+              <Filter className="w-3.5 h-3.5" />
+              Advanced_Filters
+            </button>
           </div>
 
-          {loading ? (
-            <div className="flex items-center justify-center py-20 gap-3" style={{ color: 'var(--text-muted)' }}>
-              <RefreshCw className="w-5 h-5 animate-spin" />Loading students...
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="py-20 text-center" style={{ color: 'var(--text-muted)' }}>
-              <Users className="w-10 h-10 mx-auto mb-3 opacity-30" />
-              <p className="text-sm">{search ? 'No students match your search.' : 'No students registered yet.'}</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                    {['USN', 'Name', 'Email', 'Registered', 'Last Active', 'Actions', ''].map(h => (
-                      <th key={h} className="px-6 py-3 text-left text-[10px] font-bold uppercase tracking-widest"
-                          style={{ color: 'var(--text-faint)', background: 'rgba(255,255,255,0.02)' }}>
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.map((s, i) => (
-                    <tr key={s.usn}
-                        className="transition-colors hover:bg-white/[0.02] cursor-pointer"
-                        style={{ borderBottom: i < filtered.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}
-                        onClick={() => openDetail(s.usn)}>
-                      <td className="px-6 py-4">
-                        <span className="font-mono text-xs font-bold px-2 py-1 rounded-lg"
-                              style={{ background: 'rgba(99,102,241,0.12)', color: '#818cf8' }}>
-                          {s.usn}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-                        {s.name}
-                      </td>
-                      <td className="px-6 py-4 text-xs" style={{ color: 'var(--text-muted)' }}>
-                        {s.email || '—'}
-                      </td>
-                      <td className="px-6 py-4 text-xs" style={{ color: 'var(--text-muted)' }}>
-                        {fmtDate(s.registered_at)}
-                      </td>
-                      <td className="px-6 py-4 text-xs" style={{ color: 'var(--text-muted)' }}>
-                        {fmt(s.last_active)}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="px-2.5 py-1 rounded-full text-xs font-bold"
-                              style={{ background: 'rgba(52,211,153,0.10)', color: '#34d399' }}>
-                          {s.activity_count} actions
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <button className="flex items-center gap-1 text-xs font-bold transition-colors"
-                                style={{ color: 'var(--text-faint)' }}>
-                          <Eye className="w-3.5 h-3.5" />View
-                          <ChevronRight className="w-3.5 h-3.5" />
-                        </button>
-                      </td>
-                    </tr>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-white/[0.02] border-b border-white/5">
+                  {['Student Identity', 'Email Matrix', 'Joined', 'Last Presence', 'Engagements', ''].map(h => (
+                    <th key={h} className="px-8 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                      {h}
+                    </th>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {filtered.map((student) => (
+                  <tr 
+                    key={student.usn} 
+                    className="hover:bg-white/[0.03] transition-colors cursor-pointer group"
+                    onClick={() => openDetail(student.usn)}
+                  >
+                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-violet-600/10 border border-violet-500/20 flex items-center justify-center font-black text-violet-500 text-xs">
+                          {student.name.substring(0, 2).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-white group-hover:text-violet-400 transition-colors">{student.name}</p>
+                          <p className="text-[10px] font-mono text-slate-500 tracking-wider uppercase">{student.usn}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-8 py-5 text-sm text-slate-400">{student.email || '—'}</td>
+                    <td className="px-8 py-5 text-xs text-slate-500">{fmtDate(student.registered_at)}</td>
+                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-1.5 h-1.5 rounded-full ${new Date(student.last_active || 0).getTime() > Date.now() - 3600000 ? 'bg-emerald-500' : 'bg-slate-700'}`} />
+                        <span className="text-xs text-slate-400">{fmt(student.last_active)}</span>
+                      </div>
+                    </td>
+                    <td className="px-8 py-5">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[10px] font-black text-indigo-400 uppercase tracking-widest">
+                        {student.activity_count} Units
+                      </div>
+                    </td>
+                    <td className="px-8 py-5 text-right">
+                      <button className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-slate-500 group-hover:bg-violet-600 group-hover:text-white transition-all">
+                        <ArrowUpRight className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      </main>
 
-      {/* ── Student Detail Modal ──────────────────────────────────────────── */}
+      {/* ── Detailed Ledger Overlay ── */}
       {(selected || loadingDetail) && (
-        <div className="fixed inset-0 z-50 flex items-start justify-end"
-             style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
-             onClick={() => setSelected(null)}>
-          <div className="h-full w-full max-w-lg overflow-y-auto shadow-2xl"
-               style={{ background: 'var(--surface-base)', borderLeft: '1px solid rgba(255,255,255,0.08)' }}
-               onClick={e => e.stopPropagation()}>
-
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[#020308]/80 backdrop-blur-md" onClick={() => setSelected(null)}>
+          <div className="w-full max-w-4xl max-h-[85vh] bg-[#0a0c14] border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
             {loadingDetail ? (
-              <div className="flex items-center justify-center h-64 gap-3" style={{ color: 'var(--text-muted)' }}>
-                <RefreshCw className="w-5 h-5 animate-spin" />Loading...
+              <div className="flex-1 flex flex-col items-center justify-center gap-4 text-slate-500">
+                <RefreshCw className="w-10 h-10 animate-spin" />
+                <p className="text-xs font-black uppercase tracking-widest">Compiling Records...</p>
               </div>
             ) : selected && (
               <>
-                {/* Drawer Header */}
-                <div className="sticky top-0 z-10 px-6 py-5 border-b flex items-center justify-between"
-                     style={{ background: 'var(--surface-base)', borderColor: 'rgba(255,255,255,0.06)' }}>
-                  <div>
-                    <p className="text-lg font-black" style={{ color: 'var(--text-primary)' }}>{selected.name}</p>
-                    <p className="text-xs font-mono font-bold" style={{ color: '#818cf8' }}>{selected.usn}</p>
+                {/* Header */}
+                <div className="p-10 border-b border-white/5 flex items-center justify-between bg-gradient-to-r from-violet-600/10 to-transparent">
+                  <div className="flex items-center gap-6">
+                    <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-3xl font-black text-white shadow-xl shadow-indigo-600/20">
+                      {selected.name.substring(0, 1).toUpperCase()}
+                    </div>
+                    <div>
+                      <h3 className="text-3xl font-black tracking-tight text-white mb-2">{selected.name}</h3>
+                      <div className="flex items-center gap-4">
+                        <span className="px-3 py-1 rounded-lg bg-white/5 text-sm font-mono font-bold text-violet-400 border border-white/10">
+                          {selected.usn}
+                        </span>
+                        <div className="flex items-center gap-2 text-slate-500 text-xs font-bold uppercase tracking-widest">
+                          <Mail className="w-3.5 h-3.5" />
+                          {selected.email || 'No Email Record'}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <button onClick={() => setSelected(null)}
-                          className="p-2 rounded-lg hover:bg-white/5 transition-colors">
-                    <X className="w-5 h-5" style={{ color: 'var(--text-muted)' }} />
+                  <button 
+                    onClick={() => setSelected(null)}
+                    className="w-12 h-12 rounded-2xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 transition-all"
+                  >
+                    <X className="w-6 h-6" />
                   </button>
                 </div>
 
-                <div className="p-6 space-y-6">
-                  {/* Profile info */}
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      { icon: BookOpen, label: 'Email', value: selected.email || 'Not provided' },
-                      { icon: Calendar, label: 'Registered', value: fmtDate(selected.registered_at) },
-                      { icon: Clock,    label: 'Last Active', value: fmt(selected.last_active) },
-                      { icon: Activity, label: 'Total Actions', value: `${selected.activities.length}` },
-                    ].map(({ icon: Icon, label, value }) => (
-                      <div key={label} className="p-4 rounded-xl border"
-                           style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.06)' }}>
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <Icon className="w-3.5 h-3.5" style={{ color: '#6366f1' }} />
-                          <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-faint)' }}>{label}</p>
-                        </div>
-                        <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{value}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Activity Timeline */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-4">
-                      <TrendingUp className="w-4 h-4" style={{ color: '#6366f1' }} />
-                      <h3 className="text-sm font-black uppercase tracking-widest" style={{ color: 'var(--text-primary)' }}>
-                        Activity Timeline
-                      </h3>
-                    </div>
-
-                    {selected.activities.length === 0 ? (
-                      <p className="text-sm text-center py-8" style={{ color: 'var(--text-faint)' }}>
-                        No activities recorded yet.
-                      </p>
-                    ) : (
+                <div className="flex-1 overflow-y-auto p-10 grid grid-cols-1 lg:grid-cols-3 gap-10">
+                  {/* Sidebar Info */}
+                  <div className="space-y-6">
+                    <div>
+                      <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4 flex items-center gap-2">
+                        <TrendingUp className="w-3 h-3 text-violet-500" />
+                        Engagement Metrics
+                      </h4>
                       <div className="space-y-3">
-                        {selected.activities.map(a => (
-                          <div key={a.id} className="flex gap-4 p-4 rounded-xl border"
-                               style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.05)' }}>
-                            <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-base"
-                                 style={{ background: 'rgba(99,102,241,0.12)' }}>
-                              {(actionLabel[a.action_type] || '⚡').split(' ')[0]}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-                                {(actionLabel[a.action_type] || '⚡ ' + a.action_type).split(' ').slice(1).join(' ')}
-                              </p>
-                              {a.data && Object.keys(a.data).length > 0 && (
-                                <p className="text-xs mt-0.5 truncate" style={{ color: 'var(--text-muted)' }}>
-                                  {Object.entries(a.data).map(([k, v]) => `${k}: ${v}`).join(' · ')}
-                                </p>
-                              )}
-                              <p className="text-[10px] mt-1" style={{ color: 'var(--text-faint)' }}>
-                                {fmt(a.timestamp)}
-                              </p>
-                            </div>
+                        {[
+                          { label: 'Registered', value: fmtDate(selected.registered_at) },
+                          { label: 'Last Presence', value: fmt(selected.last_active) },
+                          { label: 'Total Units', value: selected.activities.length },
+                        ].map(m => (
+                          <div key={m.label} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{m.label}</span>
+                            <span className="text-xs font-black text-white">{m.value}</span>
                           </div>
                         ))}
                       </div>
-                    )}
+                    </div>
+                  </div>
+
+                  {/* Activity Stream */}
+                  <div className="lg:col-span-2">
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-6 flex items-center gap-2">
+                      <Activity className="w-3 h-3 text-violet-500" />
+                      Neural Activity Stream
+                    </h4>
+                    
+                    <div className="space-y-4">
+                      {selected.activities.length === 0 ? (
+                        <div className="py-20 text-center border-2 border-dashed border-white/5 rounded-3xl">
+                          <p className="text-xs font-bold text-slate-600 uppercase tracking-[0.2em]">Zero Activity Recorded</p>
+                        </div>
+                      ) : (
+                        selected.activities.map((act) => (
+                          <div key={act.id} className="flex gap-6 p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all">
+                            <div className="w-12 h-12 rounded-xl bg-violet-600/10 flex items-center justify-center shrink-0 text-xl">
+                              {(actionLabel[act.action_type] || '⚡').split(' ')[0]}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-1">
+                                <p className="text-sm font-black text-white uppercase tracking-tight">
+                                  {(actionLabel[act.action_type] || '⚡ ' + act.action_type).split(' ').slice(1).join(' ')}
+                                </p>
+                                <span className="text-[10px] font-bold text-slate-600">{fmt(act.timestamp)}</span>
+                              </div>
+                              {act.data && Object.keys(act.data).length > 0 && (
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                  {Object.entries(act.data).map(([k, v]) => (
+                                    <span key={k} className="text-[9px] font-bold px-2 py-0.5 rounded bg-white/5 text-slate-500 border border-white/5">
+                                      {k}: <span className="text-slate-300">{String(v)}</span>
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
               </>

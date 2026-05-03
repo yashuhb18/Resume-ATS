@@ -19,6 +19,12 @@
   overflow-x: hidden;
 }
 
+.matrix-hub-root h1, 
+.matrix-hub-root h2, 
+.matrix-hub-root h3 {
+  font-family: 'Outfit', sans-serif;
+}
+
 .hologram-card {
   position: relative;
   background: rgba(10, 12, 20, 0.7);

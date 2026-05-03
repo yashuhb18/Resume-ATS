@@ -5,7 +5,7 @@
    Design Language: Structured Minimalism with 3D Depth
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -28,6 +28,12 @@
   --brand-secondary: #4338ca;
   --accent-blue: #38bdf8;
   
+  /* ── Institutional Accent Palette ──────────────────────── */
+  --inst-violet: #8b5cf6;
+  --inst-indigo: #6366f1;
+  --inst-gold: #f59e0b;
+  --inst-emerald: #10b981;
+  
   /* ── 3D & Elevation ──────────────────────────────────────── */
   --perspective: 1200px;
   --shadow-pro: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
@@ -41,12 +47,13 @@
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     background-image: 
-      radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(56, 189, 248, 0.05) 0, transparent 50%);
+      radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.05) 0, transparent 50%);
     background-attachment: fixed;
   }
 
   h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
     font-weight: 800;
     letter-spacing: -0.02em;
     line-height: 1.1;
@@ -54,6 +61,16 @@
 }
 
 @layer components {
+  /* ── Institutional Card ──────────────────────────────────── */
+  .inst-card {
+    @apply bg-[#111420]/50 backdrop-blur-xl border border-white/5 rounded-3xl p-6 transition-all duration-300;
+    box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
+  }
+
+  .inst-card:hover {
+    @apply border-white/10 -translate-y-1;
+    box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.5);
+  }
   /* ── Professional Text Gradient ─────────────────────────── */
   .text-gradient {
     background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
