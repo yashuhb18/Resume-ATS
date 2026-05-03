@@ -71,18 +71,6 @@ export default function MatrixGlobalGrid() {
                 <MatrixIntelligenceFeed />
               </div>
 
-              {/* Data Overlays */}
-              <div className="absolute bottom-6 left-6 flex items-center gap-6">
-                <div className="flex flex-col">
-                  <span className="text-tactical text-slate-600">Sync Status</span>
-                  <span className="text-emerald-400 font-bold text-xs uppercase">Encrypted_Link_Active</span>
-                </div>
-                <div className="h-8 w-px bg-white/5" />
-                <div className="flex flex-col">
-                  <span className="text-tactical text-slate-600">Baud Rate</span>
-                  <span className="text-white font-bold text-xs">1,240 Gbit/s</span>
-                </div>
-              </div>
             </div>
           </div>
 

@@ -144,7 +144,7 @@ export default function MatrixIntelligenceFeed() {
             {/* Content Section */}
             <div className="flex-1 p-8 flex flex-col justify-between">
                 <div>
-                    <h4 className="text-2xl md:text-3xl font-black text-white leading-tight mb-4 tracking-tight group-hover:text-blue-400 transition-colors">
+                    <h4 className="text-2xl md:text-3xl font-black text-white leading-tight mb-4 tracking-tight transition-colors">
                         {currentItem.title}
                     </h4>
                     <p className="text-slate-400 text-sm font-medium leading-relaxed line-clamp-2">
