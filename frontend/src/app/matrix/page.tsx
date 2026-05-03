@@ -3,6 +3,7 @@
 import MatrixHubNav from '@/components/matrix-hub/MatrixHubNav';
 import MatrixHero from '@/components/matrix-hub/MatrixHero';
 import MatrixGlobalGrid from '@/components/matrix-hub/MatrixGlobalGrid';
+import MatrixAcademicFacilities from '@/components/matrix-hub/MatrixAcademicFacilities';
 import MatrixDomainGrid from '@/components/matrix-hub/MatrixDomainGrid';
 import MatrixEngine from '@/components/matrix-hub/MatrixEngine';
 import MatrixJobFeed from '@/components/matrix-hub/MatrixJobFeed';
@@ -52,10 +53,13 @@ export default function MatrixHubPage() {
         {/* Section 2: Global EC Intelligence */}
         <MatrixGlobalGrid />
 
-        {/* Section 3: Trending Domains */}
+        {/* Section 3: Academic Repositories */}
+        <MatrixAcademicFacilities />
+
+        {/* Section 4: Trending Domains */}
         <MatrixDomainGrid />
 
-        {/* Section 4: AI Matrix Engine Showcase */}
+        {/* Section 5: AI Matrix Engine Showcase */}
         <MatrixEngine />
 
         {/* Section 5: Live Job Intelligence */}
