@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function LogoOverlay() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -12,6 +14,9 @@ export default function LogoOverlay() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Hide on HOD Dashboard to prevent overlapping with admin UI
+  if (pathname?.startsWith('/hod/dashboard')) return null;
 
   return (
     <div className="fixed top-0 left-0 right-0 pointer-events-none z-[110] transition-all duration-500">
