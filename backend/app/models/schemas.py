@@ -288,6 +288,19 @@ class PulseResponse(BaseModel):
     briefing: str
     social_hooks: List[Dict[str, str]]
 
+class NewsItem(BaseModel):
+    """A single news item from an external source."""
+    title: str
+    link: str
+    image: str
+    category: str = "Industry Update"
+    date: str = "Recent"
+
+class NewsFeedResponse(BaseModel):
+    """Response containing a list of news items."""
+    news: List[NewsItem]
+    last_updated: str
+
 # --- Final Analysis Response ---
 
 class AnalysisResponse(BaseModel):

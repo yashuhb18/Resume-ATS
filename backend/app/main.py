@@ -26,7 +26,8 @@ from app.services.project_recommender import project_recommender
 from app.services.mock_assessment import mock_assessment_generator
 from app.services.roadmap_generator import roadmap_generator
 from app.services.pulse_engine import pulse_engine
-from app.models.schemas import AnalysisResponse, ComparisonResponse, InterviewChatResponse, ProjectRecommendation, AssessmentResponse, RoadmapRequest, RoadmapResponse, PulseResponse, ComputerVisionAnalysis
+from app.services.industry_news_service import industry_news_service
+from app.models.schemas import AnalysisResponse, ComparisonResponse, InterviewChatResponse, ProjectRecommendation, AssessmentResponse, RoadmapRequest, RoadmapResponse, PulseResponse, ComputerVisionAnalysis, NewsFeedResponse
 
 app = FastAPI(
     title="ResQ",
@@ -599,6 +600,17 @@ async def get_pulse(request: RoadmapRequest):
     try:
         pulse_data = pulse_engine.get_pulse(domain=request.domain)
         return PulseResponse(**pulse_data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/industry-news", response_model=NewsFeedResponse)
+async def get_industry_news():
+    """
+    Get cached industry news from engineerlive.com.
+    """
+    try:
+        return industry_news_service.get_latest_news()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

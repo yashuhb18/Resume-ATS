@@ -6,6 +6,7 @@ import {
   MapPin, Shield, Radio,
   TrendingUp, BarChart3
 } from 'lucide-react';
+import MatrixIntelligenceFeed from './MatrixIntelligenceFeed';
 
 export default function MatrixGlobalGrid() {
   return (
@@ -66,48 +67,8 @@ export default function MatrixGlobalGrid() {
           <div className="lg:col-span-7 relative">
             <div className="hologram-card p-12 bg-[#0a0c14]/40 relative overflow-hidden group">
               
-              {/* World Map Simulation */}
-              <div className="absolute inset-0 opacity-10 bg-[url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg')] bg-contain bg-no-repeat bg-center mix-blend-overlay grayscale invert" />
-              
-              <div className="relative z-10 aspect-square md:aspect-video flex items-center justify-center">
-                {/* Orbital Rings */}
-                <motion.div 
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                  className="absolute w-[80%] h-[80%] border border-blue-500/10 rounded-full border-dashed"
-                />
-                <motion.div 
-                  animate={{ rotate: -360 }}
-                  transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-                  className="absolute w-[60%] h-[60%] border border-purple-500/10 rounded-full border-dashed"
-                />
-
-                {/* Pulsing Nodes */}
-                {[
-                  { t: '10%', l: '20%' },
-                  { t: '40%', l: '60%' },
-                  { t: '70%', l: '30%' },
-                  { t: '20%', l: '80%' },
-                  { t: '50%', l: '40%' },
-                ].map((pos, i) => (
-                  <motion.div
-                    key={i}
-                    style={{ top: pos.t, left: pos.l }}
-                    animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0.6, 0.3] }}
-                    transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
-                    className="absolute w-4 h-4"
-                  >
-                    <div className="absolute inset-0 bg-blue-500 rounded-full blur-[4px]" />
-                    <div className="absolute inset-1 bg-white rounded-full" />
-                  </motion.div>
-                ))}
-
-                <div className="text-center space-y-4">
-                  <Globe className="w-24 h-24 text-blue-500/20 mx-auto mb-8 animate-pulse" />
-                  <div className="px-6 py-2 rounded-full bg-blue-500 text-white font-black text-[10px] uppercase tracking-widest shadow-2xl shadow-blue-500/50">
-                    Matrix Engine v2.0
-                  </div>
-                </div>
+              <div className="relative z-10 h-[600px]">
+                <MatrixIntelligenceFeed />
               </div>
 
               {/* Data Overlays */}
