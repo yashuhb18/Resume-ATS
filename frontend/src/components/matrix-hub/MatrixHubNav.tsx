@@ -31,14 +31,19 @@ export default function MatrixHubNav() {
 
         {/* ── Desktop Links ── */}
         <div className="hidden lg:flex items-center gap-8">
-           {['Matrix', 'Trajectory', 'DNA_Scan', 'Oracle'].map((item) => (
-             <Link 
-               key={item} 
-               href="#" 
+           {[
+             { label: 'Global Field', id: '#global' },
+             { label: 'Academics',    id: '#academics' },
+             { label: 'Placements',   id: '#placements' },
+             { label: 'Nimma-AI',     id: '#ai' }
+           ].map((item) => (
+             <a 
+               key={item.label} 
+               href={item.id} 
                className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-colors"
              >
-               {item}
-             </Link>
+               {item.label}
+             </a>
            ))}
         </div>
 
@@ -50,9 +55,6 @@ export default function MatrixHubNav() {
           >
             Exit Matrix
           </Link>
-          <button className="matrix-btn !px-6 !py-3 !text-[10px] hidden sm:flex">
-            Initialize_Sync
-          </button>
         </div>
       </div>
     </nav>

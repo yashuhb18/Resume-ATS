@@ -50,19 +50,19 @@ export default function MatrixHubPage() {
         <MatrixHero />
 
         {/* Section 2: Global EC Intelligence */}
-        <MatrixGlobalGrid />
+        <section id="global"><MatrixGlobalGrid /></section>
 
         {/* Section 3: Academic Repositories */}
-        <MatrixAcademicFacilities />
+        <section id="academics"><MatrixAcademicFacilities /></section>
 
         {/* Section 4: Trending Domains */}
-        <MatrixDomainGrid />
+        <section id="placements"><MatrixDomainGrid /></section>
 
         {/* Section 5: Live Job Intelligence */}
         <MatrixJobFeed />
 
         {/* Section 6: Nimma-AI companion */}
-        <NimmaAI />
+        <section id="ai"><NimmaAI /></section>
       </main>
 
       {/* ── Footer ── */}
