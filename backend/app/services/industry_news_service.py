@@ -10,7 +10,7 @@ class IndustryNewsService:
     
     def __init__(self):
         self.url = "https://www.engineerlive.com/"
-        self.cache_file = os.path.join(os.path.dirname(__file__), "../../news_cache.json")
+        self.cache_file = os.path.join(os.path.dirname(__file__), "news_cache.json")
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
         }
@@ -61,38 +61,38 @@ class IndustryNewsService:
                 articles = soup.select('.views-row') or soup.select('.node--type-article')
             
             for article in articles:
-                if len(news_items) >= 12: # Get up to 12 items
-                    break
+                try:
+                    if len(news_items) >= 12: 
+                        break
+                        
+                    title_tag = article.find('h3') or article.find('h2') or article.find('h4')
+                    link_tag = article.find('a')
                     
-                title_tag = article.find('h3') or article.find('h2')
-                link_tag = article.find('a')
-                img_tag = article.find('img')
-                
-                if title_tag and link_tag:
+                    if not title_tag or not link_tag or not link_tag.has_attr('href'):
+                        continue
+
                     title = title_tag.get_text(strip=True)
                     link = link_tag['href']
-                    if not link.startswith('http'):
-                        link = "https://www.engineerlive.com" + link
                     
-                    # Basic exclusion for non-news links
-                    if "/content/" not in link and "/news/" not in link:
+                    if not link.startswith('http'):
+                        link = "https://www.engineerlive.com" + (link if link.startswith('/') else '/' + link)
+                    
+                    if "/content/" not in link and "/news/" not in link and "/articles/" not in link:
                         continue
                         
+                    img_tag = article.find('img')
                     img_src = ""
                     if img_tag:
-                        # Try various attributes for lazy loading
                         img_src = img_tag.get('src') or img_tag.get('data-src') or img_tag.get('srcset')
                         if img_src:
-                            if " " in img_src: # Handle srcset
+                            if " " in img_src: 
                                 img_src = img_src.split(" ")[0]
                             if not img_src.startswith('http'):
-                                img_src = "https://www.engineerlive.com" + img_src
+                                img_src = "https://www.engineerlive.com" + (img_src if img_src.startswith('/') else '/' + img_src)
                     
-                    # If no image found, use a fallback
                     if not img_src:
-                        img_src = "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80\u0026w=1000" # High-tech fallback
+                        img_src = "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1000"
 
-                    # Extract category if possible
                     category_tag = article.select_one('.field--name-field-category') or article.select_one('.category')
                     category = category_tag.get_text(strip=True) if category_tag else "Engineering"
 
@@ -103,10 +103,15 @@ class IndustryNewsService:
                         "category": category,
                         "date": "Today"
                     })
+                except Exception as inner_e:
+                    print(f"DEBUG: Skipping one article due to error: {inner_e}")
+                    continue
                     
             return news_items
         except Exception as e:
-            print(f"DEBUG: Scraping failed: {e}")
+            print(f"DEBUG: Scraping failed critically: {e}")
+            import traceback
+            traceback.print_exc()
             return []
 
 industry_news_service = IndustryNewsService()
