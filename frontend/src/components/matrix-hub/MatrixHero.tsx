@@ -133,8 +133,8 @@ export default function MatrixHero() {
                 </motion.div>
                 
                 <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none uppercase">
-                  Neural Career <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">Matrix.</span>
+                  Student Intelligence <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">Hub.</span>
                 </h1>
 
                 {file ? (
@@ -143,7 +143,7 @@ export default function MatrixHero() {
                   </p>
                 ) : (
                   <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto font-medium tracking-tight leading-relaxed">
-                    Initiate a high-fidelity DNA scan. Drop your tactical matrix (resume) to 
+                    Initiate a high-fidelity intelligence scan. Drop your tactical profile (resume) to 
                     architect your global trajectory with absolute technical precision.
                   </p>
                 )}
@@ -162,7 +162,7 @@ export default function MatrixHero() {
                   <div {...getRootProps()} className="cursor-pointer px-12 py-5 bg-transparent border border-white/10 rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-white hover:bg-white/5 hover:border-blue-500/30 transition-all flex items-center gap-4 group">
                     <input {...getInputProps()} />
                     <Zap className="w-4 h-4 text-blue-400 group-hover:scale-125 transition-transform" />
-                    Drop DNA Matrix
+                    Initialize Hub Sync
                   </div>
                 )}
                 <button className="px-10 py-5 rounded-2xl bg-white/5 border border-white/10 font-black text-xs uppercase tracking-widest text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center gap-3">
@@ -190,7 +190,7 @@ export default function MatrixHero() {
                    <div className="w-24 h-24 rounded-full border-4 border-blue-500/20 border-t-blue-500 animate-spin" />
                 </div>
                 <div className="space-y-2">
-                   <h3 className="text-3xl font-black text-white uppercase tracking-tighter italic">Analyzing Matrix...</h3>
+                   <h3 className="text-3xl font-black text-white uppercase tracking-tighter italic">Syncing Intelligence...</h3>
                    <span className="text-blue-400 font-mono text-sm">{scanProgress}% COMPLETE</span>
                 </div>
                 
@@ -209,7 +209,7 @@ export default function MatrixHero() {
 
                 {scanProgress >= 100 && (
                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pt-8">
-                      <p className="text-emerald-400 font-black uppercase tracking-widest mb-6">Matrix Analysis Successful</p>
+                      <p className="text-emerald-400 font-black uppercase tracking-widest mb-6">Intelligence Sync Successful</p>
                       <button className="px-8 py-4 bg-emerald-600 rounded-xl font-black text-xs uppercase tracking-widest text-white">Access Personal Intelligence Hub</button>
                    </motion.div>
                 )}

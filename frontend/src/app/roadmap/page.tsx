@@ -167,7 +167,7 @@ export default function RoadmapPage() {
             </div>
 
             <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/30 uppercase leading-none">
-              Neural Career<br />Matrix
+              Student Intelligence<br />Hub
             </h1>
             
             <p className="text-xl text-slate-400 font-medium max-w-2xl mb-12 leading-relaxed tracking-tight">
@@ -183,7 +183,7 @@ export default function RoadmapPage() {
               <div className="absolute inset-0 bg-indigo-500/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
               <div className="relative flex items-center gap-4">
                 {isGenerating ? <Sparkles className="w-6 h-6 text-indigo-500 animate-spin" /> : <Upload className="w-6 h-6 text-indigo-400" />}
-                <span className="text-xl font-black uppercase tracking-[0.2em]">{isGenerating ? 'Analyzing DNA...' : 'Drop DNA Matrix'}</span>
+                <span className="text-xl font-black uppercase tracking-[0.2em]">{isGenerating ? 'Syncing Intel...' : 'Sync Intelligence Hub'}</span>
               </div>
             </button>
             <input ref={fileInputRef} type="file" onChange={handleFileUpload} className="hidden" accept=".pdf,.txt,.doc,.docx" />
