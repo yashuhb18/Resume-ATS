@@ -28,7 +28,7 @@ from app.services.mock_assessment import mock_assessment_generator
 from app.services.roadmap_generator import roadmap_generator
 from app.services.pulse_engine import pulse_engine
 from app.services.industry_news_service import industry_news_service
-from app.services import auth_service
+from app.services.nimma_ai import nimma_ai
 from app.models.schemas import AnalysisResponse, ComparisonResponse, InterviewChatResponse, ProjectRecommendation, AssessmentResponse, RoadmapRequest, RoadmapResponse, PulseResponse, ComputerVisionAnalysis, NewsFeedResponse
 from app.db.database import get_db, create_tables
 from sqlalchemy.orm import Session
@@ -760,6 +760,16 @@ async def roadmap_chat(request: Request):
     history = data.get("history", [])
     
     response_text = await roadmap_chat_service.chat(query, context, history)
+    return {"response": response_text}
+
+@app.post("/api/nimma-chat")
+async def nimma_chat(request: Request):
+    """Unified Nimma-AI companion chat."""
+    data = await request.json()
+    query = data.get("query")
+    history = data.get("history", [])
+    
+    response_text = await nimma_ai.chat(query, history)
     return {"response": response_text}
 
 if __name__ == "__main__":

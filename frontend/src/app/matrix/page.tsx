@@ -6,7 +6,7 @@ import MatrixGlobalGrid from '@/components/matrix-hub/MatrixGlobalGrid';
 import MatrixAcademicFacilities from '@/components/matrix-hub/MatrixAcademicFacilities';
 import MatrixDomainGrid from '@/components/matrix-hub/MatrixDomainGrid';
 import MatrixJobFeed from '@/components/matrix-hub/MatrixJobFeed';
-import MatrixOracle from '@/components/matrix-hub/MatrixOracle';
+import NimmaAI from '@/components/matrix-hub/MatrixOracle';
 import MatrixFooter from '@/components/matrix-hub/MatrixFooter';
 import '@/styles/matrix-hub.css';
 import { useState, useEffect } from 'react';
@@ -60,8 +60,8 @@ export default function MatrixHubPage() {
         {/* Section 5: Live Job Intelligence */}
         <MatrixJobFeed />
 
-        {/* Section 6: AI Mentor Showcase */}
-        <MatrixOracle />
+        {/* Section 6: Nimma-AI companion */}
+        <NimmaAI />
       </main>
 
       {/* ── Footer ── */}
