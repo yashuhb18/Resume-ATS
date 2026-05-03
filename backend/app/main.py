@@ -28,6 +28,7 @@ from app.services.mock_assessment import mock_assessment_generator
 from app.services.roadmap_generator import roadmap_generator
 from app.services.pulse_engine import pulse_engine
 from app.services.industry_news_service import industry_news_service
+from app.services import auth_service
 from app.services.nimma_ai import nimma_ai
 from app.models.schemas import AnalysisResponse, ComparisonResponse, InterviewChatResponse, ProjectRecommendation, AssessmentResponse, RoadmapRequest, RoadmapResponse, PulseResponse, ComputerVisionAnalysis, NewsFeedResponse
 from app.db.database import get_db, create_tables
