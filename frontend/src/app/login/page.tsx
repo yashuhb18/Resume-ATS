@@ -58,8 +58,9 @@ export default function LoginPage() {
       saveAuth(data.token, { usn: data.usn, name: data.name, role: 'student' });
       setSuccess('Welcome back! Redirecting...');
       setTimeout(() => router.replace('/'), 800);
-    } catch {
-      setError('Network error. Please try again.');
+    } catch (err) {
+      console.error('Login network error:', err);
+      setError('Network error: Cannot reach the backend. Please ensure the backend server is running on http://127.0.0.1:8001');
     } finally {
       setLoading(false);
     }
@@ -93,8 +94,9 @@ export default function LoginPage() {
       saveAuth(data.token, { usn: data.usn, name: data.name, role: 'student' });
       setSuccess('Registered successfully! Welcome to ECE Hub 🎉');
       setTimeout(() => router.replace('/'), 1000);
-    } catch {
-      setError('Network error. Please try again.');
+    } catch (err) {
+      console.error('Registration network error:', err);
+      setError('Network error: Cannot reach the backend. Please ensure the backend server is running on http://127.0.0.1:8001');
     } finally {
       setLoading(false);
     }

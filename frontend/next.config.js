@@ -2,7 +2,7 @@
 const defaultBackendUrl =
   process.env.NODE_ENV === 'production'
     ? 'https://resume-ats-backend-production.up.railway.app'
-    : 'http://localhost:8001';
+    : 'http://127.0.0.1:8001';
 
 const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || defaultBackendUrl;
 
