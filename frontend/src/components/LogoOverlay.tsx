@@ -10,7 +10,7 @@ export default function LogoOverlay() {
         <img 
           src="/images/college_logo.png" 
           alt="College Logo" 
-          className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+          className="w-full h-full object-contain"
           loading="eager"
         />
       </div>
@@ -20,7 +20,7 @@ export default function LogoOverlay() {
         <img 
           src="/images/dept_logo.png" 
           alt="Department Logo" 
-          className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+          className="w-full h-full object-contain"
           loading="eager"
         />
       </div>
