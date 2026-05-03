@@ -1,4 +1,5 @@
 const configuredApiBase = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, '') || '';
+const useDirectApi = process.env.NEXT_PUBLIC_USE_DIRECT_API === 'true';
 
 function normalizePath(path: string) {
   return path.startsWith('/') ? path : `/${path}`;
@@ -6,6 +7,10 @@ function normalizePath(path: string) {
 
 export function apiUrl(path: string) {
   const normalizedPath = normalizePath(path);
+
+  if (typeof window !== 'undefined' && !useDirectApi) {
+    return normalizedPath;
+  }
 
   if (!configuredApiBase) {
     return normalizedPath;
