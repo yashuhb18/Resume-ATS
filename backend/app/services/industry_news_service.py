@@ -8,14 +8,12 @@ import re
 import urllib.parse
 
 class IndustryNewsService:
-    """Scrapes engineering news with high-resolution visuals from multiple premium sources."""
+    """Scrapes engineering news using original source photos to ensure reliability."""
     
     def __init__(self):
         self.cache_file = os.path.join(os.path.dirname(__file__), "news_cache.json")
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
-            "Accept-Language": "en-US,en;q=0.9"
         }
 
     def get_latest_news(self) -> Dict[str, Any]:
@@ -57,10 +55,10 @@ class IndustryNewsService:
         if not unique_news:
             unique_news = [
                 {
-                    "title": "Future of Robotics: AI Integration in Manufacturing",
-                    "link": "https://interestingengineering.com/innovation/future-of-robotics",
-                    "image": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=1200",
-                    "category": "Robotics",
+                    "title": "Future of Engineering: Global Shifts in Technology",
+                    "link": "https://interestingengineering.com/news",
+                    "image": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200",
+                    "category": "Engineering",
                     "date": "Field Intel"
                 }
             ]
@@ -79,7 +77,7 @@ class IndustryNewsService:
         return result
 
     def _scrape_interesting_engineering(self) -> List[Dict[str, str]]:
-        """Scrapes interestingengineering.com news items."""
+        """Scrapes interestingengineering.com using original image sources."""
         try:
             url = "https://interestingengineering.com/news"
             response = httpx.get(url, headers=self.headers, follow_redirects=True, timeout=15.0)
@@ -108,25 +106,16 @@ class IndustryNewsService:
                 
                 img_src = ""
                 if img_tag:
-                    # Resolve highest resolution from srcset or data attributes
-                    img_src = img_tag.get('srcset') or img_tag.get('data-srcset') or img_tag.get('data-src') or img_tag.get('src')
+                    # USE ORIGINAL SRC - No more clarity boosting which breaks URLs
+                    img_src = img_tag.get('src') or img_tag.get('data-src') or img_tag.get('srcset')
                     if img_src and "," in img_src:
-                        img_src = [p.strip().split(' ')[0] for p in img_src.split(',')][-1]
+                        img_src = img_src.split(',')[0].strip().split(' ')[0]
                     
-                    if img_src:
-                        if not img_src.startswith('http'):
-                            img_src = "https://interestingengineering.com" + img_src
-                        
-                        # Bypass Next.js scaling
-                        if "_next/image" in img_src:
-                            match = re.search(r'url=([^&]+)', img_src)
-                            if match:
-                                img_src = urllib.parse.unquote(match.group(1))
-                            else:
-                                img_src = re.sub(r'w=\d+', 'w=1200', img_src)
+                    if img_src and not img_src.startswith('http'):
+                        img_src = "https://interestingengineering.com" + img_src
 
                 if not img_src:
-                    img_src = "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200"
+                    img_src = "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=1200"
 
                 news_items.append({
                     "title": title,
@@ -141,7 +130,7 @@ class IndustryNewsService:
             return []
 
     def _scrape_engineer_live(self) -> List[Dict[str, str]]:
-        """Scrapes engineerlive.com news items with stable image logic."""
+        """Scrapes engineerlive.com using original image sources."""
         try:
             url = "https://www.engineerlive.com/"
             response = httpx.get(url, headers=self.headers, follow_redirects=True, timeout=15.0)
@@ -167,21 +156,16 @@ class IndustryNewsService:
                     img_tag = article.find('img')
                     img_src = ""
                     if img_tag:
+                        # USE ORIGINAL SRC - No more clarity boosting which breaks URLs
                         img_src = img_tag.get('src') or img_tag.get('data-src') or img_tag.get('srcset')
                         if img_src:
-                            if " " in img_src and "," not in img_src: img_src = img_src.split(" ")[0]
-                            elif "," in img_src: img_src = [p.strip().split(' ')[0] for p in img_src.split(',')][-1]
+                            if "," in img_src:
+                                img_src = img_src.split(',')[0].strip().split(' ')[0]
+                            elif " " in img_src:
+                                img_src = img_src.split(' ')[0]
 
                             if not img_src.startswith('http'):
                                 img_src = "https://www.engineerlive.com" + (img_src if img_src.startswith('/') else '/' + img_src)
-                            
-                            # Upgrade styles safely
-                            img_src = img_src.replace('/styles/card/', '/styles/large/')
-                            img_src = img_src.replace('/styles/thumbnail/', '/styles/large/')
-                            
-                            # Clean Pagespeed only
-                            if '.pagespeed.' in img_src:
-                                img_src = img_src.split('.pagespeed.')[0]
                     
                     if not img_src:
                         img_src = "https://images.unsplash.com/photo-1485083269755-a7b559a4fe5e?auto=format&fit=crop&q=80&w=1200"
