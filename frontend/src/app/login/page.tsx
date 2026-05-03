@@ -128,9 +128,9 @@ export default function LoginPage() {
               transition={{ delay: 0.2 }}
               className="relative inline-block mb-8"
             >
-              <div className="w-24 h-24 mx-auto rounded-[2rem] bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-2xl shadow-indigo-500/20 relative group">
-                <div className="absolute inset-0 bg-white/20 rounded-[2rem] blur-xl group-hover:blur-2xl transition-all opacity-0 group-hover:opacity-100" />
-                <GraduationCap className="w-12 h-12 text-white relative z-10" />
+              <div className="w-24 h-24 mx-auto rounded-[2rem] bg-white flex items-center justify-center shadow-2xl shadow-indigo-500/10 relative group border border-white/5">
+                <div className="absolute inset-0 bg-indigo-500/5 rounded-[2rem] blur-xl group-hover:blur-2xl transition-all opacity-0 group-hover:opacity-100" />
+                <img src="/images/logo.png" alt="Nimma-MITra Logo" className="w-16 h-16 object-contain relative z-10" />
                 <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-indigo-300 animate-pulse" />
               </div>
             </motion.div>
