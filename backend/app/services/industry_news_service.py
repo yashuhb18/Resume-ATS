@@ -8,7 +8,7 @@ import re
 import urllib.parse
 
 class IndustryNewsService:
-    """Scrapes engineering news using original source photos with lazy-loading support."""
+    """Scrapes engineering news using raw source photos exactly as they appear on-site."""
     
     def __init__(self):
         self.cache_file = os.path.join(os.path.dirname(__file__), "news_cache.json")
@@ -17,14 +17,13 @@ class IndustryNewsService:
         }
 
     def get_latest_news(self) -> Dict[str, Any]:
-        """Fetch latest news from cache or scrape sources if cache is expired (>1h)."""
+        """Fetch latest news with 1-hour caching."""
         if os.path.exists(self.cache_file):
             try:
                 with open(self.cache_file, "r") as f:
                     cache_data = json.load(f)
                 
                 last_updated = datetime.datetime.fromisoformat(cache_data["last_updated"])
-                # Refresh every 1 hour to keep it LIVE and CONSTANT
                 if datetime.datetime.now() - last_updated < datetime.timedelta(hours=1) and cache_data.get("news"):
                     return cache_data
             except Exception as e:
@@ -78,7 +77,7 @@ class IndustryNewsService:
         return result
 
     def _scrape_interesting_engineering(self) -> List[Dict[str, str]]:
-        """Scrapes interestingengineering.com with robust image attribute discovery."""
+        """Scrapes IE using raw image src."""
         try:
             url = "https://interestingengineering.com/news"
             response = httpx.get(url, headers=self.headers, follow_redirects=True, timeout=15.0)
@@ -107,25 +106,12 @@ class IndustryNewsService:
                 
                 img_src = ""
                 if img_tag:
-                    # Prioritize real image attributes over small placeholders
-                    attrs = img_tag.attrs
-                    img_src = (
-                        attrs.get('data-src') or 
-                        attrs.get('data-lazy-src') or 
-                        attrs.get('srcset') or 
-                        attrs.get('src')
-                    )
-                    
-                    if img_src:
-                        if isinstance(img_src, list): img_src = img_src[0]
-                        if "," in img_src: # Handle srcset by picking first or last
-                            parts = [p.strip().split(' ')[0] for p in img_src.split(',')]
-                            img_src = parts[-1] if parts else ""
-                        
-                        if img_src and not img_src.startswith('http'):
-                            img_src = "https://interestingengineering.com" + img_src
+                    # RAW SRC ONLY
+                    img_src = img_tag.get('src') or img_tag.get('data-src') or img_tag.get('srcset')
+                    if img_src and not img_src.startswith('http'):
+                        img_src = "https://interestingengineering.com" + img_src
 
-                if not img_src or "data:image" in img_src:
+                if not img_src:
                     img_src = "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=1200"
 
                 news_items.append({
@@ -141,7 +127,7 @@ class IndustryNewsService:
             return []
 
     def _scrape_engineer_live(self) -> List[Dict[str, str]]:
-        """Scrapes engineerlive.com with robust image attribute discovery."""
+        """Scrapes EL using raw image src."""
         try:
             url = "https://www.engineerlive.com/"
             response = httpx.get(url, headers=self.headers, follow_redirects=True, timeout=15.0)
@@ -167,25 +153,12 @@ class IndustryNewsService:
                     img_tag = article.find('img')
                     img_src = ""
                     if img_tag:
-                        attrs = img_tag.attrs
-                        img_src = (
-                            attrs.get('data-src') or 
-                            attrs.get('data-lazy-src') or 
-                            attrs.get('src') or 
-                            attrs.get('srcset')
-                        )
-                        
-                        if img_src:
-                            if isinstance(img_src, list): img_src = img_src[0]
-                            if "," in img_src:
-                                img_src = img_src.split(',')[0].strip().split(' ')[0]
-                            elif " " in img_src:
-                                img_src = img_src.split(' ')[0]
-
-                            if not img_src.startswith('http'):
-                                img_src = "https://www.engineerlive.com" + (img_src if img_src.startswith('/') else '/' + img_src)
+                        # RAW SRC ONLY - NO SPLITTING
+                        img_src = img_tag.get('src') or img_tag.get('data-src') or img_tag.get('srcset')
+                        if img_src and not img_src.startswith('http'):
+                            img_src = "https://www.engineerlive.com" + (img_src if img_src.startswith('/') else '/' + img_src)
                     
-                    if not img_src or "data:image" in img_src:
+                    if not img_src:
                         img_src = "https://images.unsplash.com/photo-1485083269755-a7b559a4fe5e?auto=format&fit=crop&q=80&w=1200"
 
                     news_items.append({
