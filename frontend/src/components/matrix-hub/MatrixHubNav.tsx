@@ -43,7 +43,7 @@ export default function MatrixHubNav() {
         </div>
 
         {/* ── Actions ── */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 mr-16">
           <Link 
             href="/"
             className="px-6 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-all"

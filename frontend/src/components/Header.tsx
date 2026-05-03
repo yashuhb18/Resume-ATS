@@ -62,7 +62,7 @@ export default function Header() {
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-8 mr-16">
           {[
             { href: '/matrix',       label: 'Career Matrix' },
             { href: '#ece-hub',      label: 'ECE Hub'       },
