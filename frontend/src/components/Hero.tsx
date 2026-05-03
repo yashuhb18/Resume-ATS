@@ -61,7 +61,7 @@ export default function Hero() {
               </a>
               <Link href="/matrix" className="btn-secondary group relative overflow-hidden">
                 <span className="relative z-10 flex items-center gap-2">
-                  Enter Global Matrix
+                  Enter our hub
                   <Zap className="w-4 h-4 text-indigo-400 group-hover:scale-125 transition-transform" />
                 </span>
                 <div className="absolute inset-0 bg-indigo-500/5 group-hover:bg-indigo-500/10 transition-colors" />
