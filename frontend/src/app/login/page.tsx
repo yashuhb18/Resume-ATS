@@ -60,7 +60,7 @@ export default function LoginPage() {
       setTimeout(() => router.replace('/'), 800);
     } catch (err) {
       console.error('Login network error:', err);
-      setError('Network error: Cannot reach the backend. Please ensure the backend server is running on http://127.0.0.1:8001');
+      setError('Network error: Cannot reach the backend. Please ensure the Railway server is online at https://resume-ats-backend-production.up.railway.app');
     } finally {
       setLoading(false);
     }
@@ -96,7 +96,7 @@ export default function LoginPage() {
       setTimeout(() => router.replace('/'), 1000);
     } catch (err) {
       console.error('Registration network error:', err);
-      setError('Network error: Cannot reach the backend. Please ensure the backend server is running on http://127.0.0.1:8001');
+      setError('Network error: Cannot reach the backend. Please ensure the Railway server is online at https://resume-ats-backend-production.up.railway.app');
     } finally {
       setLoading(false);
     }
