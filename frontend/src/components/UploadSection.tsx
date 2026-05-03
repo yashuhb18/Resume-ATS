@@ -22,7 +22,7 @@ function DropZone({
   onRemove,
   label,
   formats,
-  accentColor = 'var(--brand-glow-core)',
+  accentColor = 'var(--brand-primary)',
 }: {
   file: File | null;
   isActive: boolean;
@@ -34,99 +34,112 @@ function DropZone({
   accentColor?: string;
 }) {
   return (
-    <div>
-      <p className="text-sm font-semibold mb-3" style={{ color: 'var(--text-secondary)' }}>
+    <div className="group">
+      <p className="text-xs font-black uppercase tracking-widest mb-4 ml-1" style={{ color: 'var(--text-muted)' }}>
         {label}
       </p>
       <div
         {...rootProps}
-        className="relative border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all duration-300"
+        className="relative border-2 border-dashed rounded-[2rem] p-12 text-center cursor-pointer transition-all duration-500 overflow-hidden"
         style={{
           borderColor: isActive
             ? accentColor
             : file
-            ? 'var(--emerald-neon)'
-            : 'var(--surface-border2)',
+            ? 'var(--inst-emerald)'
+            : 'rgba(255,255,255,0.1)',
           background: isActive
-            ? `rgba(139,92,246,0.06)`
+            ? `rgba(99,102,241,0.08)`
             : file
-            ? 'rgba(52,211,153,0.04)'
-            : 'var(--surface-raised)',
-          boxShadow: isActive ? `0 0 0 3px rgba(139,92,246,0.15), 0 0 32px rgba(139,92,246,0.12)` : 'none',
+            ? 'rgba(16,185,129,0.04)'
+            : 'rgba(255,255,255,0.02)',
+          backdropFilter: 'blur(12px)',
+          boxShadow: isActive 
+            ? `0 0 40px -10px ${accentColor}44, inset 0 0 20px ${accentColor}11` 
+            : file
+            ? `0 0 30px -10px rgba(16,185,129,0.2)`
+            : 'none',
         }}
       >
+        {/* Decorative corner glow */}
+        <div 
+          className="absolute -top-12 -right-12 w-24 h-24 blur-[60px] opacity-20 pointer-events-none transition-colors"
+          style={{ background: isActive ? accentColor : file ? 'var(--inst-emerald)' : 'transparent' }}
+        />
+
         <input {...inputProps} />
 
         <AnimatePresence mode="wait">
           {file ? (
             <motion.div
               key="file"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
               className="flex flex-col items-center"
             >
               <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
-                style={{ background: 'rgba(52,211,153,0.12)' }}
+                className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6 shadow-2xl transition-transform group-hover:scale-105 duration-500"
+                style={{ 
+                  background: 'linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.05))',
+                  border: '1px solid rgba(16,185,129,0.2)'
+                }}
               >
-                <CheckCircle2 className="w-7 h-7" style={{ color: 'var(--emerald-neon)' }} />
+                <CheckCircle2 className="w-10 h-10" style={{ color: 'var(--inst-emerald)' }} />
               </div>
-              <div className="flex items-center gap-3 mb-2">
-                <FileText className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
-                <span className="font-medium text-sm truncate max-w-[200px]" style={{ color: 'var(--text-primary)' }}>
+              <div className="flex items-center gap-4 mb-3 bg-white/5 pl-5 pr-2 py-2 rounded-2xl border border-white/5">
+                <FileText className="w-5 h-5 text-emerald-400" />
+                <span className="font-bold text-sm truncate max-w-[200px] text-white">
                   {file.name}
                 </span>
                 <button
                   onClick={e => { e.stopPropagation(); onRemove(); }}
-                  className="p-1 rounded-full transition-colors"
-                  style={{ background: 'var(--surface-muted)' }}
+                  className="p-2 rounded-xl bg-white/5 hover:bg-red-500/20 hover:text-red-400 transition-all"
                 >
-                  <X className="w-3.5 h-3.5" style={{ color: 'var(--text-muted)' }} />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-xs" style={{ color: 'var(--text-faint)' }}>
-                {(file.size / 1024 / 1024).toFixed(2)} MB
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                {(file.size / 1024 / 1024).toFixed(2)} MB • READY FOR ANALYSIS
               </p>
             </motion.div>
           ) : (
             <motion.div
               key="empty"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
               className="flex flex-col items-center"
             >
               <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-all"
+                className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6 transition-all duration-500 group-hover:rotate-6 shadow-xl"
                 style={{
-                  background: isActive ? 'rgba(139,92,246,0.12)' : 'var(--surface-muted)',
+                  background: isActive ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.03)',
+                  border: isActive ? `1px solid ${accentColor}44` : '1px solid rgba(255,255,255,0.05)'
                 }}
               >
                 <Upload
-                  className="w-7 h-7 transition-colors"
-                  style={{ color: isActive ? accentColor : 'var(--text-faint)' }}
+                  className="w-10 h-10 transition-colors duration-500"
+                  style={{ color: isActive ? accentColor : 'var(--text-muted)' }}
                 />
               </div>
-              <p className="text-base font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>
-                {isActive ? 'Drop it here!' : 'Drag & drop your file'}
+              <h3 className="text-xl font-black mb-2 text-white">
+                {isActive ? 'Release to Start' : 'Analyze Your Masterpiece'}
+              </h3>
+              <p className="text-sm font-medium mb-6 text-slate-500">
+                Drag & drop or <span className="text-indigo-400 underline decoration-indigo-400/30 underline-offset-4">browse files</span>
               </p>
-              <p className="text-sm mb-4" style={{ color: 'var(--text-muted)' }}>or click to browse</p>
-              <div className="flex items-center gap-2 flex-wrap justify-center">
+              
+              <div className="flex items-center gap-3 justify-center">
                 {formats.map(f => (
                   <span
                     key={f}
-                    className="px-2.5 py-0.5 rounded-full text-xs font-semibold border"
-                    style={{
-                      background: 'var(--surface-subtle)',
-                      borderColor: 'var(--surface-border2)',
-                      color: 'var(--text-muted)',
-                    }}
+                    className="px-3 py-1 rounded-lg text-[10px] font-black tracking-tighter border border-white/5 bg-white/5 text-slate-400"
                   >
                     {f}
                   </span>
                 ))}
-                <span className="text-xs" style={{ color: 'var(--text-faint)' }}>• Max 5 MB</span>
+                <div className="w-1 h-1 rounded-full bg-white/10" />
+                <span className="text-[10px] font-black text-slate-600">MAX 5MB</span>
               </div>
             </motion.div>
           )}
@@ -200,57 +213,57 @@ export default function UploadSection({ onAnalyze, onCompare, error }: UploadSec
   return (
     <section
       id="upload"
-      className="py-24"
-      style={{ background: 'var(--surface-raised)' }}
+      className="py-32 relative overflow-hidden"
     >
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Background Ambience */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="max-w-4xl mx-auto px-6 relative z-10">
 
         {/* Mode tabs + heading */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="mb-10"
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="mb-16"
         >
-          {/* Tab switcher */}
-          <div className="flex gap-3 mb-10 justify-center">
-            {([
-              { key: 'analyze', label: 'Single Upload', icon: Zap },
-              { key: 'compare', label: 'Compare with JD', icon: GitCompare },
-            ] as const).map(({ key, label, icon: Icon }) => (
-              <button
-                key={key}
-                onClick={() => { setMode(key); setJdFile(null); setValidationError(null); }}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200"
-                style={
-                  mode === key
-                    ? {
-                        background: 'linear-gradient(135deg, var(--brand-mid), var(--brand-glow-core))',
-                        color: '#fff',
-                        boxShadow: 'var(--glow-brand-sm)',
-                      }
-                    : {
-                        background: 'var(--surface-subtle)',
-                        color: 'var(--text-secondary)',
-                        border: '1px solid var(--surface-border2)',
-                      }
-                }
-              >
-                <Icon className="w-4 h-4" />
-                {label}
-              </button>
-            ))}
+          {/* Tab switcher: Pill style with sliding highlight */}
+          <div className="flex justify-center mb-12">
+            <div className="inline-flex p-1.5 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/5 relative">
+              {([
+                { key: 'analyze', label: 'Single Upload', icon: Zap },
+                { key: 'compare', label: 'Compare with JD', icon: GitCompare },
+              ] as const).map(({ key, label, icon: Icon }) => (
+                <button
+                  key={key}
+                  onClick={() => { setMode(key); setJdFile(null); setValidationError(null); }}
+                  className={`relative flex items-center gap-2.5 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 z-10 ${
+                    mode === key ? 'text-white' : 'text-slate-500 hover:text-slate-300'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 transition-colors ${mode === key ? 'text-white' : 'text-slate-600'}`} />
+                  {label}
+                  {mode === key && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-indigo-600 rounded-xl -z-10 shadow-lg shadow-indigo-500/20"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="text-center">
-            <h2 className="section-title text-3xl sm:text-4xl mb-3">
-              {mode === 'analyze' ? 'Analyze Your Resume' : 'Compare Resume with Job Description'}
+            <h2 className="text-4xl md:text-6xl font-black mb-6 text-gradient">
+              {mode === 'analyze' ? 'Analyze Your Resume' : 'Intelligent Match Analysis'}
             </h2>
-            <p className="section-subtitle">
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
               {mode === 'analyze'
-                ? 'Upload your resume and let our AI analyze it for ATS compatibility'
-                : 'Upload both files to see how well your resume matches the job'}
+                ? 'Deploy our neural network to dismantle your resume and rebuild it for maximum ATS visibility.'
+                : 'Synchronize your architectural profile with industry requirements for a precision match score.'}
             </p>
           </div>
         </motion.div>
@@ -326,9 +339,9 @@ export default function UploadSection({ onAnalyze, onCompare, error }: UploadSec
                     ? onAnalyze(file!)
                     : onCompare?.(file!, jdFile!)
                 }
-                className="btn-primary text-lg px-12 py-4"
+                className="btn-primary text-xl px-16 py-5 rounded-[2rem] shadow-2xl shadow-indigo-500/40 active:scale-95 transition-transform"
               >
-                {mode === 'analyze' ? 'Analyze Resume' : 'Compare & Analyze'}
+                {mode === 'analyze' ? 'START ANALYSIS' : 'GENERATE MATCH REPORT'}
               </button>
             </motion.div>
           )}
