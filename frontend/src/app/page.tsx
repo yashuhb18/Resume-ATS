@@ -9,7 +9,6 @@ import Features from '@/components/Features';
 import UploadSection from '@/components/UploadSection';
 import EceSpecialization from '@/components/EceSpecialization';
 import ResultsDashboard from '@/components/ResultsDashboard';
-import PrivacyBanner from '@/components/PrivacyBanner';
 import Footer from '@/components/Footer';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import BackendStatusBanner from '@/components/BackendStatusBanner';
@@ -139,7 +138,6 @@ export default function Home() {
           <EceSpecialization />
           <HowItWorks />
           <Features />
-          <PrivacyBanner />
         </>
       )}
 
