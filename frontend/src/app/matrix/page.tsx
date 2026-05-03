@@ -8,6 +8,7 @@ import MatrixDomainGrid from '@/components/matrix-hub/MatrixDomainGrid';
 import MatrixJobFeed from '@/components/matrix-hub/MatrixJobFeed';
 import NimmaAI from '@/components/matrix-hub/MatrixOracle';
 import MatrixFooter from '@/components/matrix-hub/MatrixFooter';
+import FloatingNimmaAI from '@/components/matrix-hub/FloatingNimmaAI';
 import '@/styles/matrix-hub.css';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -67,6 +68,7 @@ export default function MatrixHubPage() {
       {/* ── Footer ── */}
       <MatrixFooter />
 
+      <FloatingNimmaAI />
     </div>
   );
 }

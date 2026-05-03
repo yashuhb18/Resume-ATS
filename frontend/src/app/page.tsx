@@ -12,7 +12,7 @@ import ResultsDashboard from '@/components/ResultsDashboard';
 import Footer from '@/components/Footer';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import BackendStatusBanner from '@/components/BackendStatusBanner';
-import VirtualInterviewerChat from '@/components/VirtualInterviewerChat';
+import FloatingNimmaAI from '@/components/matrix-hub/FloatingNimmaAI';
 import { AnalysisResult, ComparisonResult } from '@/types';
 import { apiUrl } from '@/utils/api';
 import { isLoggedIn, getUser, logActivity } from '@/utils/auth';
@@ -142,7 +142,7 @@ export default function Home() {
       )}
 
       <Footer />
-      <VirtualInterviewerChat resumeFile={activeResumeFile} jdFile={activeJdFile} />
+      <FloatingNimmaAI />
     </main>
   );
 }
